@@ -24,8 +24,8 @@ var keywords = []string {"PROGRAM","SCRIPT","MODULE",
 						"VAR","CONST","OPTION","TYPE",
 						"INTEGER","FLOAT","STRING","BOOLEAN","MAP","ARRAY","VARIANT",
 						"IMPORT","INCLUDE","USE",
-						"OPTION","SUPPORT","PURECODE"
+						"OPTION","SUPPORT","PURECODE",
 					}
 
 // NLSEP will if set to true (default value) accept a new line as a separator (and then you don't need a semi-colon at the end of each line), turning it off will require such a thing. Please note when putting multiple instructions on one line, the semi-colon will always be required to separate those.
-var NPSEP = true
+var NLSEP = true

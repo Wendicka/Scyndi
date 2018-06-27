@@ -13,7 +13,7 @@ type texpression struct{
 }
 
 type tori struct{
-	line string
+	pline string
 	ln int
 }
 
