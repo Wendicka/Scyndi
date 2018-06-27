@@ -1,4 +1,5 @@
 MKL*
 *MKL*
 test*
-
+bin
+!bin/readme.md
