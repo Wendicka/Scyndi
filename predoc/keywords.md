@@ -114,3 +114,11 @@ Every Scyndi file (except for include files) MUST have either one of these instr
 - SUPPORT
   - Tells the compiler which target languages are supported for this file. If left out all target languages that Scorpion can translate to will be supported.
   - Prefixing with a ! will allow all languages except the one you put in this way.
+
+
+- PURECODE
+  - Should just implement code from the target language (type the target language as an argument)
+  - *ENDPURECODE* will end this. Not an official keyword, and it will only be seen when it needs to end a keyword
+  - Scyndi has its own way to name the identifiers declared in its source codes. These are not the same in the target code (to avoid conflicts with keywords). If you have a variably named MyVar, then I'm planning to put $CI{MyVar}IC$ in the purecode and Scyndi should put it in
+  - Other than that PURECODE does what the name suggests, Scyndi will not touch this code. Any parse errors or other nasty stuff in a purecode block will only be seen by the compilers of the target language, this can make PURECODE a bit nasty so it should only be used when really needed ;P
+
