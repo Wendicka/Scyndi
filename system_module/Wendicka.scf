@@ -1,0 +1,5 @@
+Module System
+
+
+Import Write Void Write(a...:string)
+import WriteLn Void WriteLn(a...:string)
