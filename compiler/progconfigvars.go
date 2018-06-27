@@ -8,7 +8,7 @@ type scynt_result struct{
 
 // This variable will very likely NOT be used when parsing the keywords 
 // when used in their proper locations. This array will rather be used
-// to make sure none of them are used ns identifier names when declaring variables or functions/procedures.
+// to make sure none of them are used as identifier names when declaring variables or functions/procedures.
 var keywords = []string {"PROGRAM","SCRIPT","MODULE",
 						"USE","XUSE",
 						"PROCEDURE","VOID","PROC",
@@ -26,3 +26,5 @@ var keywords = []string {"PROGRAM","SCRIPT","MODULE",
 						"IMPORT","INCLUDE","USE",
 					}
 
+// NLSEP will if set to true (default value) accept a new line as a separator (and then you don't need a semi-colon at the end of each line), turning it off will require such a thing. Please note when putting multiple instructions on one line, the semi-colon will always be required to separate those.
+var NPSEP = true
