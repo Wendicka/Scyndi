@@ -1,6 +1,6 @@
 # Scyndi
 
-![](https://i.gjcdn.net/data/games/0/188/20688/media/game-description/general-iaxndefs.png)
+![Scyndi](http://tricky1975.github.io/63/icons/scyndi.png)
 
 Experimental stuff.
 Not much to see here yet.
