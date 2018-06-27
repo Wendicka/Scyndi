@@ -19,6 +19,7 @@ func doingln(a,b string){
 
 
 func progress(deel,geheel int){
+	if !Showdo { return }
 	d:=float64(deel)
 	w:=float64(geheel)
 	p:=(d/w)*100
@@ -37,5 +38,6 @@ func ethrow(e error){
 }
 
 func done() {
+	if !Showdo { return }
 	fmt.Println(ansistring.SCol("Done!     ",ansistring.A_Green,0))
 }
