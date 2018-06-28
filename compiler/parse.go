@@ -3,9 +3,10 @@ package scynt
 import (
 		"trickyunits/qff"
 jcr		"trickyunits/jcr6/jcr6main"
+		"trickyunits/qstr"
 )
 
-func grabfromfile(sourcefile string) *[]byte{
+func Grabfromfile(sourcefile string) *[]byte{
 	doing("Reading file: ",sourcefile)
 	bank,e:=qff.EGetFile(sourcefile)
 	if e!=nil { ethrow(e) }
@@ -14,7 +15,7 @@ func grabfromfile(sourcefile string) *[]byte{
 	return &bank
 }
 
-func grabfromjcr(j jcr.TJCR6Dir,entry string) *[]byte{
+func Grabfromjcr(j jcr.TJCR6Dir,entry string) *[]byte{
 	doing("Reading JCR entry: ",entry)
 	bank:=jcr.JCR_B(j,entry)
 	if jcr.JCR6Error!="" { throw(jcr.JCR6Error) }
@@ -26,7 +27,7 @@ func grabfromjcr(j jcr.TJCR6Dir,entry string) *[]byte{
 
 // Basically all this routine does is make sure all instructions are properly separated.
 // New lines (0x0A) and ; can do this, although those who prefer it can turn off the new-line as separation.
-func sepsource(src *[] byte,file string) *tsource {
+func Sepsource(src *[] byte,file string) *tsource {
 	ret:=&tsource{}
 	doing("Pre-parse analysing: ",file)
 	ret.nlsep = NLSEP
@@ -44,7 +45,7 @@ func sepsource(src *[] byte,file string) *tsource {
 		c:=(*src)[i]
 		ok:=true
 		// get rid of useless whitespaces
-		if (c==' ' || c=='\r' || c=='\t' || (c=='\r' && NLSEP)) {
+		if (c==' ' || c=='\r' || c=='\t' || (c=='\r' && !NLSEP)) {
 			if nwp {
 				ok=false
 			} else {
@@ -53,26 +54,31 @@ func sepsource(src *[] byte,file string) *tsource {
 		} else { nwp = false }
 		// I have no need for the text in multi-line comments. Get rid of them
 		if c=='{' && !mlc && !ins { mlc=true }
-		if c=='}' && mlc { mlc=false }
-		if c=='"' && !mlc && (!gbs && !ins) { ins=!ins }
+		if c=='}' && mlc { mlc=false; ok=false }
+		if c=='"' && !mlc && (!gbs) { ins=!ins }
 		ok=ok && !mlc
 		if ((c=='\n' && NLSEP) || c==';') && ok && !ins {
 			//psource=append(psource,string(cl))
-			psl:=string(cl)
+			psl:=qstr.MyTrim(string(cl))
 			cl=[]byte{}
 			ok=false
 			no:=&tori{}
 			no.pline=psl
 			no.ln=lnb
-			ret.source = append(ret.source,no)
+			if psl!="" {
+				ret.source = append(ret.source,no)
+			}
+			nwp=true
 			//ci:=len(ret.instructions)-1
 			//ret.instructions[ci].ori = no
-			lnb++
-		}
+			if c=='\n' {lnb++}
+		} else if c=='\n' { lnb++ }
 		if ok {
 			if (!ins) && c>='a' && c<='z' { c-=32 }
 			cl=append(cl,c)
 		}
 	}
+	if ins { throw("Unexpected end of file. String is not finished") }
+	if mlc { throw("Unexpected end of file. Comment is not finished") }
 	return ret
 }

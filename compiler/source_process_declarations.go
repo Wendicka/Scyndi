@@ -17,6 +17,8 @@ type tori struct{
 	ln int
 }
 
+func (s *tori) LORI() (int,string) { return s.ln,s.pline } // debug
+
 
 type tinstruction struct {
 	ori *tori
@@ -60,6 +62,8 @@ type tsource struct {
 	// nlsep will if turned on (default value) accept a new line as a separator (and then you don't need a semi-colon at the end of each line), turning it off will require such a thing. Please note when putting multiple instructions on one line, the semi-colon will always be required to separate those.
 	orilinerem,writetraceback,nlsep bool
 }
+
+func (s *tsource) Lsource() []*tori { return s.source }
 
 
 
