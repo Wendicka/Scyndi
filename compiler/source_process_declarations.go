@@ -12,12 +12,18 @@ type texpression struct{
 	pure string
 }
 
+type tword struct{
+	Word string
+	Wtype string
+}
+
 type tori struct{
 	pline string
+	sline []*tword
 	ln int
 }
 
-func (s *tori) LORI() (int,string) { return s.ln,s.pline } // debug
+func (s *tori) LORI() (int,string,[]*tword) { return s.ln,s.pline,s.sline } // debug
 
 
 type tinstruction struct {

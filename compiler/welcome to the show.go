@@ -37,6 +37,12 @@ func ethrow(e error){
 	throw(e.Error())
 }
 
+func lthrow(f string, l int,e string){
+	fmt.Println(ansistring.SCol("ERROR",ansistring.A_Red,ansistring.A_Blink))
+	fmt.Println(ansistring.SCol(f+":",ansistring.A_Cyan,0)+" "+ansistring.SCol(fmt.Sprintf("%d",l),ansistring.A_Magenta,0)+"\t\t"+ansistring.SCol(e,ansistring.A_Yellow,0))
+	os.Exit(1)
+}
+
 func done() {
 	if !Showdo { return }
 	fmt.Println(ansistring.SCol("Done!     ",ansistring.A_Green,0))

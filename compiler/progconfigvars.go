@@ -26,6 +26,20 @@ var keywords = []string {"PROGRAM","SCRIPT","MODULE",
 						"IMPORT","INCLUDE","USE",
 						"OPTION","SUPPORT","PURECODE",
 					}
+					
+var operators = []string { // It's very important here, that the longer ones come first and the smaller ones later, or things might go wrong here.
+	                      "==",
+	                      ">=",
+	                      "<=",
+	                      "..",
+	                      "=",
+	                      ">",
+	                      "<",
+	                      "+","-","*","/",
+	                      "(",")",
+	                      
+	                      ",", // Strictly speaking not an operator, but for the splitting routines it'll count as one.
+					  }
 
 // NLSEP will if set to true (default value) accept a new line as a separator (and then you don't need a semi-colon at the end of each line), turning it off will require such a thing. Please note when putting multiple instructions on one line, the semi-colon will always be required to separate those.
 var NLSEP = true
