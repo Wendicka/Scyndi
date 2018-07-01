@@ -4,7 +4,7 @@ package scynt
 type tidentifier struct {
 	private bool
 	idtype string // function, procedure, type, constant, variable
-	dttype string // data type string, int etc.
+	dttype string // data type string, int etc. (for variables and functions returning values)
 	translateto string // as some legal names in Scyndi can be keywords in the target language, Scyndi will use different names in its translations.
 }
 

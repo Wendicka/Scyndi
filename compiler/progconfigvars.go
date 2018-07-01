@@ -28,6 +28,9 @@ var keywords = []string {"PROGRAM","SCRIPT","MODULE",
 					}
 					
 var operators = []string { // It's very important here, that the longer ones come first and the smaller ones later, or things might go wrong here.
+	                      ":=",
+	                      ":+",
+	                      ":-",
 	                      "==",
 	                      ">=",
 	                      "<=",
@@ -38,6 +41,7 @@ var operators = []string { // It's very important here, that the longer ones com
 	                      "+","-","*","/",
 	                      "(",")",
 	                      
+	                      ":",
 	                      ",", // Strictly speaking not an operator, but for the splitting routines it'll count as one.
 					  }
 

@@ -28,6 +28,7 @@ func Grabfromjcr(j jcr.TJCR6Dir,entry string) *[]byte{
 
 func gettype(word string,file string,line int) string{
 	t:="???"
+	if len(word)==0{ return "" }
 	switch word[0]{
 		case '0','1','2','3','4','5','6','7','8','9','%','$':
 			t = "integer"
@@ -129,7 +130,7 @@ func Sepsource(src *[] byte,file string) *tsource {
 					if b==' ' || b=='\t' || b=='\r' || b=='\n' { forcenw=true }
 					if b=='"' { forcenw=true; instring=true }
 					for _,o:=range operators{
-						if i+len(o)<=len(so.pline) && qstr.Mid(so.pline,i+1,len(o))==o {
+						if i+len(o)<=len(so.pline) && qstr.Mid(so.pline,i+1,len(o))==o && !forcenw {
 							nw:=&tword{}
 							nw.Word  = word
 							nw.Wtype = gettype(word, file, so.ln)
@@ -138,8 +139,9 @@ func Sepsource(src *[] byte,file string) *tsource {
 							nw.Word=o
 							nw.Wtype="operator"
 							so.sline = append(so.sline,nw)
-							ig=len(o)
+							ig=len(o)-1
 							word=""
+							forcenw=true
 						}
 					}
 					if forcenw {
