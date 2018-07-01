@@ -3,8 +3,9 @@ package scynt
 
 type tidentifier struct {
 	private bool
-	idtype string // function, procedure, type, constant, variable
+	idtype string // function, procedure, type, constant, variable, sourcegroup(either program, module, script)
 	dttype string // data type string, int etc. (for variables and functions returning values)
+	defaultvalue string
 	translateto string // as some legal names in Scyndi can be keywords in the target language, Scyndi will use different names in its translations.
 }
 
@@ -20,6 +21,7 @@ type tword struct{
 type tori struct{
 	pline string
 	sline []*tword
+	sfile string
 	ln int
 }
 
@@ -59,9 +61,11 @@ type tchunk struct {
 
 
 type tsource struct {
+	srctype string // May contain either "PROGRAM", "SCRIPT" or "MODULE"
+	srcname string
 	inputname string
 	chunks [] tchunk
-	identifiers map[string]tidentifier
+	identifiers map[string]*tidentifier
 	source []*tori
 	// orilinerem will place the original line in the translation as a comment or remark
 	// write traceback will instruct the parser of the translated code to process the traceback data, providing the target language has any way to support such a thing.

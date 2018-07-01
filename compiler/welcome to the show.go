@@ -43,6 +43,10 @@ func lthrow(f string, l int,e string){
 	os.Exit(1)
 }
 
+func lassert(f string,l int, check bool, e string){
+	if !check { lthrow(f,l,e) }
+}
+
 func done() {
 	if !Showdo { return }
 	fmt.Println(ansistring.SCol("Done!     ",ansistring.A_Green,0))

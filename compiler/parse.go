@@ -5,6 +5,7 @@ import (
 jcr		"trickyunits/jcr6/jcr6main"
 		"trickyunits/qstr"
 		"strings"
+		"fmt"
 )
 
 func Grabfromfile(sourcefile string) *[]byte{
@@ -38,6 +39,12 @@ func gettype(word string,file string,line int) string{
 			for _,w:=range keywords {
 				if w==word { t = "keyword" }
 			}
+			for i:=0;i<len(word);i++ {
+				ok:=word[i]=='_'
+				ok =ok || (word[i]>='A' && word[i]<='Z')
+				ok =ok || (word[i]>='0' && word[i]<='9')
+				lassert(file,line,ok,"Invalid identifier: "+word)
+			}
 		default:
 			lthrow(file,line,"Unknown series of characters: "+word)
 	} 
@@ -45,6 +52,7 @@ func gettype(word string,file string,line int) string{
 }
 
 
+// After loading the code this is step #1
 // Basically all this routine does is make sure all instructions are properly separated.
 // New lines (0x0A) and ; can do this, although those who prefer it can turn off the new-line as separation.
 func Sepsource(src *[] byte,file string) *tsource {
@@ -86,6 +94,7 @@ func Sepsource(src *[] byte,file string) *tsource {
 			no:=&tori{}
 			no.pline=psl
 			no.ln=lnb
+			no.sfile=file
 			if psl!="" {
 				ret.source = append(ret.source,no)
 			}
@@ -134,7 +143,7 @@ func Sepsource(src *[] byte,file string) *tsource {
 							nw:=&tword{}
 							nw.Word  = word
 							nw.Wtype = gettype(word, file, so.ln)
-							so.sline = append(so.sline,nw)
+							so.sline = append(so.sline,nw)							
 							nw=&tword{}
 							nw.Word=o
 							nw.Wtype="operator"
@@ -168,4 +177,31 @@ func Sepsource(src *[] byte,file string) *tsource {
 			
 	}
 	return ret
+}
+
+// Basically step #2 in compiling.
+// Organising the code blocks
+func (self *tsource) Organize(){
+	for _,ol:=range self.source {
+		if ol.ln==1 {
+			lassert(ol.sfile,ol.ln,len(ol.sline)==2,"Illegal source header!  "+fmt.Sprintf("(%d)",len(ol.sline)))
+			sl:=ol.sline
+			pt:=sl[0]
+			id:=sl[1]
+			if pt.Word=="UNIT" { pt.Word="MODULE" }
+			lassert(ol.sfile,ol.ln,pt.Word=="PROGRAM" || pt.Word=="MODULE" || pt.Word=="SCRIPT","Header must define PROGRAM, MODULE or SCRIPT. Not a "+pt.Word)
+			if id.Wtype!="identifier" { lthrow(ol.sfile,ol.ln,"Unexpected "+id.Wtype+"! Expected identifier for "+pt.Word+" in stead!") }
+			self.identifiers = map[string]*tidentifier{}
+			self.identifiers[id.Word]=&tidentifier{}
+			did:=self.identifiers[id.Word]
+			did.private=false
+			did.idtype="SOURCEGROUP"
+			did.translateto="SCYNDI_SOURCEGROUP_"+id.Word
+			self.srctype=pt.Word
+			self.srcname=id.Word
+		} else {
+			throw("Unfortunately except for the heading parser, the rest of the organisor has not yet been written")
+		}
+	}
+	
 }

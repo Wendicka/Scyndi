@@ -9,7 +9,7 @@ type scynt_result struct{
 // This variable will very likely NOT be used when parsing the keywords 
 // when used in their proper locations. This array will rather be used
 // to make sure none of them are used as identifier names when declaring variables or functions/procedures.
-var keywords = []string {"PROGRAM","SCRIPT","MODULE",
+var keywords = []string {"PROGRAM","SCRIPT","MODULE","UNIT", // UNIT WILL AUTOMATICALLY BE REPLACED BY KEYWORD "MODULE"
 						"USE","XUSE",
 						"PROCEDURE","VOID","PROC",
 						"FUNCTION","FUNC","DEF",
