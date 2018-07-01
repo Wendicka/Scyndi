@@ -27,6 +27,11 @@ type tori struct{
 
 func (s *tori) LORI() (int,string,[]*tword) { return s.ln,s.pline,s.sline } // debug
 
+type tstatmentspot struct {
+	openline int
+	openinstruct string
+}
+
 
 type tinstruction struct {
 	ori *tori
@@ -45,6 +50,9 @@ type tinstruction struct {
 			  // for exporting to languages using { and } it may not matter too much (except for repeat/until statements) same goes for languages just using "end"
 			  // But if exporting to languages based on BASIC and COMAL for example, it can hurt pretty bad if the translator doesn't know all this :P
 			  // And besides when parse checing Scyndi code, knowing all this would be better anyway :P
+	levels []tstatementspot
+		// This basically determines the statement level. Comments like "if" and such make it go up one level, and "end" makes it go down a level.
+		// The info stored in the array is only for the error/warning handler in order to refer to line numbers were statements began.
 }
 
 
