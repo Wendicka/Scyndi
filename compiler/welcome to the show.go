@@ -47,6 +47,11 @@ func lassert(f string,l int, check bool, e string){
 	if !check { lthrow(f,l,e) }
 }
 
+func (s *ori) throw(e string) {
+	lthrow ( s.sfile,s.s.ln,e )
+}
+
+
 func done() {
 	if !Showdo { return }
 	fmt.Println(ansistring.SCol("Done!     ",ansistring.A_Green,0))

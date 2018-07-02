@@ -179,9 +179,17 @@ func Sepsource(src *[] byte,file string) *tsource {
 	return ret
 }
 
+func contains(a []string,s string) bool{
+	for _,v :=range a { if v==s { return true }}
+	return false
+}
+
 // Basically step #2 in compiling.
 // Organising the code blocks
 func (self *tsource) Organize(){
+	agroundkeys:=[]string{"VOID","PROCEDURE","PROC","FUNC","FUNCTION","DEF","VAR","TYPE","USE","XUSE"} // On "ground level" only these keywords are allowed.
+	ogroundkeys:=[]string{"VOID","PROCEDURE","PROC","FUNC","FUNCTION","DEF","TYPE","USE","XUSE"}       // These keywords are ONLY allowed on "ground level".
+	ltype:="ground"
 	for _,ol:=range self.source {
 		if ol.ln==1 {
 			lassert(ol.sfile,ol.ln,len(ol.sline)==2,"Illegal source header!  "+fmt.Sprintf("(%d)",len(ol.sline)))
@@ -200,7 +208,16 @@ func (self *tsource) Organize(){
 			self.srctype=pt.Word
 			self.srcname=id.Word
 		} else {
-			throw("Unfortunately except for the heading parser, the rest of the organisor has not yet been written")
+			sl:=ol.sline
+			pt:=sl[0]
+			if ltype=="ground" {
+				if pt.Wtype!="keyword" { ol.throw("Unexpected identifier") }
+				if !contains(agroundkeys,pt.Word) { ol.throw("Unexpected "+pt.Word) }
+				
+			} else {
+				if pt.Wtype=="keyword" && contains(ogroundkeys,pt.Word) {  ol.throw("Keyword "+pt.Word+" can only be used on the 'lowest' level of the program") }
+				
+			throw("Unfortunately, the part of the organisor to perform what is set up next has not yet been written")
 		}
 	}
 	
