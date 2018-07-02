@@ -47,10 +47,16 @@ func lassert(f string,l int, check bool, e string){
 	if !check { lthrow(f,l,e) }
 }
 
-func (s *ori) throw(e string) {
-	lthrow ( s.sfile,s.s.ln,e )
+func (s *tori) throw(e string) {
+	lthrow ( s.sfile,s.ln,e )
 }
 
+func (s *tori) pthrow(e string) {
+	if len(e)<4 { return }
+	ce:=e[:3]
+	pe:=e[3:]
+	if ce=="er:" {throw(pe)}
+}
 
 func done() {
 	if !Showdo { return }

@@ -27,7 +27,7 @@ type tori struct{
 
 func (s *tori) LORI() (int,string,[]*tword) { return s.ln,s.pline,s.sline } // debug
 
-type tstatmentspot struct {
+type tstatementspot struct {
 	openline int
 	openinstruct string
 }
@@ -63,8 +63,7 @@ type tchunk struct {
 				// for translating to Wendicka or a scripting language such as php or even lua, this may not matter, but when translating to languages 
 				// like Pascal, C or Go, this information can be crucial (especially in Go where the compiler is very very strict on these matters).
 	instructions [] tinstruction
-	locals []tidentifier
-	levels []tstatementspot
+	locals []*tidentifier
 
 }
 
@@ -74,6 +73,7 @@ type tsource struct {
 	srctype string // May contain either "PROGRAM", "SCRIPT" or "MODULE"
 	srcname string
 	inputname string
+	filename string
 	chunks [] tchunk
 	identifiers map[string]*tidentifier
 	source []*tori
@@ -81,6 +81,8 @@ type tsource struct {
 	// write traceback will instruct the parser of the translated code to process the traceback data, providing the target language has any way to support such a thing.
 	// nlsep will if turned on (default value) accept a new line as a separator (and then you don't need a semi-colon at the end of each line), turning it off will require such a thing. Please note when putting multiple instructions on one line, the semi-colon will always be required to separate those.
 	orilinerem,writetraceback,nlsep bool
+	private bool
+	levels []tstatementspot
 }
 
 func (s *tsource) Lsource() []*tori { return s.source }
