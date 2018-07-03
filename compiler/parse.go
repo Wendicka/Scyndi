@@ -195,11 +195,13 @@ func (s *tsource) declarevar(line []*tword) (string,tidentifier){
 	//vr:=self.identifiers
 	vr:=tidentifier{}
 	vr.private=s.private
-	vr.idtype="VARIANT"
+	vr.dttype="VARIANT"
+	vr.idtype="VAR"
 	vr.defaultvalue="NIL"
 	if len(line)==0 {return "er:Empty variable declaration",vr } // should normally never happen, but at least this vovr a go panic crash
 	n:=line[0]
 	name:=n.Word
+	vr.translateto="SCYNDI_VAR_"+s.srcname+"_"+name
 	if contains(keywords,name) { return "er:"+name+" is a keyword and may NOT be used as a variable",vr }
 	if n.Wtype!="identifier" { return "er:Unexpected "+n.Wtype+"("+name+"). A name for a variable was expected",vr }
 	if len(line)==1 {return name,vr}
@@ -209,7 +211,7 @@ func (s *tsource) declarevar(line []*tword) (string,tidentifier){
 		if len(line)<3 { return "er:Unexpected end of line. A type for a variable was expected",vr }
 		n:=line[i+1]
 		if !s.validtype(n) { return "er:Invalid variable type. Either an unknown type or invalud type: "+n.Word,vr }
-		vr.idtype=n.Word
+		vr.dttype=n.Word
 		i+=2
 	}
 	if len(line)>i {
@@ -241,7 +243,7 @@ func (s *tsource) declarevar(line []*tword) (string,tidentifier){
 			}
 		} else { return "er:Syntax error!",vr } // Now it's really beyond me what you were trying to do.... :-/
 	} else {
-		switch vr.idtype {			
+		switch vr.dttype {			
 			case "STRING": vr.defaultvalue = ""
 			case "INTEGER","FLOAT": vr.defaultvalue="0"
 			case "BOOLEAN":  vr.defaultvalue="FALSE"

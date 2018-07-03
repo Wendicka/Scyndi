@@ -7,6 +7,7 @@ type tidentifier struct {
 	dttype string // data type string, int etc. (for variables and functions returning values)
 	defaultvalue string
 	translateto string // as some legal names in Scyndi can be keywords in the target language, Scyndi will use different names in its translations.
+	tarformed bool // Will be true if the translation module already reformed this variable, in order to rule out ANY POSSIBILITY AT ALL it will happen twice.
 }
 
 type texpression struct{
@@ -91,7 +92,7 @@ func (s *tsource) Lsource() []*tori { return s.source }
 
 
 
-type tpackage struct {
+type TPackage struct {
 	sources [] *tsource
 	mainsource *tsource
 	outputf string
