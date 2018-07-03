@@ -83,6 +83,7 @@ type tsource struct {
 	orilinerem,writetraceback,nlsep bool
 	private bool
 	levels []tstatementspot
+	target string
 }
 
 func (s *tsource) Lsource() []*tori { return s.source }

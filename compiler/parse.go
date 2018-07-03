@@ -58,6 +58,7 @@ func gettype(word string,file string,line int) string{
 func Sepsource(src *[] byte,file string) *tsource {
 	ret:=&tsource{}
 	doing("Pre-parse analysing: ",file)
+	ret.target=TARGET
 	ret.filename=file
 	ret.nlsep = NLSEP
 	mlc:=false // Multi-line comment

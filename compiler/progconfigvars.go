@@ -49,3 +49,6 @@ var operators = []string { // It's very important here, that the longer ones com
 
 // NLSEP will if set to true (default value) accept a new line as a separator (and then you don't need a semi-colon at the end of each line), turning it off will require such a thing. Please note when putting multiple instructions on one line, the semi-colon will always be required to separate those.
 var NLSEP = true
+
+// This variable will contain the target. Default will be "Wendicka"
+var TARGET = "Wendicka"
