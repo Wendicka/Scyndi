@@ -85,6 +85,7 @@ type tsource struct {
 	private bool
 	levels []tstatementspot
 	target string
+	spackage *TPackage
 }
 
 func (s *tsource) Lsource() []*tori { return s.source }

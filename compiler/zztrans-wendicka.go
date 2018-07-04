@@ -6,7 +6,7 @@ func init(){
 	
 	
 	
-	TransMod["Wendicka"] = & T_TransMod {}
+	TransMod["Wendicka"] = &T_TransMod {}
 	tmw:=TransMod["Wendicka"]
 	
 	tmw.NameIdentifiers = func(p *TPackage) {

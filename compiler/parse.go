@@ -252,11 +252,63 @@ func (s *tsource) declarevar(line []*tword) (string,tidentifier){
 	return name,vr
 }
 
+func (self *tsource) declarechunk(ol *tori){
+	
+	ct:=ol.sline[0]
+	
+	if ct.Word=="BEGIN"{
+		if len(ol.sline)>1 { ol.throw("BEGIN does not allow parameters of any sort") }
+		if self.srctype=="PROGRAM" {
+			ol.sline = []*tword{}
+			ol.sline = append(ol.sline,&tword{"PROCEDURE","keyword"})
+			ol.sline = append(ol.sline,&tword{"MAIN","identifier"})
+		} else {
+			ol.sline = []*tword{}
+			ol.sline = append(ol.sline,&tword{"PROCEDURE","keyword"})
+			ol.sline = append(ol.sline,&tword{"INIT","identifier"})
+		}
+	}
+	wl:=ol.sline
+	if len(wl)<2 { ol.throw("Expected identifier") }
+	tp:=wl[0]
+	id:=wl[1]
+	idname:=id.Word
+	if id.Wtype=="keyword" { ol.throw("Unexpected keyword ("+idname+")") }
+	if _,foundid:=self.identifiers[idname];foundid { ol.throw("Duplicate identifier: "+idname) }	
+	if len(wl)>2 {
+		q:=2;
+		qt:=wl[q]
+		if qt.Word==":" {
+			if len(wl)<q+1 { ol.throw("Type expected") }
+			if ct.Word=="VOID" || ct.Word=="PROCEDURE" || ct.Word=="PROC" { ol.throw("Procedures have no return type") }
+			if qt.Wtype=="keyword" { ol.throw("Unexpected keyword ("+qt.Word+")") }
+			if tid,found:=self.identifiers[qt.Word];found {
+				if tid.dttype!="TYPE" { ol.throw("Invalid identifier. Expected type but I got "+tid.dttype); }
+			} else {
+				if qt.Word!="STRING" && qt.Word!="INTEGER" && qt.Word!="BOOLEAN" && qt.Word!="FLOAT" && qt.Word!="VARIANT" {
+					ol.throw("Unknown type: "+qt.Word)
+				}
+			}
+			q+=2
+		}
+		// parameters for functions/procedures
+		for q<len(wl) {
+			qt=wl[q]
+			// TODO HERE: main parameter code (comes later)
+			q++			
+		}
+		
+	}
+	// TODO HERE: Create function code chunk
+	// TODO HERE: Declare identifier for this function
+	self.levels=append(self.levels,tstatementspot{ol.ln,tp.Word})
+}
+
 // Basically step #2 in compiling.
 // Organising the code blocks
 func (self *tsource) Organize(){
-	agroundkeys:=[]string{"VOID","PROCEDURE","PROC","FUNC","FUNCTION","DEF","VAR","TYPE","USE","XUSE","PRIVATE","PUBLIC"} // On "ground level" only these keywords are allowed.
-	ogroundkeys:=[]string{"VOID","PROCEDURE","PROC","FUNC","FUNCTION","DEF","TYPE","USE","XUSE","PRIVATE","PUBLIC"}       // These keywords are ONLY allowed on "ground level".
+	agroundkeys:=[]string{"BEGIN","VOID","PROCEDURE","PROC","FUNC","FUNCTION","DEF","VAR","TYPE","USE","XUSE","PRIVATE","PUBLIC"} // On "ground level" only these keywords are allowed.
+	ogroundkeys:=[]string{"BEGIN","VOID","PROCEDURE","PROC","FUNC","FUNCTION","DEF","TYPE","USE","XUSE","PRIVATE","PUBLIC"}       // These keywords are ONLY allowed on "ground level".
 	ltype:="ground"
 	doing("Organising: ",self.filename)
 	self.levels=[]tstatementspot{}
@@ -287,11 +339,14 @@ func (self *tsource) Organize(){
 					case "END": ol.throw("Unexpected END") 
 					case "PRIVATE": self.private=true;  if len(sl)>1 { ol.throw("PRIVATE takes no parameters") }
 					case "PUBLIC":  self.private=false; if len(sl)>1 { ol.throw("PUBLIC takes no parameters") }
+					case "BEGIN","VOID","PROCEDURE","PROC","FUNCTION","FUNC","DEF":
+						self.declarechunk(ol)
 					case "VAR":
 						if len(sl)>1 { 
 							tv:=sl[1:]
 							n,i:=self.declarevar(tv)
 							ol.pthrow(n)
+							if _,found:=self.identifiers[n];found { ol.throw("Duplicate identifier: "+n) }
 							self.identifiers[n]=&i
 						} else {
 							ltype="var"
