@@ -8,6 +8,14 @@ jcr		"trickyunits/jcr6/jcr6main"
 		"fmt"
 )
 
+const parchat = true
+
+func pchat(a... string){
+	for _,s :=range a { 
+		fmt.Println("= ",s)
+	}
+}
+
 func Grabfromfile(sourcefile string) *[]byte{
 	doing("Reading file: ",sourcefile)
 	bank,e:=qff.EGetFile(sourcefile)
@@ -333,7 +341,7 @@ func (self *tsource) Organize(){
 			sl:=ol.sline
 			pt:=sl[0]
 			if ltype=="ground" {
-				if pt.Wtype!="keyword" { ol.throw("Unexpected "+pt.Wtype) }
+				if pt.Wtype!="keyword" { pchat("Codeblock: "+ltype+"; "); ol.throw("Unexpected "+pt.Wtype) }
 				if !contains(agroundkeys,pt.Word) { ol.throw("Unexpected "+pt.Word) }
 				switch pt.Word {
 					case "END": ol.throw("Unexpected END") 
@@ -341,6 +349,7 @@ func (self *tsource) Organize(){
 					case "PUBLIC":  self.private=false; if len(sl)>1 { ol.throw("PUBLIC takes no parameters") }
 					case "BEGIN","VOID","PROCEDURE","PROC","FUNCTION","FUNC","DEF":
 						self.declarechunk(ol)
+						ltype="chunk"
 					case "VAR":
 						if len(sl)>1 { 
 							tv:=sl[1:]

@@ -36,6 +36,7 @@ type tstatementspot struct {
 
 type tinstruction struct {
 	ori *tori
+	parsed bool // All instructions only come in with the ori value set. Only keywords starting extra sub-chunks will have the extra level set, but other than that, no. This is to make sure everything can be declared in random order in the source code Scyndi processes.
 	instruct byte // 0 = call function/procedure
 				  // 1 = define variable
 				  // 2 = start "if"
@@ -75,7 +76,8 @@ type tsource struct {
 	srcname string
 	inputname string
 	filename string
-	chunks [] tchunk
+	chunks [] *tchunk
+	currentchunk *tchunk
 	identifiers map[string]*tidentifier
 	source []*tori
 	// orilinerem will place the original line in the translation as a comment or remark
