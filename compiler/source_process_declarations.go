@@ -64,7 +64,7 @@ type tchunk struct {
 	pof byte	// 0 = procedure, 1 = function 
 				// for translating to Wendicka or a scripting language such as php or even lua, this may not matter, but when translating to languages 
 				// like Pascal, C or Go, this information can be crucial (especially in Go where the compiler is very very strict on these matters).
-	instructions [] tinstruction
+	instructions [] *tinstruction
 	locals []*tidentifier
 
 }
@@ -80,6 +80,7 @@ type tsource struct {
 	currentchunk *tchunk
 	identifiers map[string]*tidentifier
 	source []*tori
+	varblock []*tori
 	// orilinerem will place the original line in the translation as a comment or remark
 	// write traceback will instruct the parser of the translated code to process the traceback data, providing the target language has any way to support such a thing.
 	// nlsep will if turned on (default value) accept a new line as a separator (and then you don't need a semi-colon at the end of each line), turning it off will require such a thing. Please note when putting multiple instructions on one line, the semi-colon will always be required to separate those.

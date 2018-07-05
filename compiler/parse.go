@@ -260,7 +260,7 @@ func (s *tsource) declarevar(line []*tword) (string,tidentifier){
 	return name,vr
 }
 
-func (self *tsource) declarechunk(ol *tori){
+func (self *tsource) declarechunk(ol *tori) *tchunk{
 	
 	ct:=ol.sline[0]
 	
@@ -310,11 +310,17 @@ func (self *tsource) declarechunk(ol *tori){
 	// TODO HERE: Create function code chunk
 	// TODO HERE: Declare identifier for this function
 	self.levels=append(self.levels,tstatementspot{ol.ln,tp.Word})
+	rc:=&tchunk{}
+	if ct.Word=="VOID" || ct.Word=="PROCEDURE" || ct.Word=="PROC" { rc.pof=0 } else { rc.pof=1 }
+	rc.instructions = []*tinstruction{}
+	rc.locals =[]*tidentifier{}
+	return rc
 }
 
 // Basically step #2 in compiling.
 // Organising the code blocks
 func (self *tsource) Organize(){
+	var mychunk  *tchunk
 	agroundkeys:=[]string{"BEGIN","VOID","PROCEDURE","PROC","FUNC","FUNCTION","DEF","VAR","TYPE","USE","XUSE","PRIVATE","PUBLIC"} // On "ground level" only these keywords are allowed.
 	ogroundkeys:=[]string{"BEGIN","VOID","PROCEDURE","PROC","FUNC","FUNCTION","DEF","TYPE","USE","XUSE","PRIVATE","PUBLIC"}       // These keywords are ONLY allowed on "ground level".
 	ltype:="ground"
@@ -348,8 +354,8 @@ func (self *tsource) Organize(){
 					case "PRIVATE": self.private=true;  if len(sl)>1 { ol.throw("PRIVATE takes no parameters") }
 					case "PUBLIC":  self.private=false; if len(sl)>1 { ol.throw("PUBLIC takes no parameters") }
 					case "BEGIN","VOID","PROCEDURE","PROC","FUNCTION","FUNC","DEF":
-						self.declarechunk(ol)
-						ltype="chunk"
+						mychunk = self.declarechunk(ol)
+						ltype="func"
 					case "VAR":
 						if len(sl)>1 { 
 							tv:=sl[1:]
@@ -364,8 +370,34 @@ func (self *tsource) Organize(){
 					default:
 						ol.throw("Unexpected "+pt.Word+"!! (Very likely a bug in the Scyndi compiler! Please report!)")
 				}
+			} else if ltype=="var" {
+				if pt.Word=="END" {
+					self.levels=self.levels[:len(self.levels)-1]
+					pchat("VAR-block ended on line "+fmt.Sprintf("%5d",ol.ln))
+					ltype="ground"
+				} else {
+					self.varblock = append(self.varblock,ol)
+					pchat("VAR-block line added: "+pt.Word)
+				}
 			} else {
 				if pt.Wtype=="keyword" && contains(ogroundkeys,pt.Word) {  ol.throw("Keyword "+pt.Word+" can only be used on the 'lowest' level of the program") }
+				ins:=&tinstruction{}
+				ins.ori=ol
+				ins.level=len(self.levels)
+				//fmt.Println(mychunk,ltype)
+				mychunk.instructions = append(mychunk.instructions,ins)
+				pchat("Instruction line added >> "+pt.Word)
+				if pt.Word=="IF" || pt.Word=="WHILE" || pt.Word=="DO" || pt.Word=="REPEAT" {
+					self.levels=append(self.levels,tstatementspot{ol.ln,pt.Word+" block"})
+				}
+				if pt.Word=="LOOP" || pt.Word=="UNTIL" || pt.Word=="FOREVER" {
+					bl:=self.levels[len(self.levels)-1]
+					if bl.openinstruct!="REPEAT block" && bl.openinstruct!="DO block" {
+						ol.throw(pt.Word+" cannot be used to end a "+bl.openinstruct+"! Use and END to end that in stead! "+pt.Word+" can only be used to end a DO/REPEAT block!")
+					}
+					self.levels=self.levels[:len(self.levels)-1]
+					if len(self.levels)==0 {ltype="ground"} else {ltype="func"}
+				}
 				if pt.Word=="END" {
 					self.levels=self.levels[:len(self.levels)-1]
 					if len(self.levels)==0 {ltype="ground"} else {ltype="func"}
