@@ -6,6 +6,7 @@ type tidentifier struct {
 	idtype string // function, procedure, type, constant, variable, sourcegroup(either program, module, script)
 	dttype string // data type string, int etc. (for variables and functions returning values)
 	defaultvalue string
+	defstring bool // When a string, it must be made sure, as strings often have quotations and other required stuff.
 	translateto string // as some legal names in Scyndi can be keywords in the target language, Scyndi will use different names in its translations.
 	tarformed bool // Will be true if the translation module already reformed this variable, in order to rule out ANY POSSIBILITY AT ALL it will happen twice.
 }
