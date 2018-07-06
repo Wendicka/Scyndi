@@ -1,7 +1,7 @@
 package scynt
 
 
-import "fmt"
+//import "fmt"
 
 func init(){
 	
@@ -11,6 +11,7 @@ func init(){
 	TransMod["Wendicka"] = &T_TransMod {}
 	tmw:=TransMod["Wendicka"]
 	
+	/*
 	tmw.NameIdentifiers = func(src *tsource) {
 		//for _,src := range p.sources {
 			for _,id := range src.identifiers {
@@ -23,6 +24,7 @@ func init(){
 			}
 		//}
 	}
+	*/
 	
 	tmw.TransVars = func(src *tsource) string{
 
