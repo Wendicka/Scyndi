@@ -1,7 +1,7 @@
 package scynt
 
 type T_TransMod struct {
-	NameIdentifiers func(t *tsource)
+	//NameIdentifiers func(t *tsource)
 	TransVars func(t *tsource) string
 	Merge func(b map[string]string) string
 }

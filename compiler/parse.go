@@ -357,7 +357,7 @@ func (self *tsource) Organize(){
 
 func (self *tsource) Translate() string {
 	trans:=TransMod[TARGET]
-	trans.NameIdentifiers(self)
+	//trans.NameIdentifiers(self)
 	blocks:=map[string]string{}
 	blocks["VAR"]=self.declarevars()
 	return trans.Merge(blocks)
