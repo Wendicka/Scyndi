@@ -30,6 +30,7 @@ var keywords = []string {"PROGRAM","SCRIPT","MODULE","UNIT", // UNIT WILL AUTOMA
 					}
 					
 var operators = []string { // It's very important here, that the longer ones come first and the smaller ones later, or things might go wrong here.
+	                      "...",
 	                      ":=",
 	                      ":+",
 	                      ":-",
@@ -52,3 +53,6 @@ var NLSEP = true
 
 // This variable will contain the target. Default will be "Wendicka"
 var TARGET = "Wendicka"
+
+// Compilers will have to define the path here where all the system unit source files can be found for each target.
+var SYSTEMDIR = "" 

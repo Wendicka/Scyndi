@@ -4,13 +4,15 @@ import (
 		"trickyunits/qff"
 jcr		"trickyunits/jcr6/jcr6main"
 		"trickyunits/qstr"
+
 		"strings"
 		"fmt"
 )
 
-const parchat = true
+const parchat = false
 
 func pchat(a... string){
+	if !parchat { return }
 	for _,s :=range a { 
 		fmt.Println("= ",s)
 	}
@@ -65,7 +67,7 @@ func gettype(word string,file string,line int) string{
 // New lines (0x0A) and ; can do this, although those who prefer it can turn off the new-line as separation.
 func Sepsource(src *[] byte,file string) *tsource {
 	ret:=&tsource{}
-	doing("Pre-parse analysing: ",file)
+	doingln("Pre-parse analysing: ",file)
 	ret.target=TARGET
 	ret.filename=file
 	ret.nlsep = NLSEP
@@ -91,14 +93,29 @@ func Sepsource(src *[] byte,file string) *tsource {
 			}
 		} else { nwp = false }
 		// I have no need for the text in multi-line comments. Get rid of them
-		if c=='{' && !mlc && !ins { mlc=true }
-		if c=='}' && mlc { mlc=false; ok=false }
-		if c=='"' && !mlc && (!gbs) { ins=!ins }
+		if c=='{'  && !mlc && !ins { mlc=true }
+		if c=='}'  && mlc { mlc=false; ok=false }
+		if c=='"'  && !mlc && (!gbs) { ins=!ins }
+		if gbs {
+			/*
+			nc:=c
+			switch c {
+				case 'n': nc=10
+				case 'r': nc=13
+				case 't': nc= 9
+				case 'b': nc= 8
+			}
+			cl=append(cl,nc)
+			*/
+			cl=append(cl,'\\')
+			cl=append(cl,c) 
+			ok=false
+			gbs=false
+		} else if c=='\\' && ins {gbs=true; ok=false }		
 		ok=ok && !mlc
 		if ((c=='\n' && NLSEP) || c==';') && ok && !ins {
 			//psource=append(psource,string(cl))
-			psl:=
-			qstr.MyTrim(string(cl))
+			psl:=qstr.MyTrim(string(cl))
 			cl=[]byte{}
 			ok=false
 			no:=&tori{}
@@ -118,6 +135,7 @@ func Sepsource(src *[] byte,file string) *tsource {
 			cl=append(cl,c)
 		}
 	}
+	if gbs { throw("Unexpected end of file. No follow character to \\") }
 	if ins { throw("Unexpected end of file. String is not finished") }
 	if mlc { throw("Unexpected end of file. Comment is not finished") }
 	//chkstuff:=[][]string{keywords,operators}
@@ -135,7 +153,9 @@ func Sepsource(src *[] byte,file string) *tsource {
 				if ig>0 {
 					ig--
 				} else if instring {
-					if b=='"' {
+					gbs:=false
+					if i>0 { gbs=bline[i-1]=='\\' }
+					if b=='"' && !gbs {
 						instring=false
 						nw:=&tword{}
 						nw.Word  = word
@@ -252,7 +272,7 @@ func (self *tsource) declarechunk(ol *tori) *tchunk{
 	rc:=&tchunk{}
 	if ct.Word=="VOID" || ct.Word=="PROCEDURE" || ct.Word=="PROC" { rc.pof=0 } else { rc.pof=1 }
 	rc.instructions = []*tinstruction{}
-	rc.locals =[]*tidentifier{}
+	rc.locals =map[string]*tidentifier{}
 	return rc
 }
 
@@ -260,8 +280,8 @@ func (self *tsource) declarechunk(ol *tori) *tchunk{
 // Organising the code blocks
 func (self *tsource) Organize(){
 	var mychunk  *tchunk
-	agroundkeys:=[]string{"BEGIN","VOID","PROCEDURE","PROC","FUNC","FUNCTION","DEF","VAR","TYPE","USE","XUSE","PRIVATE","PUBLIC"} // On "ground level" only these keywords are allowed.
-	ogroundkeys:=[]string{"BEGIN","VOID","PROCEDURE","PROC","FUNC","FUNCTION","DEF","TYPE","USE","XUSE","PRIVATE","PUBLIC"}       // These keywords are ONLY allowed on "ground level".
+	agroundkeys:=[]string{"BEGIN","VOID","PROCEDURE","PROC","FUNC","FUNCTION","DEF","VAR","TYPE","USE","XUSE","PRIVATE","PUBLIC","IMPORT"} // On "ground level" only these keywords are allowed.
+	ogroundkeys:=[]string{"BEGIN","VOID","PROCEDURE","PROC","FUNC","FUNCTION","DEF","TYPE","USE","XUSE","PRIVATE","PUBLIC","IMPORT"}       // These keywords are ONLY allowed on "ground level".
 	ltype:="ground"
 	doing("Organising: ",self.filename)
 	self.levels=[]tstatementspot{}
@@ -327,6 +347,7 @@ func (self *tsource) Organize(){
 					pchat("VAR-block line added: "+pt.Word)
 				}
 			} else {
+				// -- >> Inside a function or procedure
 				if pt.Wtype=="keyword" && contains(ogroundkeys,pt.Word) {  ol.throw("Keyword "+pt.Word+" can only be used on the 'lowest' level of the program") }
 				ins:=&tinstruction{}
 				ins.ori=ol
@@ -353,12 +374,28 @@ func (self *tsource) Organize(){
 			//throw("Unfortunately, the part of the organisor to perform what is set up next has not yet been written")
 		}
 	}
+	done()
 }
 
+func CompileFile(file string,t string) (string, *tsource) {
+	doingln("Processing:",file)
+	k:=Grabfromfile(file)
+	s:=Sepsource(k,file)
+	s.Organize()
+	if s.srctype!=t && s.srctype!="SCRIPT" { throw("Source "+file+" may not be used for the purpose that it's been attempted to use\nWanted: "+t+"\nGot:    "+s.srctype) }
+	return s.Translate(),s
+}
+
+
+
 func (self *tsource) Translate() string {
+	doingln("Translating: ",self.filename)
 	trans:=TransMod[TARGET]
 	//trans.NameIdentifiers(self)
 	blocks:=map[string]string{}
+	if trans.SealBlocks!=nil { trans.SealBlocks(&blocks) }
+	blocks["USE"]=""
+	useblock(TransMod,self,&blocks)
 	blocks["VAR"]=self.declarevars()
 	return trans.Merge(blocks)
 }

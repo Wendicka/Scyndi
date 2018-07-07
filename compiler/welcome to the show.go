@@ -10,10 +10,12 @@ func doing(a,b string){
 	if !Showdo { return }
 	fmt.Print(ansistring.SCol(a,ansistring.A_Yellow,0),
 	          ansistring.SCol(b,ansistring.A_Cyan,0))
+	fmt.Print(" ")
 }
 
 func doingln(a,b string){
 	doing(a,b)
+	
 	fmt.Println()
 }
 
@@ -22,9 +24,10 @@ func progress(deel,geheel int){
 	if !Showdo { return }
 	d:=float64(deel)
 	w:=float64(geheel)
-	p:=(d/w)*100
-	fmt.Print(ansistring.SCol(fmt.Sprintf("%f3.1%",p),ansistring.A_Magenta,0))
-	fmt.Print("\010\010\010\010\010\010")
+	p:=float64((d/w)*100)
+	pi:=int(p)
+	fmt.Print(ansistring.SCol(fmt.Sprintf("%3d",pi)+"%",ansistring.A_Magenta,0))
+	fmt.Print("\010\010\010\010")
 }
 
 func throw(e string){

@@ -66,10 +66,13 @@ type tchunk struct {
 				// for translating to Wendicka or a scripting language such as php or even lua, this may not matter, but when translating to languages 
 				// like Pascal, C or Go, this information can be crucial (especially in Go where the compiler is very very strict on these matters).
 	instructions [] *tinstruction
-	locals []*tidentifier
+	locals map[string]*tidentifier
 
 }
 
+type smap struct {
+	m map[string]*tsource
+}
 
 
 type tsource struct {
@@ -89,18 +92,41 @@ type tsource struct {
 	private bool
 	levels []tstatementspot
 	target string
-	spackage *TPackage
+	//spackage *TPackage
+	used []*tsource
+	usedmap *smap
+	userequested []string
+	usepurecode string
+	allid map[string]*tidentifier // All own identifiers plus the imported ones.
+}
+
+func (s *tsource) GetIdentifier(name string,c *tchunk, o *tori) *tidentifier {
+	var ret *tidentifier
+	if c!=nil {
+		loc:=c.locals
+		if v,ok:=loc[name]; ok { return v }
+	}
+	if v,ok:=s.identifiers[name];ok { return v }
+	if v,ok:=s.allid[name];ok { return v }
+	if ret==nil {
+		if o==nil { 
+			throw("Unknown identifier: "+name)
+		} else {
+			o.throw("Unknown identifier: "+name)
+		}
+	}
+	return ret
 }
 
 func (s *tsource) Lsource() []*tori { return s.source }
 
 
 
-
+/*
 type TPackage struct {
 	sources [] *tsource
 	mainsource *tsource
 	outputf string
 	translateto string
 }
-
+*/
