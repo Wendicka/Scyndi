@@ -39,6 +39,12 @@ package scynt
  * Overall, I also recommend to only use Imports in modules and not in
  * your main program.
  * 
+ * 
+ * Also special treatment is not always required.
+ * Import MyVar Var MyVar:String
+ * Would if you translate to php just result into $MyVar being imported
+ * as php required. ;)
+ * 
  */
  
   
