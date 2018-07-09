@@ -45,6 +45,32 @@ package scynt
  * Would if you translate to php just result into $MyVar being imported
  * as php required. ;)
  * 
+ * Also note the quotations are for the target identifier not requires, 
+ * BUT if the target language is case sensitive highly recommended,
+ * if you don't want the target parser to throw needless errors :P
+ * For case INSENSITVE targets this doesn't matter.
+ * 
  */
  
   
+// This function will not actually generate a true translation.
+// All this does is create an identifer the transalator will directly link
+// to its target language counterpart... ;)  
+func (s *tsource) performimport(ol *tori){
+	imptar:=ol.getword(1).Word;
+	imptype:=ol.getword(2).Word;
+	isprocedure=imptype=="PROCEDURE" || imptype=="PROC" || imptype=="VOID"
+	if (!isprocedure) && imptype!="VAR" && imptype!="FUNCTION" && imptype!="FUNC" && imptype!="DEF" { ol.throw("Syntax error. I do not understand the word "+imptype+" in this import instruction") }
+	impid:=ol.getword(3);
+	if impid.Wtype!="identifier" { ol.throw("Unexpected "+impid.Wtype)=". I expected an identifier to tie an imported identifier to") }
+	dubbelepunt:=ol.getword(4).Word;
+	qw:=5;
+	if !isprocedure {
+		if ol.getword(5).Word!=":" { ol.throw("':' expected") }
+		dtpe:=ol.getword(6)
+		if dpte.Word=="VARIANT" { ol.throw("VARIANT not allowed for imported functions") }
+		if dpte.Word=="INTEGER" || dpte.Word=="STRING" || dpte.Word=="FLOAT" || dpte.Word=="BOOLEAN" || dpte.Wtype=="identifier" {
+		} else { ol.throw("Identifier expected for imported "+impype) }
+		qw+=2
+	}
+}

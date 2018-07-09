@@ -1,5 +1,5 @@
 Module System
 
 
-Import Write Void Write ...string
-import WriteLn Void WriteLn ...string
+Import "Write" Void Write ...string
+import "WriteLn" Void WriteLn ...string

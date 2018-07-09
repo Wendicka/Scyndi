@@ -27,6 +27,11 @@ type tori struct{
 	ln int
 }
 
+func (o *tori) getword(i int) *tword{
+	if i>=len(o.sline) { o.throw("Syntax error! Not all data needed provided!") }
+	return o.sline[i]
+}
+
 func (s *tori) LORI() (int,string,[]*tword) { return s.ln,s.pline,s.sline } // debug
 
 type tstatementspot struct {
