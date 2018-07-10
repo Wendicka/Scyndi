@@ -312,6 +312,11 @@ func (self *tsource) Organize(){
 					case "END": ol.throw("Unexpected END") 
 					case "PRIVATE": self.private=true;  if len(sl)>1 { ol.throw("PRIVATE takes no parameters") }
 					case "PUBLIC":  self.private=false; if len(sl)>1 { ol.throw("PUBLIC takes no parameters") }
+					case "IMPORT":
+						id,name:=self.performimport(ol)
+						if _,ok:=self.identifiers[name];ok { ol.throw("Duplicate identifier by import request") }
+						self.identifiers[name]=id
+						pchat("External identifier imported as "+name)
 					case "BEGIN","VOID","PROCEDURE","PROC","FUNCTION","FUNC","DEF":
 						mychunk = self.declarechunk(ol)
 						ltype="func"
@@ -397,5 +402,6 @@ func (self *tsource) Translate() string {
 	blocks["USE"]=""
 	useblock(TransMod,self,&blocks)
 	blocks["VAR"]=self.declarevars()
+	blocks["fun"]=self.translatefunctions()
 	return trans.Merge(blocks)
 }
