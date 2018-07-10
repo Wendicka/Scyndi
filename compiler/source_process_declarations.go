@@ -5,7 +5,8 @@ type targ struct {
 	
 	// These two fields may play a role when translating functions
 	argname string 
-	args *tidentifier
+	arg *tidentifier
+	optional bool
 	
 }
 type targs struct {
@@ -23,6 +24,7 @@ type tidentifier struct {
 	translateto string // as some legal names in Scyndi can be keywords in the target language, Scyndi will use different names in its translations.
 	tarformed bool // Will be true if the translation module already reformed this variable, in order to rule out ANY POSSIBILITY AT ALL it will happen twice.
 	args *targs
+	constant bool // When set true the code cannot change this identifier after being defined.
 }
 
 type texpression struct{

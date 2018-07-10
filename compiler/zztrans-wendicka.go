@@ -11,6 +11,7 @@ func init(){
 	TransMod["Wendicka"] = &T_TransMod {}
 	tmw:=TransMod["Wendicka"]
 	tmw.extension="wsf"
+	tmw.endlessargs=true
 	
 	/*
 	tmw.NameIdentifiers = func(src *tsource) {

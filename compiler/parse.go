@@ -222,6 +222,7 @@ func (s *tsource) validtype(n *tword) bool{
 func (self *tsource) declarechunk(ol *tori) *tchunk{
 	
 	ct:=ol.sline[0]
+	args:=&targs{}
 	
 	if ct.Word=="BEGIN"{
 		if len(ol.sline)>1 { ol.throw("BEGIN does not allow parameters of any sort") }
@@ -259,10 +260,63 @@ func (self *tsource) declarechunk(ol *tori) *tchunk{
 			q+=2
 		}
 		// parameters for functions/procedures
+		stage:=0 // 0 = new + identifier (or var), 1 = dubbele punt, 2 = type or ...,3 = '=' for optional arguments, 6 = default value (constant only)
+		constant:=true
+		endless:=false
+		var arg *targ
+		var aid *tidentifier
 		for q<len(wl) {
 			qt=wl[q]
 			// TODO HERE: main parameter code (comes later)
-			q++			
+			if qt.Word=="," && (stage==0 || stage==2 || stage==4) { ol.throw("Unexpected coma") } else if qt.Word=="," {
+				stage=0
+				constant=true
+				if endless { ol.throw("Endless arguments always come last") }
+			} else {
+				switch stage {
+					case 0: if qt.Word=="VAR" {
+								if !constant { ol.throw("Double var") }
+								constant=false
+							} else if qt.Wtype!="identifier" {
+								ol.throw("Unexpected "+qt.Word)
+							}
+							for _,a:=range args.a {
+								if a.argname==qt.Word { ol.throw("Duplicate argument") }
+							}
+							arg=&targ{}
+							args.a=append(args.a,arg)
+							arg.argname=qt.Word
+							arg.arg=&tidentifier{}; aid=arg.arg
+							aid.idtype="VAR"
+							aid.dttype="VARIANT"
+							aid.constant=constant
+							stage=1
+					case 1:
+							if qt.Word!=":" { ol.throw(": expected") }
+							stage=2
+					case 2:
+							if qt.Word!="STRING" && qt.Word!="INTEGER" && qt.Word!="BOOLEAN" && qt.Word!="FLOAT" && qt.Word!="VARIANT" {
+								ol.throw("Unknown type: "+qt.Word)
+							}
+							aid.dttype=qt.Word
+							stage=3
+					case 3:
+							if qt.Word!=":" { ol.throw("= expected") }
+							if !constant { ol.throw("Variable arguments cannot be optional") }
+							stage=4
+							arg.optional=true
+					case 4:
+							ok:=false
+							if (aid.dttype=="VARIANT" || aid.dttype=="STRING") && qt.Wtype=="string"                         { ok=true }
+							if (aid.dttype=="VARIANT" || aid.dttype=="INTEGER" || aid.dttype=="FLOAT") && qt.Wtype=="string" { ok=true }
+							if (aid.dttype=="VARIANT" || aid.dttype=="BOOLEAN") && (qt.Word=="TRUE" && qt.Word=="FALSE")     { ok=true }
+							if !ok { ol.throw("Unexpected "+qt.Wtype+": "+qt.Word) }
+							aid.defaultvalue=qt.Word
+					default:
+							ol.throw("Internal error. Invalid stage. Please report!")
+				}
+			}
+			q++
 		}
 		
 	}
@@ -273,6 +327,7 @@ func (self *tsource) declarechunk(ol *tori) *tchunk{
 	if ct.Word=="VOID" || ct.Word=="PROCEDURE" || ct.Word=="PROC" { rc.pof=0 } else { rc.pof=1 }
 	rc.instructions = []*tinstruction{}
 	rc.locals =map[string]*tidentifier{}
+	rc.args=args
 	return rc
 }
 
