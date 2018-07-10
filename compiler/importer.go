@@ -73,4 +73,6 @@ func (s *tsource) performimport(ol *tori){
 		} else { ol.throw("Identifier expected for imported "+impype) }
 		qw+=2
 	}
+	if len(ol.sline)>5 && imptype=="VAR" { ol.throw("Variables do not accept parameters") } // Procedure type variables will (for now) not be importable. Perhaps in the future...
+	
 }
