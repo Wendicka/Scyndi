@@ -1,7 +1,20 @@
 package scynt
 
+type targ struct {
+	argtype string // Just the types... Scyndi will use this to translate function calls.. 
+	
+	// These two fields may play a role when translating functions
+	argname string 
+	args *tidentifier
+	
+}
+type targs struct {
+	a []*targ
+	endless *targ
+}
 
 type tidentifier struct {
+	imported bool
 	private bool
 	idtype string // function, procedure, type, constant, variable, sourcegroup(either program, module, script)
 	dttype string // data type string, int etc. (for variables and functions returning values)
@@ -9,6 +22,7 @@ type tidentifier struct {
 	defstring bool // When a string, it must be made sure, as strings often have quotations and other required stuff.
 	translateto string // as some legal names in Scyndi can be keywords in the target language, Scyndi will use different names in its translations.
 	tarformed bool // Will be true if the translation module already reformed this variable, in order to rule out ANY POSSIBILITY AT ALL it will happen twice.
+	args *targs
 }
 
 type texpression struct{
@@ -66,12 +80,14 @@ type tinstruction struct {
 
 
 type tchunk struct {
+	isimported bool
 	ismethod string
 	pof byte	// 0 = procedure, 1 = function 
 				// for translating to Wendicka or a scripting language such as php or even lua, this may not matter, but when translating to languages 
 				// like Pascal, C or Go, this information can be crucial (especially in Go where the compiler is very very strict on these matters).
 	instructions [] *tinstruction
 	locals map[string]*tidentifier
+	args *targs
 
 }
 

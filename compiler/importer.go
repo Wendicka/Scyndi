@@ -40,10 +40,6 @@ package scynt
  * your main program.
  * 
  * 
- * Also special treatment is not always required.
- * Import MyVar Var MyVar:String
- * Would if you translate to php just result into $MyVar being imported
- * as php required. ;)
  * 
  * Also note the quotations are for the target identifier not requires, 
  * BUT if the target language is case sensitive highly recommended,
@@ -56,23 +52,83 @@ package scynt
 // This function will not actually generate a true translation.
 // All this does is create an identifer the transalator will directly link
 // to its target language counterpart... ;)  
-func (s *tsource) performimport(ol *tori){
+
+//import "fmt"
+
+func (s *tsource) performimport(ol *tori) (*tidentifier,string){
+	tar:=&tidentifier{}
+	tar.imported=true
+	tar.args=&targs{}
+	tar.private=s.private
 	imptar:=ol.getword(1).Word;
 	imptype:=ol.getword(2).Word;
-	isprocedure=imptype=="PROCEDURE" || imptype=="PROC" || imptype=="VOID"
+	isprocedure:=imptype=="PROCEDURE" || imptype=="PROC" || imptype=="VOID"
 	if (!isprocedure) && imptype!="VAR" && imptype!="FUNCTION" && imptype!="FUNC" && imptype!="DEF" { ol.throw("Syntax error. I do not understand the word "+imptype+" in this import instruction") }
 	impid:=ol.getword(3);
-	if impid.Wtype!="identifier" { ol.throw("Unexpected "+impid.Wtype)=". I expected an identifier to tie an imported identifier to") }
+	if impid.Wtype!="identifier" { ol.throw("Unexpected "+impid.Wtype+". I expected an identifier to tie an imported identifier to") }
 	dubbelepunt:=ol.getword(4).Word;
 	qw:=5;
 	if !isprocedure {
-		if ol.getword(5).Word!=":" { ol.throw("':' expected") }
-		dtpe:=ol.getword(6)
-		if dpte.Word=="VARIANT" { ol.throw("VARIANT not allowed for imported functions") }
+		if dubbelepunt!=":" { ol.throw("':' expected") }
+		dpte:=ol.getword(5)
+		if dpte.Word=="VARIANT" { ol.throw("VARIANT not allowed for imported identifiers") }
 		if dpte.Word=="INTEGER" || dpte.Word=="STRING" || dpte.Word=="FLOAT" || dpte.Word=="BOOLEAN" || dpte.Wtype=="identifier" {
-		} else { ol.throw("Identifier expected for imported "+impype) }
+			tar.dttype=dpte.Word
+		} else { ol.throw("Identifier expected for imported "+imptype) }
 		qw+=2
+
 	}
-	if len(ol.sline)>5 && imptype=="VAR" { ol.throw("Variables do not accept parameters") } // Procedure type variables will (for now) not be importable. Perhaps in the future...
+	if len(ol.sline)>5 {
+		if imptype=="VAR" { 
+			ol.throw("Variables do not accept parameters")  // Procedure type variables will (for now) not be importable. Perhaps in the future...
+		} else {
+			wantcomma:=false
+			endless:=false
+			for i:=qw;i<len(ol.sline);i++{				
+				if wantcomma {
+					if ol.getword(i).Word!="," { ol.throw("Comma expected") }
+					wantcomma=false
+				} else if ol.getword(i).Word=="..." {
+					//fmt.Print(i,len(ol.sline))
+					if i+1>=len(ol.sline) { ol.throw("Type wanted for infinite argument") }
+					if i+3<=len(ol.sline) { ol.throw("Endless arguments always come last") }
+					dpte:=ol.getword(i+1)
+					if dpte.Word=="INTEGER" || dpte.Word=="STRING" || dpte.Word=="FLOAT" || dpte.Word=="BOOLEAN" || dpte.Wtype=="identifier" {
+						arn:=dpte.Word
+						ara:=&targ{}
+						ara.argtype=arn
+						tar.args.endless=ara
+						endless=true
+					} else {
+						{ ol.throw("Type identifier expected for endless argument for imported "+imptype) }
+					}
+				} else if !endless {
+					dpte:=ol.getword(i)
+					if dpte.Word=="INTEGER" || dpte.Word=="STRING" || dpte.Word=="FLOAT" || dpte.Word=="BOOLEAN" || dpte.Wtype=="identifier" {
+						arn:=dpte.Word
+						ara:=&targ{}
+						ara.argtype=arn
+						tar.args.a = append(tar.args.a,ara)
+						wantcomma=true
+					} else { ol.throw("Type identifier expected for argument for imported "+imptype) }
+
+				}
+			}
+		}
+	}
+	switch imptype{
+		case "PROCEDURE","PROC","VOID":
+			tar.idtype="PROCEDURE"
+		case "FUNCTION","FUNC","DEF":
+			tar.idtype="FUNCTION"
+		case "VAR":
+			tar.idtype="VAR"
+		default:
+			ol.throw("Cannot import '"+tar.idtype+"'")
+	}
+	tar.translateto = imptar
+	tar.tarformed = true
 	
+	
+	return tar,impid.Word // Allow the translator to do what is right here. 
 }
