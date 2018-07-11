@@ -32,4 +32,4 @@ And I hear the question, will the generated code be as powerful as when written 
 "If you want the full power of C, use C".
 My prime concern is getting stuff to work, and then trying to make it as optimal as possible will certainly come into play, and for now it's too early to say if Scyndi will be efficient enough to fully replace their target languages. It's a personal experiment anyway, so future tests will have to tell. But always keep in mind, no matter how efficient a translation based language is, nothing beats using the target language for real, no exceptions!
 
-
+Now the prototype for Scyndi is being written in Go, which was for me just because of Go having a compiler that easily compiles to all three great platforms (Mac, Linux and Windows). I have no short-term plans for writing Scyndi in Scyndi allowing it to "compile itself", but maybe on the longer run, it would be great if it could, right? If that will ever happen a new repository will very likely be started and this will then be an 'archive repository'. This is all long term planning, though.
