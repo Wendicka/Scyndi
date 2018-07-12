@@ -78,18 +78,22 @@ type tinstruction struct {
 	level int
 		// This basically determines the statement level. Comments like "if" and such make it go up one level, and "end" makes it go down a level.
 		// The info stored in the array is only for the error/warning handler in order to refer to line numbers were statements began.
+	state *tstatementspot
 }
 
 
 type tchunk struct {
 	isimported bool
 	ismethod string
+	translateto string
 	pof byte	// 0 = procedure, 1 = function 
 				// for translating to Wendicka or a scripting language such as php or even lua, this may not matter, but when translating to languages 
 				// like Pascal, C or Go, this information can be crucial (especially in Go where the compiler is very very strict on these matters).
 	instructions [] *tinstruction
 	locals map[string]*tidentifier
 	args *targs
+	returntype string
+	from *tori
 
 }
 
@@ -113,7 +117,7 @@ type tsource struct {
 	// nlsep will if turned on (default value) accept a new line as a separator (and then you don't need a semi-colon at the end of each line), turning it off will require such a thing. Please note when putting multiple instructions on one line, the semi-colon will always be required to separate those.
 	orilinerem,writetraceback,nlsep bool
 	private bool
-	levels []tstatementspot
+	levels []*tstatementspot
 	target string
 	//spackage *TPackage
 	used []*tsource

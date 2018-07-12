@@ -1,0 +1,18 @@
+
+void Write a:...string
+	purecode "BlitzMax","For local a = Eachin $C{a}C$ "
+	purecode "BlitzMax","	WriteStdOut a "
+	purecode "BlitzMax","	Writestdout \" \" "
+	purecode "BlitzMax","Next"
+	purecode "BlitzMax","WriteStdOut \"~b\" "
+	
+end
+
+void WriteLn a:...string
+	purecode "BlitzMax","For local a = Eachin $C{a}C$
+		WriteStdOut a
+		Writestdout \" \"
+	Next
+	writestdout \"~b~n\"
+	"
+end

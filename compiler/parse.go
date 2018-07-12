@@ -170,11 +170,13 @@ func Sepsource(src *[] byte,file string) *tsource {
 					if b=='"' { forcenw=true; instring=true }
 					for _,o:=range operators{
 						if i+len(o)<=len(so.pline) && qstr.Mid(so.pline,i+1,len(o))==o && !forcenw {
+							if word!="" {
+							   nw:=&tword{}
+							   nw.Word  = word
+							   nw.Wtype = gettype(word, file, so.ln)
+							   so.sline = append(so.sline,nw)							
+						    }
 							nw:=&tword{}
-							nw.Word  = word
-							nw.Wtype = gettype(word, file, so.ln)
-							so.sline = append(so.sline,nw)							
-							nw=&tword{}
 							nw.Word=o
 							nw.Wtype="operator"
 							so.sline = append(so.sline,nw)
@@ -223,6 +225,8 @@ func (self *tsource) declarechunk(ol *tori) *tchunk{
 	
 	ct:=ol.sline[0]
 	args:=&targs{}
+	locals:= map[string]*tidentifier{}
+	
 	
 	if ct.Word=="BEGIN"{
 		if len(ol.sline)>1 { ol.throw("BEGIN does not allow parameters of any sort") }
@@ -243,6 +247,8 @@ func (self *tsource) declarechunk(ol *tori) *tchunk{
 	idname:=id.Word
 	if id.Wtype=="keyword" { ol.throw("Unexpected keyword ("+idname+")") }
 	if _,foundid:=self.identifiers[idname];foundid { ol.throw("Duplicate identifier: "+idname) }	
+	myname:="SCYNDI_PRG_"+self.srcname+"_"+tp.Word+"_"+strings.ToUpper(idname)
+	mytype:="VARIANT"
 	if len(wl)>2 {
 		q:=2;
 		qt:=wl[q]
@@ -255,14 +261,17 @@ func (self *tsource) declarechunk(ol *tori) *tchunk{
 			} else {
 				if qt.Word!="STRING" && qt.Word!="INTEGER" && qt.Word!="BOOLEAN" && qt.Word!="FLOAT" && qt.Word!="VARIANT" {
 					ol.throw("Unknown type: "+qt.Word)
+				} else {
+					mytype=qt.Word
 				}
 			}
 			q+=2
 		}
 		// parameters for functions/procedures
-		stage:=0 // 0 = new + identifier (or var), 1 = dubbele punt, 2 = type or ...,3 = '=' for optional arguments, 6 = default value (constant only)
+		stage:=0 // 0 = new + identifier (or var), 1 = dubbele punt, 2 = type or ...,3 = '=' for optional arguments, 4 = default value (constant only)
 		constant:=true
 		endless:=false
+		
 		var arg *targ
 		var aid *tidentifier
 		for q<len(wl) {
@@ -289,7 +298,9 @@ func (self *tsource) declarechunk(ol *tori) *tchunk{
 							arg.arg=&tidentifier{}; aid=arg.arg
 							aid.idtype="VAR"
 							aid.dttype="VARIANT"
+							aid.translateto="SCYNDI_ARGUMENT_"+qt.Word
 							aid.constant=constant
+							locals[qt.Word]=aid
 							stage=1
 					case 1:
 							if qt.Word!=":" { ol.throw(": expected") }
@@ -322,12 +333,24 @@ func (self *tsource) declarechunk(ol *tori) *tchunk{
 	}
 	// TODO HERE: Create function code chunk
 	// TODO HERE: Declare identifier for this function
-	self.levels=append(self.levels,tstatementspot{ol.ln,tp.Word})
+	self.levels=append(self.levels,&tstatementspot{ol.ln,tp.Word})
 	rc:=&tchunk{}
-	if ct.Word=="VOID" || ct.Word=="PROCEDURE" || ct.Word=="PROC" { rc.pof=0 } else { rc.pof=1 }
+	if ct.Word=="VOID" || ct.Word=="PROCEDURE" || ct.Word=="PROC" || ct.Word=="BEGIN" { rc.pof=0; mytype="VOID" } else { rc.pof=1 }
 	rc.instructions = []*tinstruction{}
 	rc.locals =map[string]*tidentifier{}
 	rc.args=args
+	rc.translateto=myname
+	rc.locals=locals
+	rc.returntype=mytype
+	rc.from=ol
+	apof:=[]string{"PROCEDURE","FUNCTION"}
+	cid:=&tidentifier{}
+	cid.idtype=apof[rc.pof]
+	cid.dttype=mytype
+	cid.translateto=myname
+	cid.args=args
+	cid.constant=true
+	self.chunks = append(self.chunks,rc)
 	return rc
 }
 
@@ -339,7 +362,7 @@ func (self *tsource) Organize(){
 	ogroundkeys:=[]string{"BEGIN","VOID","PROCEDURE","PROC","FUNC","FUNCTION","DEF","TYPE","USE","XUSE","PRIVATE","PUBLIC","IMPORT"}       // These keywords are ONLY allowed on "ground level".
 	ltype:="ground"
 	doing("Organising: ",self.filename)
-	self.levels=[]tstatementspot{}
+	self.levels=[]*tstatementspot{}
 	for _,ol:=range self.source {
 		if ol.ln==1 {
 			lassert(ol.sfile,ol.ln,len(ol.sline)==2,"Illegal source header!  "+fmt.Sprintf("(%d)",len(ol.sline)))
@@ -392,7 +415,7 @@ func (self *tsource) Organize(){
 							pchat("Instant: VAR-block line added") 
 						} else {
 							ltype="var"
-							self.levels=append(self.levels,tstatementspot{ol.ln,"Global VAR declaration block"})
+							self.levels=append(self.levels,&tstatementspot{ol.ln,"Global VAR declaration block"})
 						}
 					default:
 						ol.throw("Unexpected "+pt.Word+"!! (Very likely a bug in the Scyndi compiler! Please report!)")
@@ -412,11 +435,12 @@ func (self *tsource) Organize(){
 				ins:=&tinstruction{}
 				ins.ori=ol
 				ins.level=len(self.levels)
+				ins.state=self.levels[len(self.levels)-1]
 				//fmt.Println(mychunk,ltype)
 				mychunk.instructions = append(mychunk.instructions,ins)
 				pchat("Instruction line added >> "+pt.Word)
 				if pt.Word=="IF" || pt.Word=="WHILE" || pt.Word=="DO" || pt.Word=="REPEAT" {
-					self.levels=append(self.levels,tstatementspot{ol.ln,pt.Word+" block"})
+					self.levels=append(self.levels,&tstatementspot{ol.ln,pt.Word+" block"})
 				}
 				if pt.Word=="LOOP" || pt.Word=="UNTIL" || pt.Word=="FOREVER" {
 					bl:=self.levels[len(self.levels)-1]
@@ -449,14 +473,15 @@ func CompileFile(file string,t string) (string, *tsource) {
 
 
 func (self *tsource) Translate() string {
-	doingln("Translating: ",self.filename)
+	doingln("Sorting out dependencies for translating: ",self.filename)
 	trans:=TransMod[TARGET]
 	//trans.NameIdentifiers(self)
 	blocks:=map[string]string{}
 	if trans.SealBlocks!=nil { trans.SealBlocks(&blocks) }
 	blocks["USE"]=""
 	useblock(TransMod,self,&blocks)
+	doingln("Translating: ",self.filename)
 	blocks["VAR"]=self.declarevars()
-	blocks["fun"]=self.translatefunctions()
+	blocks["FUN"]=self.translatefunctions()
 	return trans.Merge(blocks)
 }
