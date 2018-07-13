@@ -46,12 +46,22 @@ func lthrow(f string, l int,e string){
 	os.Exit(1)
 }
 
+func lwarn(f string, l int,e string){
+	fmt.Println(ansistring.SCol("WARNING",ansistring.A_White,ansistring.A_Blink))
+	fmt.Println(ansistring.SCol(f+":",ansistring.A_Cyan,0)+" "+ansistring.SCol(fmt.Sprintf("%d",l),ansistring.A_Magenta,0)+"\t\t"+ansistring.SCol(e,ansistring.A_Yellow,0))
+}
+
+
 func lassert(f string,l int, check bool, e string){
 	if !check { lthrow(f,l,e) }
 }
 
 func (s *tori) throw(e string) {
 	lthrow ( s.sfile,s.ln,e )
+}
+
+func (s *tori) warn(e string) {
+	lwarn ( s.sfile,s.ln,e )
 }
 
 func (s *tori) pthrow(e string) {
