@@ -253,13 +253,14 @@ func (self *tsource) declarechunk(ol *tori) *tchunk{
 		q:=2;
 		qt:=wl[q]
 		if qt.Word==":" {
+			qt:=wl[q+1]
 			if len(wl)<q+1 { ol.throw("Type expected") }
 			if ct.Word=="VOID" || ct.Word=="PROCEDURE" || ct.Word=="PROC" { ol.throw("Procedures have no return type") }
-			if qt.Wtype=="keyword" { ol.throw("Unexpected keyword ("+qt.Word+")") }
 			if tid,found:=self.identifiers[qt.Word];found {
 				if tid.dttype!="TYPE" { ol.throw("Invalid identifier. Expected type but I got "+tid.dttype); }
 			} else {
 				if qt.Word!="STRING" && qt.Word!="INTEGER" && qt.Word!="BOOLEAN" && qt.Word!="FLOAT" && qt.Word!="VARIANT" {
+					if qt.Wtype=="keyword" { ol.throw("Unexpected keyword ("+qt.Word+")") }
 					ol.throw("Unknown type: "+qt.Word)
 				} else {
 					mytype=qt.Word
@@ -350,6 +351,7 @@ func (self *tsource) declarechunk(ol *tori) *tchunk{
 	cid.translateto=myname
 	cid.args=args
 	cid.constant=true
+	self.identifiers[id.Word]=cid
 	self.chunks = append(self.chunks,rc)
 	return rc
 }
@@ -484,4 +486,10 @@ func (self *tsource) Translate() string {
 	blocks["VAR"]=self.declarevars()
 	blocks["FUN"]=self.translatefunctions()
 	return trans.Merge(blocks)
+}
+
+func (self *tsource) SaveTranslation(strans,outputpath string) {
+	doingln("Saving: ","Translation")
+	trans:=TransMod[TARGET]
+	trans.savetrans(self,strans,outputpath)
 }

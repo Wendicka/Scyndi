@@ -6,3 +6,14 @@ Module System
 void BlitzTest a:string
 	purecode "BlitzMax","	Print $C{A}C$"
 end
+
+function Platform:String
+	purecode "BlitzMax","	?MacOS
+		return \"MacOS\"
+	?Win32
+		return \"Windows\"
+	?Linux
+		return \"Linux\"
+	?
+		return \"Unknown\""
+end

@@ -35,6 +35,7 @@ func use(transm map[string] *T_TransMod,s *tsource, blocks *map[string]string,mo
 	// Let's do it
 	usetranslation,usesource:=CompileFile(file,"MODULE")
 	s.usedmap.m[cmodule]=usesource
+	s.used=append(s.used,usesource)
 	e:=qff.WriteStringToFile(file+".scyndi.translation."+TARGET+"."+trans.extension, usetranslation)
 	if e!=nil { ethrow(e) }
 	usesource.usedmap=s.usedmap

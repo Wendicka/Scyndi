@@ -52,8 +52,8 @@ func ReadConfig(){
 
 func LetsGo(){
 	ReadConfig()
-	//translation,source:=
-	Scyndi.CompileFile(sourcefile,"PROGRAM")  // Must be moved up once everything goes, and live above must be unremmed...
+	trans,src:=Scyndi.CompileFile(sourcefile,"PROGRAM")  
+	src.SaveTranslation(trans,outputpath)
 }
 
 func main(){

@@ -8,3 +8,6 @@ import "WriteLn" Void WriteLn ...string
 void WendickaTest a:string
 	Write a
 end
+
+
+	

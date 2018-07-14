@@ -51,6 +51,10 @@ func lwarn(f string, l int,e string){
 	fmt.Println(ansistring.SCol(f+":",ansistring.A_Cyan,0)+" "+ansistring.SCol(fmt.Sprintf("%d",l),ansistring.A_Magenta,0)+"\t\t"+ansistring.SCol(e,ansistring.A_Yellow,0))
 }
 
+func sumdot(i int){
+	s:=fmt.Sprintf("%5d. ",i)
+	fmt.Print(ansistring.SCol(s,ansistring.A_Green,0))
+}
 
 func lassert(f string,l int, check bool, e string){
 	if !check { lthrow(f,l,e) }
