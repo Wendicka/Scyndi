@@ -208,6 +208,18 @@ func Sepsource(src *[] byte,file string) *tsource {
 		}
 			
 	}
+	// make sure escape codes are properly seen
+	for _,so:=range ret.source {
+		for _,fw:=range so.sline{
+			if fw.Wtype=="string" {
+				for k,v:=range okki {
+					//doingln("okki:",k)//debug
+					fw.Word=strings.Replace(fw.Word,k,string([]byte{v}),-1)
+				}
+				fw.Word=strings.Replace(fw.Word,"\\\\","\\",-1) // Must always be done last.
+			}
+		}
+	}
 	return ret
 }
 

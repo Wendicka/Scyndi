@@ -15,7 +15,9 @@ begin
 	dl[1]:='r';
 	dl[2]:='b';
 	dl[3]:='n';
-	{dl[4]:='0';}
+	{dl[4]:='"';}
+	{dl[5]:='0';}
+	writeln('	okki["\\\""] = ''"''');
 	for i:=1 to 3 do 
 		writeln('	okki["\\',dl[i],'"]=''\',dl[i],''';');
 	for i:=1 to 10 do
@@ -30,7 +32,7 @@ begin
 				if aantal<j+1 then aantal:=j+1
 			end
 		end;
-		write('	okki["\');
+		write('	okki["\\');
 		for j:=3 downto 1 do write(digi[j]);
 		write('"] = ''\');
 		for j:=3 downto 1 do write(digi[j]);
