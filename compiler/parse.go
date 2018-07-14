@@ -71,6 +71,7 @@ func Sepsource(src *[] byte,file string) *tsource {
 	ret.target=TARGET
 	ret.filename=file
 	ret.nlsep = NLSEP
+	ret.allid=map[string]*tidentifier{}
 	mlc:=false // Multi-line comment
 	nwp:=true  // No whitespace
 	ins:=false // in string

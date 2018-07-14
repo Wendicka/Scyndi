@@ -1,5 +1,7 @@
 package scynt
 
+import "trickyunits/qstr"
+
 func (s *tsource) declarevar(line []*tword) (string,tidentifier){
 	//vr:=self.identifiers
 	vr:=tidentifier{}
@@ -29,8 +31,9 @@ func (s *tsource) declarevar(line []*tword) (string,tidentifier){
 		o=line[i]
 		if o.Word=="=" {
 			i++
+			o:=line[i]
 			if len(line)<i+1 { return "er:Unexpected end of line",vr }
-			switch vr.idtype {
+			switch vr.dttype {
 				case "VARIANT":
 					return "er:VARIANTS cannot be defined in a variable block",vr
 				case "MAP","ARRAY":
@@ -50,7 +53,7 @@ func (s *tsource) declarevar(line []*tword) (string,tidentifier){
 					if o.Word!="TRUE" && o.Word!="FALSE" { return "er:Unexpected "+o.Word+". TRUE or FALSE required!",vr }
 					vr.defaultvalue = o.Word
 				default:
-					if o.Wtype!="keyword" || o.Word!="NEW" { return "er:Unexpected "+o.Wtype+". Only the keyword NEW is allowed here",vr }
+					if o.Wtype!="keyword" || o.Word!="NEW" { return "er:Unexpected "+o.Wtype+" ("+o.Word+"). Only the keyword NEW is allowed for "+vr.dttype,vr }
 					vr.defaultvalue = "NEW"
 			}
 		} else { return "er:Syntax error!",vr } // Now it's really beyond me what you were trying to do.... :-/
@@ -67,6 +70,7 @@ func (s *tsource) declarevar(line []*tword) (string,tidentifier){
 func (self *tsource) declarevars() string{
 	for _,ol:=range self.varblock{
 		n,i:=self.declarevar(ol.sline)
+		if qstr.Prefixed(n,"er:") { ol.throw(n[3:]) }
 		self.identifiers[n]=&i
 	}
 	t:=TransMod[TARGET]

@@ -23,7 +23,7 @@ func use(transm map[string] *T_TransMod,s *tsource, blocks *map[string]string,mo
 	m:=s.usedmap.m
 	if us,ok:=m[cmodule];ok {
 		for id,i:=range us.identifiers {
-			if !i.private { s.allid[id]=i }
+			if !i.private { s.allid[id]=i } //else { doing("IGNORED PRIVATE: ",id) }
 		}
 		for id,i:=range us.allid {
 			if !i.private { s.allid[id]=i }
@@ -39,7 +39,14 @@ func use(transm map[string] *T_TransMod,s *tsource, blocks *map[string]string,mo
 	e:=qff.WriteStringToFile(file+".scyndi.translation."+TARGET+"."+trans.extension, usetranslation)
 	if e!=nil { ethrow(e) }
 	usesource.usedmap=s.usedmap
-	
+	us:=usesource
+	for id,i:=range us.identifiers {
+		if !i.private { s.allid[id]=i } //else { doing("IGNORED PRIVATE: ",id) }
+	}
+	for id,i:=range us.allid {
+		if !i.private { s.allid[id]=i }
+	}
+
 }
 
 func useblock(trans map[string] *T_TransMod,s *tsource, blocks *map[string]string){

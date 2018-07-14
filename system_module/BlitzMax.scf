@@ -1,5 +1,10 @@
 Module System
 
+{temp code -- will be removed soon}
+void Writeln
+end
+void write
+end
 
 
 

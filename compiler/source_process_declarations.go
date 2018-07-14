@@ -135,6 +135,7 @@ func (s *tsource) GetIdentifier(name string,c *tchunk, o *tori) *tidentifier {
 	}
 	if v,ok:=s.identifiers[name];ok { return v }
 	if v,ok:=s.allid[name];ok { return v }
+	// for k,_ := range(s.allid) { doing("ID: ",k) } // debug only
 	if ret==nil {
 		if o==nil { 
 			throw("Unknown identifier: "+name)

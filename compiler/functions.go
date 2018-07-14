@@ -14,8 +14,22 @@ func (self *tsource)  translatefunctions() string{
 			ol:=ins.ori
 			pt:=ol.sline[0]
 			if pt.Wtype=="identifier" {
+				//id,idfound:=self.identifiers[pt.Word]
+				//if !idfound { ol.throw("Primary identifier unknown: "+pt.Word) }
+				id:=self.GetIdentifier(pt.Word,chf,ol)
 				if len(ol.sline)>1 {
-					
+					op:=ol.sline[1]
+					if op.Wtype=="operator" {
+						switch op.Word {
+							case "++":
+								if len(ol.sline)>1 { ol.throw("Invalid increment request") }
+								ret += trans.plusone(id)+"\n"
+							case "--":
+								if len(ol.sline)>1 { ol.throw("Invalid decrement request") }
+								ret += trans.minusone(id)+"\n"
+							default: ol.throw("Operator not expected in this particular situation: "+op.Word)
+						}
+					}
 				}
 			} else if pt.Word=="END" {
 				//doingln("Ending:",ins.state.openinstruct) // debug only
