@@ -31,6 +31,7 @@ var keywords = []string {"PROGRAM","SCRIPT","MODULE","UNIT", // UNIT WILL AUTOMA
 					
 var operators = []string { // It's very important here, that the longer ones come first and the smaller ones later, or things might go wrong here.
 	                      "...",
+	                      "++","--",
 	                      ":=",
 	                      ":+",
 	                      ":-",
