@@ -79,4 +79,15 @@ func init(){
 		ret+="\n\n\tCHUNK __LOAD\n\t\tCALL SYSCYNDI_VAR\n"
 		return ret
 	}
+	
+	tmw.operators = defoperators // We need to have the basic. As this is not a pointer assignment, I can just modify all this :)
+	tmw.operators[  "="]="="
+	tmw.operators[ "=="]="="
+	tmw.operators[ "!="]="<>"
+	tmw.operators[ "<>"]="<>"
+	tmw.operators["AND"]="And"
+	tmw.operators[ "OR"]="Or"
+	tmw.operators["NOT"]="Not"
+	tmw.operators["MOD"]="Mod"
+	
 }

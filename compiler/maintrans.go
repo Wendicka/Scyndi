@@ -23,6 +23,7 @@ type T_TransMod struct {
 	minusone func(i *tidentifier) string
 	setstring func(str string) string
 	setint func(str string) string
+	transexp func (expect string,source *tsource, ol *tori,start,level int) (endpos int,ex string)
 	//expressiontrans func(ex *tex) string
 	//definevar func(s *tsource,id *tidentifier,ex *tex) string
 	UsePureCode byte // 0 = Purecode PRIOR to translated code; 1 = PurseCode AFTER translated code; 2 = Let the translation module handle it by itself
@@ -30,6 +31,7 @@ type T_TransMod struct {
 	ProcessUsed func(s *tsource, b *map[string]string,translation string) // If no function set, the imported code will just be added at the top of the translated file
 	operators map[string] string
 	endlessargs bool
+	
 }
 
 var TransMod = map[string] *T_TransMod{}
