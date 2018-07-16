@@ -22,11 +22,18 @@ func (self *tsource)  translatefunctions() string{
 					if op.Wtype=="operator" {
 						switch op.Word {
 							case "++":
+								if id.constant { ol.throw("Constants cannot be redefined") }
 								if len(ol.sline)>2 { ol.throw("Invalid increment request") }
 								ret += trans.plusone(id)+"\n"
 							case "--":
+							if id.constant { ol.throw("Constants cannot be redefined") }
 								if len(ol.sline)>2 { ol.throw("Invalid decrement request") }
 								ret += trans.minusone(id)+"\n"
+							case "=",":=":
+								if id.constant { ol.throw("Constants cannot be redefined") }
+								einde,ex:=self.translateExpressions(id.dttype,ol,2,0)
+								if einde<len(ol.sline) { ol.throw("unexpected stuff after definition") }
+								ret+=trans.definevar(self,id,ex)+"\n"
 							default: ol.throw("Operator not expected in this particular situation: "+op.Word)
 						}
 					}

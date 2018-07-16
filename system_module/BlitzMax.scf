@@ -8,6 +8,8 @@ end
 
 
 
+
+
 void BlitzTest a:string
 	purecode "BlitzMax","	Print $C{A}C$"
 end
