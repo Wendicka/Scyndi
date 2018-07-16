@@ -18,7 +18,7 @@ var keywords = []string {"PROGRAM","SCRIPT","MODULE","UNIT", // UNIT WILL AUTOMA
 						"WHILE",
 						"FOR","FOREACH",
 						"REPEAT","UNTIL","DO","LOOP","FOREVER",
-						"AND","OR", "NOT"
+						"AND","OR", "NOT",
 						"END","BEGIN", // Begin will only be used as an alias for VOID MAIN in a program and VOID INIT in scripts and modules. So its function is NOT the same as in Pascal, although making it into a quick keyword WAS inpired by Pascal :P
 						"PRIVATE","PUBLIC",
 						"VAR","CONST","OPTION","TYPE",
@@ -26,7 +26,7 @@ var keywords = []string {"PROGRAM","SCRIPT","MODULE","UNIT", // UNIT WILL AUTOMA
 						"IMPORT","INCLUDE","USE",
 						"OPTION","SUPPORT","PURECODE",
 						"TRUE","FALSE","NEW",
-						"MOD"
+						"MOD",
 						"NIL", 
 					}
 					

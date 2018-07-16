@@ -23,8 +23,8 @@ type T_TransMod struct {
 	minusone func(i *tidentifier) string
 	setstring func(str string) string
 	setint func(str string) string
-	expressiontrans func(ex *tex) string
-	definevar func(s *tsource,id *tidentifier,ex *tex) string
+	//expressiontrans func(ex *tex) string
+	//definevar func(s *tsource,id *tidentifier,ex *tex) string
 	UsePureCode byte // 0 = Purecode PRIOR to translated code; 1 = PurseCode AFTER translated code; 2 = Let the translation module handle it by itself
 	DontInterface bool // If set no interface files will be written, meaning the entire module will always be compiled whole
 	ProcessUsed func(s *tsource, b *map[string]string,translation string) // If no function set, the imported code will just be added at the top of the translated file
@@ -58,14 +58,14 @@ func TargetsSupported() string {
 func init(){
 	dfo:=&defoperators
 	for _,k := range ([]string{"==","+","-","/","*","^","!="}){
-		dfo[k]=k
+		(*dfo)[k]=k
 	}
-	dfo["NOT"]="!"
-	dfo["AND"]="&&"
-	dfo["OR" ]="||"
-	dfo["MOD"]="%"
+	(*dfo)["NOT"]="!"
+	(*dfo)["AND"]="&&"
+	(*dfo)["OR" ]="||"
+	(*dfo)["MOD"]="%"
 	
-	dfo["="] ="=="
-	dfo["<>"]="!="
-	dfo["~="]="!="
+	(*dfo)["="] ="=="
+	(*dfo)["<>"]="!="
+	(*dfo)["~="]="!="
 }
