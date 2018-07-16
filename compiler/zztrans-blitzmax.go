@@ -30,6 +30,9 @@ func init(){
 	
 	tmw.extension="bmx"
 	tmw.constantsupport = true
+	
+	tmw.int2float="Double(%s)"
+	tmw.float2int="Long(%s)"
 
 	// Trabskate global variables to BlitzMax
 	tmw.TransVars = func(src *tsource) string{
