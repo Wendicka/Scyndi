@@ -4,6 +4,9 @@ import(
 			"sort"
 )
 
+var defoperators = map[string] string {}
+
+
 type T_TransMod struct {
 	constantsupport bool
 	extension string
@@ -25,6 +28,7 @@ type T_TransMod struct {
 	UsePureCode byte // 0 = Purecode PRIOR to translated code; 1 = PurseCode AFTER translated code; 2 = Let the translation module handle it by itself
 	DontInterface bool // If set no interface files will be written, meaning the entire module will always be compiled whole
 	ProcessUsed func(s *tsource, b *map[string]string,translation string) // If no function set, the imported code will just be added at the top of the translated file
+	operators map[string] string
 	endlessargs bool
 }
 
@@ -47,4 +51,21 @@ func TargetsSupported() string {
 		ret += ts[i]
 	}
 	return ret
+}
+
+
+
+func init(){
+	dfo:=&defoperators
+	for _,k := range ([]string{"==","+","-","/","*","^","!="}){
+		dfo[k]=k
+	}
+	dfo["NOT"]="!"
+	dfo["AND"]="&&"
+	dfo["OR" ]="||"
+	dfo["MOD"]="%"
+	
+	dfo["="] ="=="
+	dfo["<>"]="!="
+	dfo["~="]="!="
 }
