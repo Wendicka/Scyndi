@@ -31,9 +31,10 @@ func (self *tsource)  translatefunctions() string{
 								ret += trans.minusone(id)+"\n"
 							case "=",":=":
 								if id.constant { ol.throw("Constants cannot be redefined") }
-								einde,ex:=self.translateExpressions(id.dttype,ol,2,0)
-								if einde<len(ol.sline) { ol.throw("unexpected stuff after definition") }
-								ret+=trans.definevar(self,id,ex)+"\n"
+								//einde,ex:=
+								self.translateExpressions(id.dttype,ol,2,0)
+								//if einde<len(ol.sline) { ol.throw("unexpected stuff after definition") }
+								//ret+=trans.definevar(self,id,ex)+"\n"
 							default: ol.throw("Operator not expected in this particular situation: "+op.Word)
 						}
 					}
