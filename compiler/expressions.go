@@ -42,6 +42,7 @@ func defaultexpressiontranslation(expect string,source *tsource, c *tchunk, ol *
 		if wantcov{
 			if sexi.Word=="(" { 
 				haakjelevel++ 
+				ex += "("
 			} else {
 				if expect=="identifier" && sexi.Wtype!="identifier" { ol.throw("Unexpected "+sexi.Wtype+": "+sexi.Word) }
 				switch sexi.Wtype{
@@ -90,6 +91,7 @@ func defaultexpressiontranslation(expect string,source *tsource, c *tchunk, ol *
 			} else if sexi.Word==")" {
 				if haakjelevel==0 {break}
 				haakjelevel--
+				ex += ")"
 			} else if sexi.Word=="+" && cexpect=="string" {
 				cop="concat"
 			} else if (sexi.Word=="-" || sexi.Word=="+" || sexi.Word=="*" || sexi.Word=="MOD" || sexi.Word=="/") && (cexpect!="integer" && cexpect!="float") {
