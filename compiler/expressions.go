@@ -26,9 +26,13 @@ func defaultexpressiontranslation(expect string,source *tsource, c *tchunk, ol *
 	wantcov:=true // cov = constant or variable
 	float2int:="%s"
 	int2float:="%s"
+	iint2string:="%s"
+	iflt2string:="%s"
 	cop:=""
-	if trans.float2int!="" { float2int=trans.float2int }
-	if trans.int2float!="" { int2float=trans.int2float }
+	if  trans.float2int!=""  { float2int  =trans. float2int }
+	if  trans.int2float!=""  { int2float  =trans. int2float }
+	if trans.iint2string!="" { iint2string=trans.iint2string }
+	if trans.iflt2string!="" { iflt2string=trans.iflt2string }
 	timeout:=int64(2000000000)
 	for{
 		timeout--
@@ -48,9 +52,12 @@ func defaultexpressiontranslation(expect string,source *tsource, c *tchunk, ol *
 				switch sexi.Wtype{
 					case "identifier":
 						id:=source.GetIdentifier(sexi.Word,c,ol)
+						out:=id.translateto
 						// maybe some type checkups can come here
+						if cexpect=="string" && id.dttype=="INTEGER" { out=fmt.Sprintf(iint2string,id.translateto) }
+						if cexpect=="string" && id.dttype=="FLOAT"   { out=fmt.Sprintf(iflt2string,id.translateto) }
 						// output
-						ex += id.translateto
+						ex += out
 						wantcov = false
 						rtt=id.dttype
 						rti=id

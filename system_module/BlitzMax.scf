@@ -1,5 +1,10 @@
 Module System
 
+{just a test
+var
+	test:string="lul"
+end}
+
 {temp code -- will be removed soon}
 void Writeln
 end

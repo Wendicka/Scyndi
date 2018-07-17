@@ -40,6 +40,8 @@ type T_TransMod struct {
 	endlessargs bool
 	int2float string
 	float2int string
+	iint2string string
+	iflt2string string
 }
 
 var TransMod = map[string] *T_TransMod{}
