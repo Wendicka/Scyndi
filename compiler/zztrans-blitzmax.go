@@ -36,6 +36,12 @@ func init(){
 	tmw.iint2string="psf_int2str(%s)"
 	tmw.iflt2string="psf_flt2str(%s)"
 	
+	tmw.simpleif="If %s"
+	tmw.simpleendif="End If"
+	
+	tmw.simplewhile="While %s"
+	tmw.simpleendwhile="Wend"
+	
 	tmw.operators = defoperators // We need to have the basic. As this is not a pointer assignment, I can just modify all this :)
 	tmw.operators[  "="]="="
 	tmw.operators[ "=="]="="

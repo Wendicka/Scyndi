@@ -42,6 +42,10 @@ type T_TransMod struct {
 	float2int string
 	iint2string string
 	iflt2string string
+	simpleif string
+	simpleendif string
+	simplewhile string
+	simpleendwhile string
 }
 
 var TransMod = map[string] *T_TransMod{}
@@ -69,7 +73,7 @@ func TargetsSupported() string {
 
 func init(){
 	dfo:=&defoperators
-	for _,k := range ([]string{"==","+","-","/","*","^","!="}){
+	for _,k := range ([]string{"==","+","-","/","*","^","!=","<",">"}){
 		(*dfo)[k]=k
 	}
 	(*dfo)["NOT"]="!"

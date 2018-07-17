@@ -1,6 +1,7 @@
 package scynt
 import(
 							"strings"
+							"fmt"
 )
 
 
@@ -73,7 +74,20 @@ func (self *tsource)  translatefunctions() string{
 							ol.throw("Function calls not yet implemented! (coming soon)")
 					}
 				}
-				
+			} else if pt.Word=="IF" {
+				exp,exu:=self.translateExpressions("boolean", chf, ol,1,0)
+				if exp<len(ol.sline) { 
+					//echat("\tEnd:",exp,len(ol.sline))
+					ol.throw("Separator expected") 
+				}
+				ret+=fmt.Sprintf(trans.simpleif,exu)+"\n"
+			} else if pt.Word=="WHILE" {
+				exp,exu:=self.translateExpressions("boolean", chf, ol,1,0)
+				if exp<len(ol.sline) { 
+					//echat("\tEnd:",exp,len(ol.sline))
+					ol.throw("Separator expected") 
+				}
+				ret+=fmt.Sprintf(trans.simplewhile,exu)+"\n"
 			} else if pt.Word=="END" {
 				//doingln("Ending:",ins.state.openinstruct) // debug only
 				switch ins.state.openinstruct {
@@ -82,8 +96,12 @@ func (self *tsource)  translatefunctions() string{
 					case "DEF","FUNCTION","FUNC":
 						// Make sure there is a return in the end and add one if not.
 						ret += trans.EndFunc(self,chf,true)
+					case "IF","IF block":
+						ret += trans.simpleendif+"\n"
+					case "WHILE","WHILE block":
+						ret += trans.simpleendwhile+"\n"
 					default:
-						ol.throw("I do not yet know how to end the "+ins.state.openinstruct+"; Either a bug or you are still working with an experimental version?")
+						ol.throw("I do not yet know how to end the "+ins.state.openinstruct+"!\nEither a bug or you are still working with an experimental version?")
 				}
 			} else if pt.Word=="PURECODE" {
 				ret += purecode(self,chf,ol)+"\n"
