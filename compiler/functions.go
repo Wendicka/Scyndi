@@ -18,6 +18,7 @@ func (self *tsource)  translatefunctions() string{
 			ol:=ins.ori
 			pt:=ol.sline[0]
 			if pt.Wtype=="identifier" {
+				/* old code
 				//id,idfound:=self.identifiers[pt.Word]
 				//if !idfound { ol.throw("Primary identifier unknown: "+pt.Word) }
 				id:=self.GetIdentifier(pt.Word,chf,ol)
@@ -43,6 +44,33 @@ func (self *tsource)  translatefunctions() string{
 						}
 					}
 				}
+				*/
+				pos,idname:=self.translateExpressions("identifier", chf, ol,0,0)
+				if pos<len(ol.sline) {
+					nxt:=ol.sline[pos]
+					switch nxt.Word{
+						case "++":
+							ret+=trans.plusone(idname)+"\n"
+						case "--":
+							ret+=trans.minusone(idname)+"\n"
+						case ":+","+=":
+							ol.throw(":+/+= altering not yet supported! (coming soon)")
+						case ":-","-=":
+							ol.throw(":-/-= altering not yet supported! (coming soon)")
+						case "=",":=":
+							id:=rti
+							if id.constant { ol.throw("Constants cannot be redefined") }
+							exp,exu:=self.translateExpressions(strings.ToLower(id.dttype), chf, ol,pos+1,0)
+							if exp<len(ol.sline) { 
+								echat("\tEnd:",exp,len(ol.sline))
+								ol.throw("Separator expected") 
+							}
+							ret+=trans.definevar(self,id,exu)+"\n"
+						default:
+							ol.throw("Function calls not yet implemented! (coming soon)")
+					}
+				}
+				
 			} else if pt.Word=="END" {
 				//doingln("Ending:",ins.state.openinstruct) // debug only
 				switch ins.state.openinstruct {

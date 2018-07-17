@@ -4,10 +4,19 @@ import(
 							"fmt"
 )
 
+const haveechat = true
 var rtt string // ReTurned Type -- Needed for recognition of intruction starting identifiers
 var rti *tidentifier // 
 
+func echat(a ...interface{}){
+	if !haveechat { return }
+	for _,aa:=range a{ fmt.Print(aa," ") }
+	fmt.Print("\n")
+}
+
+
 func defaultexpressiontranslation(expect string,source *tsource, c *tchunk, ol *tori,start,level int) (endpos int,ex string){
+	echat("Expression:","\n\tExpeciting:",expect,"\n\tStarting at word:",start)
 	endpos=start
 	ex=""
 	einde:=false
@@ -27,14 +36,16 @@ func defaultexpressiontranslation(expect string,source *tsource, c *tchunk, ol *
 		if endpos>=len(ol.sline) { break }
 		sexi:=ol.sline[endpos] // Scyndi Expression Index
 		if einde { break }
-		if expect=="identifier" && (sexi.Word!="[") { break }
+		echat("\tChecking word:",endpos,"\t"+sexi.Wtype+":",sexi.Word)
+		echat("\tiddefend:",expect=="identifier" && (sexi.Word!="[") && (endpos!=start))
+		if expect=="identifier" && (sexi.Word!="[") && (endpos!=start) { break }
 		if wantcov{
 			if sexi.Word=="(" { 
 				haakjelevel++ 
 			} else {
 				if expect=="identifier" && sexi.Wtype!="identifier" { ol.throw("Unexpected "+sexi.Wtype+": "+sexi.Word) }
 				switch sexi.Wtype{
-					case "identifer":
+					case "identifier":
 						id:=source.GetIdentifier(sexi.Word,c,ol)
 						// maybe some type checkups can come here
 						// output
@@ -62,6 +73,7 @@ func defaultexpressiontranslation(expect string,source *tsource, c *tchunk, ol *
 					case "keyword":
 						switch sexi.Word{
 							case "NOT":
+								if expect=="identifier" { ol.throw("That is NOT where you place NOT") }
 								if cexpect!="boolean" { ol.throw("Keyword 'NOT' only works in BOOLEAN expressions!") }
 								ex += trans.operators["NOT"]
 							default:
@@ -90,13 +102,17 @@ func defaultexpressiontranslation(expect string,source *tsource, c *tchunk, ol *
 				if _,ok:=trans.operators[cop];ok{
 					ex += " "+trans.operators[cop]+" " 
 				} else {
+					if haveechat {
+						echat("operators:")
+						for k,v :=range(trans.operators){ echat("\t",k,"=",v) }
+					}
 					ol.throw("Unknown operator: "+cop)
 				}
 			}
 		}
 		endpos++ // MUST always be last before everything reloops
 	}
-	if wantcov { ol.throw("Unexpected end of expression") }
+	if wantcov { echat(start,endpos); ol.throw("Unexpected end of expression") }
 	if haakjelevel>1  { ol.throw(fmt.Sprintf("There are %s brackets in this expression that are not properly closed, yet the expression has ended")) }
 	if haakjelevel==1 { ol.throw(fmt.Sprintf("There is 1 bracket in this expression that are not properly closed, yet the expression has ended")) }
 	return
