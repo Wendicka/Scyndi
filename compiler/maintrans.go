@@ -2,9 +2,15 @@ package scynt
 
 import(
 			"sort"
+			"fmt"
 )
 
 var defoperators = map[string] string {}
+
+
+func gt(i interface{}) string {
+	return fmt.Sprintf("%T",i)
+}
 
 
 type T_TransMod struct {
@@ -19,8 +25,8 @@ type T_TransMod struct {
 	FuncHeader func(s *tsource,ch *tchunk) string
 	EndFunc func(s *tsource,ch *tchunk,trueend bool) string
 	savetrans func(s *tsource,trans, outp string)
-	plusone func(i *tidentifier) string
-	minusone func(i *tidentifier) string
+	plusone func(i interface{}) string
+	minusone func(i interface{}) string
 	setstring func(str string) string
 	setint func(str string) string
 	transexp func (expect string,source *tsource, c *tchunk, ol *tori,start,level int) (endpos int,ex string)

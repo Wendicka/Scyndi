@@ -84,8 +84,27 @@ func init(){
 		return ret
 	}
 	
-	tmw.plusone  = func(i *tidentifier) string { return i.translateto+":+1 "}
-	tmw.minusone = func(i *tidentifier) string { return i.translateto+":-1 "}
+	tmw.plusone  = func(i interface{}) string { 
+		if gt(i)=="*scynt.tidentifier" {
+			return i.(*tidentifier).translateto+":+1 "
+		} else if gt(i)=="string" {
+			return i.(string)+":+1\t"
+		} else {
+			throw("INTERNAL ERROR: What the hell must a ++ request do with type: "+gt(i))
+			return "error" // does nothing, but Go requires it!
+		}
+		
+	}
+	tmw.minusone = func(i interface{}) string { //return i.translateto+":-1 "}
+		if gt(i)=="*scynt.tidentifier" {
+			return i.(*tidentifier).translateto+":-1 "
+		} else if gt(i)=="string" {
+			return i.(string)+":-1\t"
+		} else {
+			throw("INTERNAL ERROR: What the hell must a -- request do with type: "+gt(i))
+			return "error" // does nothing, but Go requires it!
+		}
+	}
 	
 	tmw.setstring = func(str string) string {
 		ret:=[]byte{'"'}

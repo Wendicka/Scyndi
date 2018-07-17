@@ -67,9 +67,10 @@ func init(){
 		return ret
 	}
 	
+	/* temp out of use
 	tmw.plusone  = func(i *tidentifier) string { return "\tINC "+i.translateto+",1"}
 	tmw.minusone = func(i *tidentifier) string { return "\tDEC "+i.translateto+",1"}
-	
+	*/
 	
 	
 	tmw.Merge = func(b map[string]string) string {
