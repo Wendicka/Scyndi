@@ -4,7 +4,7 @@ import(
 							"fmt"
 )
 
-const haveechat = true
+const haveechat = false
 var rtt string // ReTurned Type -- Needed for recognition of intruction starting identifiers
 var rti *tidentifier // 
 
@@ -94,6 +94,7 @@ func defaultexpressiontranslation(expect string,source *tsource, c *tchunk, ol *
 				ex += ")"
 			} else if sexi.Word=="+" && cexpect=="string" {
 				cop="concat"
+				wantcov=true
 			} else if (sexi.Word=="-" || sexi.Word=="+" || sexi.Word=="*" || sexi.Word=="MOD" || sexi.Word=="/") && (cexpect!="integer" && cexpect!="float") {
 				ol.throw("Unexpected mathematical operation")
 			} else {
@@ -116,7 +117,7 @@ func defaultexpressiontranslation(expect string,source *tsource, c *tchunk, ol *
 	}
 	if wantcov { echat(start,endpos); ol.throw("Unexpected end of expression") }
 	if haakjelevel>1  { ol.throw(fmt.Sprintf("There are %s brackets in this expression that are not properly closed, yet the expression has ended")) }
-	if haakjelevel==1 { ol.throw(fmt.Sprintf("There is 1 bracket in this expression that are not properly closed, yet the expression has ended")) }
+	if haakjelevel==1 { ol.throw(fmt.Sprintf("There is 1 bracket in this expression that is not properly closed, yet the expression has ended")) }
 	return
 }
 

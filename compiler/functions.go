@@ -17,6 +17,9 @@ func (self *tsource)  translatefunctions() string{
 		for _,ins:=range chf.instructions {
 			ol:=ins.ori
 			pt:=ol.sline[0]
+			for tab:=0;tab<ins.level;tab++{ 
+				if !(pt.Word=="END" && tab==ins.level-1) {ret+="\t" }
+			}
 			if pt.Wtype=="identifier" {
 				/* old code
 				//id,idfound:=self.identifiers[pt.Word]
