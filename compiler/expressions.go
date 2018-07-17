@@ -4,15 +4,20 @@ import(
 							"fmt"
 )
 
+var rtt string // ReTurned Type -- Needed for recognition of intruction starting identifiers
+var rti *tidentifier // 
+
 func defaultexpressiontranslation(expect string,source *tsource, c *tchunk, ol *tori,start,level int) (endpos int,ex string){
 	endpos=start
 	ex=""
 	einde:=false
+	cexpect:=expect
 	haakjelevel:=0
 	trans:=TransMod[TARGET]
 	wantcov:=true // cov = constant or variable
 	float2int:="%s"
 	int2float:="%s"
+	cop:=""
 	if trans.float2int!="" { float2int=trans.float2int }
 	if trans.int2float!="" { int2float=trans.int2float }
 	timeout:=int64(2000000000)
@@ -27,6 +32,7 @@ func defaultexpressiontranslation(expect string,source *tsource, c *tchunk, ol *
 			if sexi.Word=="(" { 
 				haakjelevel++ 
 			} else {
+				if expect=="identifier" && sexi.Wtype!="identifier" { ol.throw("Unexpected "+sexi.Wtype+": "+sexi.Word) }
 				switch sexi.Wtype{
 					case "identifer":
 						id:=source.GetIdentifier(sexi.Word,c,ol)
@@ -34,8 +40,10 @@ func defaultexpressiontranslation(expect string,source *tsource, c *tchunk, ol *
 						// output
 						ex += id.translateto
 						wantcov = false
+						rtt=id.dttype
+						rti=id
 					case "integer","float":
-						if expect!="string" {
+						if cexpect!="string" {
 							switch sexi.Wtype { // yes again, and for good reasons, trust me 
 								case "integer":
 									ex += fmt.Sprintf(float2int,sexi.Word)
@@ -48,13 +56,13 @@ func defaultexpressiontranslation(expect string,source *tsource, c *tchunk, ol *
 						sexi.Wtype="string"
 						fallthrough
 					case "string":
-						if expect=="integer" || expect=="float" { ol.throw("Strings may not be used when nummeric expressions are expected") }
+						if cexpect=="integer" || expect=="float" { ol.throw("Strings may not be used when nummeric expressions are expected") }
 						ex += trans.setstring(sexi.Word)
 						wantcov = false
 					case "keyword":
 						switch sexi.Word{
 							case "NOT":
-								if expect!="boolean" { ol.throw("Keyword 'NOT' only works in BOOLEAN expressions!") }
+								if cexpect!="boolean" { ol.throw("Keyword 'NOT' only works in BOOLEAN expressions!") }
 								ex += trans.operators["NOT"]
 							default:
 								ol.throw(fmt.Sprintf("Unexpected keyword '%s' in expression. Identifier expected.",sexi.Word))
@@ -64,11 +72,26 @@ func defaultexpressiontranslation(expect string,source *tsource, c *tchunk, ol *
 				}
 			}
 		} else {
-			if sexi.Word=="[" {ol.throw("Array indexes and map keys are not YET supported, they will be taken care of as soon as possible (Hey! Rome wasn't built in one day, either, ya know)") }
-			if sexi.Word=="(" {ol.throw("Function calls are not YET supported in expressions, they will be taken care of as soon as possible (Hey! Rome wasn't built in one day, either, ya know)") }
-			if sexi.Word==")" {
+			cop=""
+			if sexi.Word=="[" {ol.throw("Array indexes and map keys are not YET supported, they will be taken care of as soon as possible (Hey! Rome wasn't built in one day, either, ya know)") 
+			} else if sexi.Word=="(" {ol.throw("Function calls are not YET supported in expressions, they will be taken care of as soon as possible (Hey! Rome wasn't built in one day, either, ya know)") 
+			} else if sexi.Word==")" {
 				if haakjelevel==0 {break}
 				haakjelevel--
+			} else if sexi.Word=="+" && cexpect=="string" {
+				cop="concat"
+			} else if (sexi.Word=="-" || sexi.Word=="+" || sexi.Word=="*" || sexi.Word=="MOD" || sexi.Word=="/") && (cexpect!="integer" && cexpect!="float") {
+				ol.throw("Unexpected mathematical operation")
+			} else {
+				cop=sexi.Word
+				wantcov=true
+			}
+			if cop!="" { 
+				if _,ok:=trans.operators[cop];ok{
+					ex += " "+trans.operators[cop]+" " 
+				} else {
+					ol.throw("Unknown operator: "+cop)
+				}
 			}
 		}
 		endpos++ // MUST always be last before everything reloops
