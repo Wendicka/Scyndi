@@ -15,10 +15,11 @@ begin
 	dl[1]:='r';
 	dl[2]:='b';
 	dl[3]:='n';
+	dl[4]:='t';
 	{dl[4]:='"';}
 	{dl[5]:='0';}
 	writeln('	okki["\\\""] = ''"''');
-	for i:=1 to 3 do 
+	for i:=1 to 4 do 
 		writeln('	okki["\\',dl[i],'"]=''\',dl[i],''';');
 	for i:=1 to 10 do
 		digi[i]:=0;

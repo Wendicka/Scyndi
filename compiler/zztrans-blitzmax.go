@@ -126,6 +126,7 @@ func init(){
 				case  13: ret=append(ret,'~'); ret=append(ret,'r')
 				case  10: ret=append(ret,'~'); ret=append(ret,'n')
 				case   8: ret=append(ret,'~'); ret=append(ret,'b')
+				case   9: ret=append(ret,'~'); ret=append(ret,'t')
 				case '"': ret=append(ret,'~'); ret=append(ret,'q')
 				case '~': ret=append(ret,'~'); ret=append(ret,'~')
 				default:
