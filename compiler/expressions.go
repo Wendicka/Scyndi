@@ -93,6 +93,7 @@ func defaultexpressiontranslation(expect string,source *tsource, c *tchunk, ol *
 			}
 		} else {
 			cop=""
+			if sexi.Word=="," { break }
 			if sexi.Word=="[" {ol.throw("Array indexes and map keys are not YET supported, they will be taken care of as soon as possible (Hey! Rome wasn't built in one day, either, ya know)") 
 			} else if sexi.Word=="(" {ol.throw("Function calls are not YET supported in expressions, they will be taken care of as soon as possible (Hey! Rome wasn't built in one day, either, ya know)") 
 			} else if sexi.Word==")" {
