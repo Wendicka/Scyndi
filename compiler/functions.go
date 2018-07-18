@@ -16,6 +16,7 @@ func (self *tsource)  translatefunctions() string{
 	trans:=TransMod[TARGET]
 	ret:=trans.FuncHeaderRem()
 	for _,chf := range self.chunks {
+		ended:=false
 		chf.forid = map[string]*tidentifier{}
 		chf.fors  = map[int]bool{}
 		ret += trans.FuncHeader(self,chf)
@@ -177,9 +178,11 @@ func (self *tsource)  translatefunctions() string{
 				switch ins.state.openinstruct {
 					case "PROCEDURE","PROC","VOID":
 						ret += trans.EndFunc(self,chf,true)
+						ended=true
 					case "DEF","FUNCTION","FUNC":
 						// Make sure there is a return in the end and add one if not.
 						ret += trans.EndFunc(self,chf,true)
+						ended=true
 					case "FOR","FORU","FOREACH","FOR block","FORU block","FOREACH block":
 						ret += trans.simpleendfor+"\n"
 					case "IF","IF block":
@@ -208,6 +211,10 @@ func (self *tsource)  translatefunctions() string{
 			} else {
 				ol.throw("Unexpected "+pt.Wtype+" ("+pt.Word+")")
 			}
+		}
+		if !ended {
+			ei:=chf.instructions[len(chf.instructions)-1]
+			throw(fmt.Sprintf("%s in line %d not properly closed!",ei.state.openinstruct,ei.state.openline))
 		}
 	}
 	return ret // I must have this asa temp measyre or Go won't work (figures).

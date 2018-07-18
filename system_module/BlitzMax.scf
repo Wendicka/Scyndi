@@ -8,6 +8,7 @@ end}
 {temp code -- will be removed soon}
 void Writeln
 end
+
 void write
 end
 
@@ -27,5 +28,7 @@ function Platform:String
 	?Linux
 		return \"Linux\"
 	?
-		return \"Unknown\""
+		return \"Unknown\"
+	"
 end
+
