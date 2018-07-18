@@ -347,7 +347,7 @@ func (self *tsource) declarechunk(ol *tori) *tchunk{
 	}
 	// TODO HERE: Create function code chunk
 	// TODO HERE: Declare identifier for this function
-	self.levels=append(self.levels,&tstatementspot{ol.ln,tp.Word})
+	self.levels=append(self.levels,&tstatementspot{ol.ln,tp.Word,0})
 	rc:=&tchunk{}
 	if ct.Word=="VOID" || ct.Word=="PROCEDURE" || ct.Word=="PROC" || ct.Word=="BEGIN" { rc.pof=0; mytype="VOID" } else { rc.pof=1 }
 	rc.instructions = []*tinstruction{}
@@ -430,7 +430,7 @@ func (self *tsource) Organize(){
 							pchat("Instant: VAR-block line added") 
 						} else {
 							ltype="var"
-							self.levels=append(self.levels,&tstatementspot{ol.ln,"Global VAR declaration block"})
+							self.levels=append(self.levels,&tstatementspot{ol.ln,"Global VAR declaration block",0})
 						}
 					default:
 						ol.throw("Unexpected "+pt.Word+"!! (Very likely a bug in the Scyndi compiler! Please report!)")
@@ -454,8 +454,8 @@ func (self *tsource) Organize(){
 				//fmt.Println(mychunk,ltype)
 				mychunk.instructions = append(mychunk.instructions,ins)
 				pchat("Instruction line added >> "+pt.Word)
-				if pt.Word=="IF" || pt.Word=="WHILE" || pt.Word=="DO" || pt.Word=="REPEAT" {
-					self.levels=append(self.levels,&tstatementspot{ol.ln,pt.Word+" block"})
+				if pt.Word=="IF" || pt.Word=="WHILE" || pt.Word=="DO" || pt.Word=="REPEAT" || pt.Word=="FOR" || pt.Word=="FORU" || pt.Word=="FOREACH" {
+					self.levels=append(self.levels,&tstatementspot{ol.ln,pt.Word+" block",0})
 				}
 				if pt.Word=="LOOP" || pt.Word=="UNTIL" || pt.Word=="FOREVER" {
 					bl:=self.levels[len(self.levels)-1]

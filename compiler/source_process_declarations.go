@@ -53,6 +53,7 @@ func (s *tori) LORI() (int,string,[]*tword) { return s.ln,s.pline,s.sline } // d
 type tstatementspot struct {
 	openline int
 	openinstruct string
+	startfor int
 }
 
 
@@ -94,6 +95,8 @@ type tchunk struct {
 	args *targs
 	returntype string
 	from *tori
+	forid map[string]*tidentifier
+	fors map[int] bool
 
 }
 

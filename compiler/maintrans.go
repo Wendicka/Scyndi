@@ -24,6 +24,7 @@ type T_TransMod struct {
 	FuncHeaderRem func() string
 	FuncHeader func(s *tsource,ch *tchunk) string
 	EndFunc func(s *tsource,ch *tchunk,trueend bool) string
+	StartFor func(fortype string,index *tidentifier,sxu,exu,step string,stepconstant bool) string
 	savetrans func(s *tsource,trans, outp string)
 	plusone func(i interface{}) string
 	minusone func(i interface{}) string
@@ -43,9 +44,14 @@ type T_TransMod struct {
 	iint2string string
 	iflt2string string
 	simpleif string
+	simpleelif string
 	simpleendif string
 	simplewhile string
 	simpleendwhile string
+	simpleloop string
+	simpleinfloop string
+	simpleuntilloop string
+	simpleendfor string
 }
 
 var TransMod = map[string] *T_TransMod{}

@@ -16,7 +16,7 @@ var keywords = []string {"PROGRAM","SCRIPT","MODULE","UNIT", // UNIT WILL AUTOMA
 						"IF","ELSE","ELSEIF","ELIF",
 						"SWITCH","CASE","DEFAULT",
 						"WHILE",
-						"FOR","FOREACH",
+						"FOR","FOREACH","FORU", // FORU = For Until It has only a very small difference with FOR, but still one with significant effect ;)
 						"REPEAT","UNTIL","DO","LOOP","FOREVER",
 						"AND","OR", "NOT",
 						"END","BEGIN", // Begin will only be used as an alias for VOID MAIN in a program and VOID INIT in scripts and modules. So its function is NOT the same as in Pascal, although making it into a quick keyword WAS inpired by Pascal :P
