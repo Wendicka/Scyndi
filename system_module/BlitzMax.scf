@@ -5,13 +5,24 @@ var
 	test:string="lul"
 end}
 
-{temp code -- will be removed soon}
-void Writeln
+
+void Write a:...string
+	purecode "BlitzMax","For local a = Eachin $C{A}C$ "
+	purecode "BlitzMax","	WriteStdOut a "
+	purecode "BlitzMax","	Writestdout \" \" "
+	purecode "BlitzMax","Next"
+	purecode "BlitzMax","WriteStdOut \"~b\" "
+	
 end
 
-void write
+void WriteLn a:...string
+	purecode "BlitzMax","For local a = Eachin $C{A}C$
+		WriteStdOut a
+		Writestdout \" \"
+	Next
+	writestdout \"~b~n\"
+	"
 end
-
 
 
 

@@ -291,7 +291,7 @@ func (self *tsource) declarechunk(ol *tori) *tchunk{
 		for q<len(wl) {
 			qt=wl[q]
 			// TODO HERE: main parameter code (comes later)
-			if qt.Word=="," && (stage==0 || stage==2 || stage==4) { ol.throw("Unexpected coma") } else if qt.Word=="," {
+			if qt.Word=="," && (stage==0 || stage==2 || stage==4) { ol.throw(fmt.Sprintf("Unexpected comma   (code: %d)",stage)) } else if qt.Word=="," {
 				stage=0
 				constant=true
 				if endless { ol.throw("Endless arguments always come last") }
@@ -320,14 +320,20 @@ func (self *tsource) declarechunk(ol *tori) *tchunk{
 							if qt.Word!=":" { ol.throw(": expected") }
 							stage=2
 					case 2:
-							if qt.Word!="STRING" && qt.Word!="INTEGER" && qt.Word!="BOOLEAN" && qt.Word!="FLOAT" && qt.Word!="VARIANT" {
+							if qt.Word=="..." {
+								endless=true
+							} else if qt.Word!="STRING" && qt.Word!="INTEGER" && qt.Word!="BOOLEAN" && qt.Word!="FLOAT" && qt.Word!="VARIANT" {
 								ol.throw("Unknown type: "+qt.Word)
+								aid.dttype=qt.Word
+								stage=3
+							} else {
+								aid.dttype=qt.Word
+								stage=3
 							}
-							aid.dttype=qt.Word
-							stage=3
 					case 3:
 							if qt.Word!="=" { ol.throw("= expected") }
 							if !constant { ol.throw("Variable arguments cannot be optional") }
+							if endless { ol.throw("Default values not allowed in endless argument declaration") }
 							stage=4
 							arg.optional=true
 					case 4:
