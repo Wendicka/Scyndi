@@ -107,6 +107,8 @@ func init(){
 	tmw.operators[ "OR"]="Or"
 	tmw.operators["NOT"]="Not"
 	tmw.operators["MOD"]="Mod"
+	
+	tmw.procnoneedbracket=true
 
 	// Trabskate global variables to BlitzMax
 	tmw.TransVars = func(src *tsource) string{

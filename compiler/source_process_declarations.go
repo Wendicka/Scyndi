@@ -1,5 +1,10 @@
 package scynt
 
+import (
+						"strings"
+						"fmt"
+)
+
 type targ struct {
 	argtype string // Just the types... Scyndi will use this to translate function calls.. 
 	
@@ -97,6 +102,7 @@ type tchunk struct {
 	from *tori
 	forid map[string]*tidentifier
 	fors map[int] bool
+	forline2ins map[int]*tinstruction
 
 }
 
@@ -133,6 +139,12 @@ type tsource struct {
 func (s *tsource) GetIdentifier(name string,c *tchunk, o *tori) *tidentifier {
 	var ret *tidentifier
 	if c!=nil {
+		flv:=c.forid
+		if fv,fok:=flv[name]; fok {
+			for i,b:=range c.fors{
+				if b && strings.HasPrefix(fv.translateto,fmt.Sprintf("SCYNDI_FOR%X_",i)) { return fv }
+			}
+		}
 		loc:=c.locals
 		if v,ok:=loc[name]; ok { return v }
 	}

@@ -9,7 +9,54 @@ var fortotal = 0
 
 
 
-func (self *tsource) callfunction() {
+func (self *tsource) callfunction(c *tchunk, ol *tori, mustreturn bool, funpos int) (cf string, epos int){
+	cf=""
+	epos=funpos
+	trans:=TransMod[TARGET]
+	if trans.AltFuncCall!=nil { return trans.AltFuncCall() }
+	id:=rti
+	if id.idtype!="PROCEDURE" && id.idtype!="FUNCTION" { ol.throw(rtt+" cannot be called as a function") }
+	epos++
+	tvargs:=[]string{}
+	ending:=len(id.args.a)+funpos+1
+	// regular paramters
+	for ac,aa:=range id.args.a {
+		pchat(fmt.Sprintf("Processing arg #%d",ac))
+		want:=""
+		switch aa.arg.dttype {
+			case "VARIANT":
+				want="anything"
+			case "INTEGER","FLOAT","BOOLEAN","STRING":
+				want=strings.ToLower(aa.arg.dttype)
+			default:
+				want=aa.arg.dttype
+		}
+		ep,eu:=self.translateExpressions(want, c, ol,epos,0)
+		tvargs=append(tvargs,eu)
+		epos=ep
+		//fmt.Println(epos,ending)
+		if epos<ending { 
+			c:=ol.sline[epos]
+			if c.Word!="," { 
+				// Define optional paramters if present
+				// else
+				ol.throw("Comma expected") 
+			}
+			epos++
+		}
+	}
+	// Infinite parameters
+	
+	
+	cf=id.translateto
+	if mustreturn || (!trans.procnoneedbracket) { cf +="(" } else {cf +=" "}
+	for ai,at:=range tvargs{
+		//fmt.Println(ai,at)
+		if ai!=0 { cf += ", " }
+		cf += at
+	}
+	
+	return 
 }
 
 func (self *tsource)  translatefunctions() string{
@@ -19,6 +66,7 @@ func (self *tsource)  translatefunctions() string{
 		ended:=false
 		chf.forid = map[string]*tidentifier{}
 		chf.fors  = map[int]bool{}
+		chf.forline2ins = map[int]*tinstruction{}
 		ret += trans.FuncHeader(self,chf)
 		//doingln("DEBUG: Translating func to: ",chf.translateto) // debug only
 		for _,ins:=range chf.instructions {
@@ -77,7 +125,10 @@ func (self *tsource)  translatefunctions() string{
 							}
 							ret+=trans.definevar(self,id,exu)+"\n"
 						default:
-							ol.throw("Function calls not yet implemented! (coming soon)")
+							//ol.throw("Function calls not yet implemented! (coming soon)")
+							scall,spos:=self.callfunction(chf,ol,false,0)
+							ret+=scall+"\n"
+							pchat(fmt.Sprintf("%d",spos)) // just compiler distraction... for now
 					}
 				}
 			} else if pt.Word=="IF" || pt.Word=="ELSEIF" || pt.Word=="ELIF" {
@@ -101,6 +152,7 @@ func (self *tsource)  translatefunctions() string{
 				ret+=fmt.Sprintf(trans.simplewhile,exu)+"\n"
 			} else if pt.Word=="FOR" || pt.Word=="FORU" {
 				fortotal++
+				chf.forline2ins[ol.ln]=ins
 				if len(ol.sline)<2 { ol.throw("Index variable expected") }
 				indexw:=ol.sline[1]
 				indexn:=indexw.Word
@@ -132,7 +184,7 @@ func (self *tsource)  translatefunctions() string{
 				// step value if present, if not use 1
 				step:="1"
 				stepconstant:=true
-				fmt.Println(i,len(ol.sline)) // debug
+				//fmt.Println(i,len(ol.sline)) // debug
 				if i<len(ol.sline) {
 				//} else {
 					dp=ol.getword(i)
@@ -185,6 +237,11 @@ func (self *tsource)  translatefunctions() string{
 						ended=true
 					case "FOR","FORU","FOREACH","FOR block","FORU block","FOREACH block":
 						ret += trans.simpleendfor+"\n"
+						//fmt.Println(ins.state.openline,chf.forline2ins)
+						//for i,_:=range chf.forline2ins { fmt.Println("I have:",i) }
+						fins:=chf.forline2ins[ins.state.openline]
+						chf.fors[fins.state.startfor]=false
+						//fmt.Println("Close FOR #",fins.state.startfor)
 					case "IF","IF block":
 						ret += trans.simpleendif+"\n"
 					case "WHILE","WHILE block":

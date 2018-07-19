@@ -76,15 +76,16 @@ func (s *tsource) performimport(ol *tori) (*tidentifier,string){
 			tar.dttype=dpte.Word
 		} else { ol.throw("Identifier expected for imported "+imptype) }
 		qw+=2
-
-	}
-	if len(ol.sline)>5 {
+	} else { qw=4 }
+	//fmt.Println("Start",qw,len(ol.sline))
+	if len(ol.sline)>4 {
 		if imptype=="VAR" { 
 			ol.throw("Variables do not accept parameters")  // Procedure type variables will (for now) not be importable. Perhaps in the future...
 		} else {
 			wantcomma:=false
 			endless:=false
 			for i:=qw;i<len(ol.sline);i++{				
+				//fmt.Println("Walk",qw,i,len(ol.sline))
 				if wantcomma {
 					if ol.getword(i).Word!="," { ol.throw("Comma expected") }
 					wantcomma=false
@@ -108,6 +109,8 @@ func (s *tsource) performimport(ol *tori) (*tidentifier,string){
 						arn:=dpte.Word
 						ara:=&targ{}
 						ara.argtype=arn
+						ara.arg=&tidentifier{}
+						ara.arg.dttype=dpte.Word
 						tar.args.a = append(tar.args.a,ara)
 						wantcomma=true
 					} else { ol.throw("Type identifier expected for argument for imported "+imptype) }

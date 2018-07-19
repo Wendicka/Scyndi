@@ -52,6 +52,9 @@ type T_TransMod struct {
 	simpleinfloop string
 	simpleuntilloop string
 	simpleendfor string
+	procnoneedbracket bool
+	AltFuncCall func() (string,int) // more stuff to be added later!
+
 }
 
 var TransMod = map[string] *T_TransMod{}
