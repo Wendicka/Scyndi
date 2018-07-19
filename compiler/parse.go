@@ -326,15 +326,15 @@ func (self *tsource) declarechunk(ol *tori) *tchunk{
 							aid.dttype=qt.Word
 							stage=3
 					case 3:
-							if qt.Word!=":" { ol.throw("= expected") }
+							if qt.Word!="=" { ol.throw("= expected") }
 							if !constant { ol.throw("Variable arguments cannot be optional") }
 							stage=4
 							arg.optional=true
 					case 4:
 							ok:=false
-							if (aid.dttype=="VARIANT" || aid.dttype=="STRING") && qt.Wtype=="string"                         { ok=true }
-							if (aid.dttype=="VARIANT" || aid.dttype=="INTEGER" || aid.dttype=="FLOAT") && qt.Wtype=="string" { ok=true }
-							if (aid.dttype=="VARIANT" || aid.dttype=="BOOLEAN") && (qt.Word=="TRUE" && qt.Word=="FALSE")     { ok=true }
+							if (aid.dttype=="VARIANT" || aid.dttype=="STRING") && qt.Wtype=="string"                                                 { ok=true }
+							if (aid.dttype=="VARIANT" || aid.dttype=="INTEGER" || aid.dttype=="FLOAT") && (qt.Wtype=="integer" || qt.Wtype=="float") { ok=true }
+							if (aid.dttype=="VARIANT" || aid.dttype=="BOOLEAN") && (qt.Word=="TRUE" || qt.Word=="FALSE")                             { ok=true }
 							if !ok { ol.throw("Unexpected "+qt.Wtype+": "+qt.Word) }
 							aid.defaultvalue=qt.Word
 					default:

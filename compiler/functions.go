@@ -19,9 +19,10 @@ func (self *tsource) callfunction(c *tchunk, ol *tori, mustreturn bool, funpos i
 	epos++
 	tvargs:=[]string{}
 	ending:=len(id.args.a)+funpos+1
+	nomore:=false
 	// regular paramters
 	for ac,aa:=range id.args.a {
-		pchat(fmt.Sprintf("Processing arg #%d",ac))
+		fmt.Println(fmt.Sprintf("%5d: Processing arg %s #%d  (nomore: %t)",ol.ln,id.translateto,ac,nomore))
 		want:=""
 		switch aa.arg.dttype {
 			case "VARIANT":
@@ -31,18 +32,27 @@ func (self *tsource) callfunction(c *tchunk, ol *tori, mustreturn bool, funpos i
 			default:
 				want=aa.arg.dttype
 		}
-		ep,eu:=self.translateExpressions(want, c, ol,epos,0)
-		tvargs=append(tvargs,eu)
-		epos=ep
-		//fmt.Println(epos,ending)
-		if epos<ending { 
-			c:=ol.sline[epos]
-			if c.Word!="," { 
-				// Define optional paramters if present
-				// else
-				ol.throw("Comma expected") 
-			}
-			epos++
+		if nomore {
+			if !aa.optional { ol.throw("Missing parameter!") }
+			tvargs=append(tvargs,aa.arg.defaultvalue)
+		} else {
+			ep,eu:=self.translateExpressions(want, c, ol,epos,0)
+			tvargs=append(tvargs,eu)
+			epos=ep
+			//fmt.Println(epos,ending)
+			if epos+1>=len(ol.sline) {
+				nomore=true
+			} else if epos<ending { 
+				c:=ol.sline[epos]
+				if c.Word==")" {
+					nomore=true
+				} else if c.Word!="," { 
+					// Define optional paramters if present
+					// else
+					ol.throw("Comma expected") 
+				}
+				epos++
+			} else { nomore = true }
 		}
 	}
 	// Infinite parameters
