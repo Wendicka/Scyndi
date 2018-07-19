@@ -1,0 +1,4 @@
+Program HelloWorld
+Void Main
+	WriteLn "Hello, world!"
+end
