@@ -70,6 +70,44 @@ Function FFRange:Double[](start:Double,eind:Double,steps:Double=1,tu$="to")
 End Function
 `
 
+const arraytype=`Type arrayof<type>
+	Field v:<type>[]
+	Method add(value:<type>)
+		Local l=Len(v)
+		v=v[..L+1]
+		v[l]=value
+	End Method
+	Method remove(index)
+		Local l=Len(v)
+		Local e=l-1
+		If index>e Or index<0 crash "Array index out of range (index requested is: "+index+" while range is 0 till "+e+")"
+		If index=0
+			v=v[1..]
+			Print "Remfirst"
+		ElseIf index=e
+			v=v[..e]
+			Print "RemLast"
+		Else
+			Print "RemMid"+index
+			Local t:Long[] = New Long[e]			
+			For Local i=0 Until l
+				If i<index 
+					t[i]=v[i]
+					Print i+"="+v[i]+"bef"
+				ElseIf i>index
+					t[i-1]=v[i]
+					Print i+"="+v[i]+"aft"
+				EndIf
+			Next
+			v=t
+		EndIf
+	End Method
+	Method sort(ascend=True)
+		v.sort(ascend)
+	End Method
+End Type
+`
+
 func init(){
 
 	
@@ -237,6 +275,9 @@ func init(){
 		bigsource+="function psf_int2str$(a:long  )\n\treturn  \"\"+a\nend function\n"
 		bigsource+="function psf_flt2str$(a:double)\n\treturn  \"\"+a\nend function\n\n"
 		bigsource+=bmxbig+"\n\n"
+		for _,k:=range []string{"LONG","DOUBLE","STRING","BYTE"} {
+			bigsource+=strings.Replace(arraytype,"<type>",k,-1)
+		}
 		for i,us:=range s.used {
 			sumdot(i)
 			doingln("Merging: ",us.srcname)
