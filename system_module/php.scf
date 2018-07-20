@@ -1,0 +1,25 @@
+module system
+
+var phpnlbr:boolean
+
+void Write a:...string
+	purecode "php" "$a=$C{a}C$
+		for ( $i=0;$i<len($a);$i++ ){
+			echo \"$a "
+		}
+	"
+end
+
+void WriteLn a:...string
+	purecode "php" "$a=$C{a}C$;
+		for ( $i=0;$i<len($a);$i++ ){
+			echo \"$a ";
+		}
+		if $C{phpnlbr}C${ echo "<br />" }
+		echo "\n";
+	"
+end
+
+void init
+	phpblbr:=true
+end
