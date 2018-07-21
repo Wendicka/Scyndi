@@ -31,6 +31,7 @@ import (
 			"strings"
 			"trickyunits/qstr"
 			"trickyunits/qff"
+			"trickyunits/mkl"
 )
 
 
@@ -133,6 +134,8 @@ End Type
 `
 
 func init(){
+mkl.Lic    ("Scyndi Programming Language - zztrans-blitzmax.go","GNU General Public License 3")
+mkl.Version("Scyndi Programming Language - zztrans-blitzmax.go","18.07.21")
 
 	
 	TransMod["BlitzMax"] = &T_TransMod {}
@@ -340,6 +343,38 @@ func init(){
 		doingln("Saving: ",outfile)
 		e:=qff.WriteStringToFile(outfile, bigsource)
 		if e!=nil { ethrow(e) }
+	}
+	
+	tmw.createindexvar = func(indexedvariable string,indexedidentifier *tidentifier,sex string) (ivar string,iid *tidentifier){
+		iid = &tidentifier{}
+		if indexedidentifier.dttype=="STRING" {
+			ivar=indexedvariable+"["+sex+"]"
+			iid.translateto=ivar
+			iid.indexed=true
+			iid.dttype="STRING"
+			iid.idtype="VAR"
+			return
+		}
+		st:=strings.Split(indexedidentifier.dttype," ")
+		at:=""
+		for _,t:=range st[1:]{
+			if at!="" { at+=" " }
+			at += t
+		}
+		switch st[0] {
+			case "MAP":
+				throw("Map indexing not yet supported in BlitzMax")
+			case "ARRAY":
+				ivar=indexedvariable+"["+sex+"].Value"
+				// Some more stuff will be needed when more complex stuff comes into play
+				
+				// Make fake identifier
+				iid.translateto=ivar
+				iid.dttype=at
+				iid.indexed=true
+				iid.idtype="VAR"
+		}
+		return
 	}
 	
 	// Merge all code together

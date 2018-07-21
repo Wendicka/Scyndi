@@ -24,6 +24,8 @@ Version: 18.07.21
 */
 package scynt
 
+import "trickyunits/mkl"
+
 type scynt_result struct{
 	success, changed bool
 }
@@ -68,7 +70,7 @@ var operators = []string { // It's very important here, that the longer ones com
 	                      ">",
 	                      "<",
 	                      "+","-","*","/",
-	                      "(",")",
+	                      "(",")","[","]",
 	                      
 	                      ":",
 	                      ",", // Strictly speaking not an operator, but for the splitting routines it'll count as one.
@@ -82,3 +84,9 @@ var TARGET = "Wendicka"
 
 // Compilers will have to define the path here where all the system unit source files can be found for each target.
 var SYSTEMDIR = "" 
+
+
+func init(){
+mkl.Version("Scyndi Programming Language - progconfigvars.go","18.07.21")
+mkl.Lic    ("Scyndi Programming Language - progconfigvars.go","GNU General Public License 3")
+}
