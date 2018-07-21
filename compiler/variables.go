@@ -1,3 +1,27 @@
+/*
+	Scyndi
+	Variable Processing 
+	
+	
+	
+	(c) Jeroen P. Broks, 2018, All rights reserved
+	
+		This program is free software: you can redistribute it and/or modify
+		it under the terms of the GNU General Public License as published by
+		the Free Software Foundation, either version 3 of the License, or
+		(at your option) any later version.
+		
+		This program is distributed in the hope that it will be useful,
+		but WITHOUT ANY WARRANTY; without even the implied warranty of
+		MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+		GNU General Public License for more details.
+		You should have received a copy of the GNU General Public License
+		along with this program.  If not, see <http://www.gnu.org/licenses/>.
+		
+	Exceptions to the standard GNU license are available with Jeroen's written permission given prior 
+	to the project the exceptions are needed for.
+Version: 18.07.21
+*/
 package scynt
 
 import "trickyunits/qstr"
@@ -22,8 +46,14 @@ func (s *tsource) declarevar(line []*tword) (string,tidentifier){
 	if o.Word==":" {
 		if len(line)<3 { return "er:Unexpected end of line. A type for a variable was expected",vr }
 		n:=line[i+1]
-		if !s.validtype(n) { return "er:Invalid variable type. Either an unknown type or invalud type: "+n.Word,vr }
+		if !s.validtype(n) { return "er:Invalid variable type. Either an unknown type or invalid type: "+n.Word,vr }
 		vr.dttype=n.Word
+		for n.Word=="ARRAY" || n.Word=="MAP" {
+			i++
+			n=line[i+1]
+			if !s.validtype(n) { return "er:Invalid variable type for map/array. Either an unknown type or invalid type: "+n.Word,vr }
+			vr.dttype+=" "+n.Word
+		}
 		i+=2
 		vr.defstring = vr.dttype=="STRING"
 	}

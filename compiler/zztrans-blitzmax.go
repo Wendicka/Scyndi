@@ -1,3 +1,27 @@
+/*
+	Scyndi
+	Translate to BlitzMax
+	
+	
+	
+	(c) Jeroen P. Broks, 2018, All rights reserved
+	
+		This program is free software: you can redistribute it and/or modify
+		it under the terms of the GNU General Public License as published by
+		the Free Software Foundation, either version 3 of the License, or
+		(at your option) any later version.
+		
+		This program is distributed in the hope that it will be useful,
+		but WITHOUT ANY WARRANTY; without even the implied warranty of
+		MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+		GNU General Public License for more details.
+		You should have received a copy of the GNU General Public License
+		along with this program.  If not, see <http://www.gnu.org/licenses/>.
+		
+	Exceptions to the standard GNU license are available with Jeroen's written permission given prior 
+	to the project the exceptions are needed for.
+Version: 18.07.21
+*/
 package scynt
 
 
@@ -162,7 +186,21 @@ func init(){
 					case "BOOLEAN": ret +=":Byte"
 					case "FLOAT":   ret +=":Double"
 					case "VARIANT": throw("Variant types not allowed in BlitzMax translation")
-					default:        throw("Alternate types ("+vdata.dttype+") are not yet supported for BlitzMax translation. Please come back later!!")
+					default:        
+									serial:=vdata.dttype
+									sersp:=strings.Split(serial," ")
+									if sersp[0]=="ARRAY"{
+										if len(sersp)<=1 { throw("Array of what?") }
+										switch sersp[1]{
+											case "STRING":	ret += "ArrayOfString";	vdata.defaultvalue="New ArrayOfString"
+											case "INTEGER":	ret += "ArrayOfLong";	vdata.defaultvalue="New ArrayOfLong"
+											case "BOOLEAN":	ret += "ArrayOfByte";	vdata.defaultvalue="New ArrayOfByte"
+											case "FLOAT":	ret += "ArrayOfDouble";	vdata.defaultvalue="New ArrayOfDouble"
+											default:		ret += "ArrayOfObject";	vdata.defaultvalue="New ArrayOfObject"
+										}
+									} else {
+										throw("Alternate types ("+vdata.dttype+") are not yet supported for BlitzMax translation. Please come back later!!")
+									}
 				}
 				ret += " = "
 				if vdata.defstring { ret += "\""+vdata.defaultvalue+"\"\n" } else { ret+=vdata.defaultvalue+"\n" }
@@ -275,7 +313,7 @@ func init(){
 		bigsource+="function psf_int2str$(a:long  )\n\treturn  \"\"+a\nend function\n"
 		bigsource+="function psf_flt2str$(a:double)\n\treturn  \"\"+a\nend function\n\n"
 		bigsource+=bmxbig+"\n\n"
-		for _,k:=range []string{"LONG","DOUBLE","STRING","BYTE"} {
+		for _,k:=range []string{"LONG","DOUBLE","STRING","BYTE","OBJECT"} {
 			bigsource+=strings.Replace(arraytype,"<type>",k,-1)
 		}
 		for i,us:=range s.used {

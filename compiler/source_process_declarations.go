@@ -1,3 +1,27 @@
+/*
+	Scyndi
+	Souce Progress Declarations
+	
+	
+	
+	(c) Jeroen P. Broks, 2018, All rights reserved
+	
+		This program is free software: you can redistribute it and/or modify
+		it under the terms of the GNU General Public License as published by
+		the Free Software Foundation, either version 3 of the License, or
+		(at your option) any later version.
+		
+		This program is distributed in the hope that it will be useful,
+		but WITHOUT ANY WARRANTY; without even the implied warranty of
+		MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+		GNU General Public License for more details.
+		You should have received a copy of the GNU General Public License
+		along with this program.  If not, see <http://www.gnu.org/licenses/>.
+		
+	Exceptions to the standard GNU license are available with Jeroen's written permission given prior 
+	to the project the exceptions are needed for.
+Version: 18.07.21
+*/
 package scynt
 
 import (
@@ -22,6 +46,8 @@ type targs struct {
 type tidentifier struct {
 	imported bool
 	private bool
+	indexed bool // normally alwas false, but could be used to clarify we're talking about a member of a map or array here
+	indexedfrom string // Should if indexed is true contain a half translated string the identifier getter could easily transform if needed.
 	idtype string // function, procedure, type, constant, variable, sourcegroup(either program, module, script)
 	dttype string // data type string, int etc. (for variables and functions returning values)
 	defaultvalue string

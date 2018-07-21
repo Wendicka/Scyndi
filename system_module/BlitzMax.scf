@@ -5,6 +5,7 @@ var
 	test:string="lul"
 end}
 
+ 
 
 void Write a:...string
 	purecode "BlitzMax","For local a = Eachin $C{A}C$ "
