@@ -37,10 +37,17 @@ var sourcefile string
 var outputpath string
 
 func init(){
+mkl.Version("Scyndi Programming Language - main.go","18.07.21")
+mkl.Lic    ("Scyndi Programming Language - main.go","GNU General Public License 3")
 	nonl:=flag.Bool("sco",false,"If set new lines will not count as the end of an instruction and all instructions will have to be ended with a semi-colon")
 	trgt:=flag.String("target","Wendicka","Set the target to translate to. (Supported targets: "+Scyndi.TargetsSupported()+")")
 	outp:=flag.String("o","","Output file/dir. Please note that the output effect can be different depending on the chosen target")
+	ver :=flag.Bool("version",false,"Show version information of all used source files to build Scorpion")
 	flag.Parse()
+	if *ver {
+		fmt.Println(mkl.ListAll())
+		os.Exit(0)
+	}
 	// configure
 	Scyndi.NLSEP = !*nonl
 	Scyndi.TARGET = *trgt
@@ -48,8 +55,6 @@ func init(){
 	outputpath=*outp
 	myargs:=flag.Args()
 	if len(myargs)>=1 { sourcefile=myargs[0] }
-mkl.Version("Scyndi Programming Language - main.go","18.07.21")
-mkl.Lic    ("Scyndi Programming Language - main.go","GNU General Public License 3")
 }
 
 func Copyright(){
