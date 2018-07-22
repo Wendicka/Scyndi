@@ -20,7 +20,7 @@
 		
 	Exceptions to the standard GNU license are available with Jeroen's written permission given prior 
 	to the project the exceptions are needed for.
-Version: 18.07.21
+Version: 18.07.22
 */
 package scynt
 
@@ -144,14 +144,13 @@ func defaultexpressiontranslation(expect string,source *tsource, c *tchunk, ol *
 			if sexi.Word=="]" { break }
 			if sexi.Word=="[" {
 				sex:="" // sub-expression! (what the hell where you thinking?)
-				if indexedvariable=="" || indexedidentifier!=nil { ol.throw("Tried to index unindexable identifier") }
+				if indexedvariable=="" || indexedidentifier==nil { ol.throw("Tried to index unindexable identifier") }
 				if indexedidentifier.dttype=="STRING" && expect=="identifier" { ol.throw("String slicing can not be used this way") }
-				if indexedidentifier.dttype=="STRING" || qstr.Prefixed(indexedidentifier.dttype,"ARRAY") { endpos,sex = defaultexpressiontranslation("integer",source, c , ol,endpos,level+1) }
-				if qstr.Prefixed(indexedidentifier.dttype,"MAP") { endpos,sex = defaultexpressiontranslation("string",source, c , ol,endpos,level+1) }
+				if indexedidentifier.dttype=="STRING" || qstr.Prefixed(indexedidentifier.dttype,"ARRAY") { endpos,sex = defaultexpressiontranslation("integer",source, c , ol,endpos+1,level+1) }
+				if qstr.Prefixed(indexedidentifier.dttype,"MAP") { endpos,sex = defaultexpressiontranslation("string",source, c , ol,endpos+1,level+1) }
 				tsexi:=ol.sline[endpos]
 				if tsexi.Word!="]" { ol.throw("\"]\" expected at the end of the index") }
 				if indexnext(ol,endpos+1) {
-
 					indexedvariable,indexedidentifier = trans.createindexvar(indexedvariable,indexedidentifier,sex)
 				} else {
 					ex+=indexedvariable
@@ -202,5 +201,5 @@ func (s *tsource) translateExpressions(expect string, c *tchunk, ol *tori,start,
 
 func init(){
 mkl.Lic    ("Scyndi Programming Language - expressions.go","GNU General Public License 3")
-mkl.Version("Scyndi Programming Language - expressions.go","18.07.21")
+mkl.Version("Scyndi Programming Language - expressions.go","18.07.22")
 }
