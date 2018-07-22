@@ -45,6 +45,7 @@ mkl.Lic    ("Scyndi Programming Language - main.go","GNU General Public License 
 	ver :=flag.Bool("version",false,"Show version information of all used source files to build Scorpion")
 	flag.Parse()
 	if *ver {
+		Copyright()
 		fmt.Println(mkl.ListAll())
 		os.Exit(0)
 	}
