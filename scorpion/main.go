@@ -20,7 +20,7 @@
 		
 	Exceptions to the standard GNU license are available with Jeroen's written permission given prior 
 	to the project the exceptions are needed for.
-Version: 18.07.21
+Version: 18.07.22
 */
 package main
 
@@ -37,7 +37,7 @@ var sourcefile string
 var outputpath string
 
 func init(){
-mkl.Version("Scyndi Programming Language - main.go","18.07.21")
+mkl.Version("Scyndi Programming Language - main.go","18.07.22")
 mkl.Lic    ("Scyndi Programming Language - main.go","GNU General Public License 3")
 	nonl:=flag.Bool("sco",false,"If set new lines will not count as the end of an instruction and all instructions will have to be ended with a semi-colon")
 	trgt:=flag.String("target","Wendicka","Set the target to translate to. (Supported targets: "+Scyndi.TargetsSupported()+")")
