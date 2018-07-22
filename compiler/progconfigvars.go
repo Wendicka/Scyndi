@@ -20,7 +20,7 @@
 		
 	Exceptions to the standard GNU license are available with Jeroen's written permission given prior 
 	to the project the exceptions are needed for.
-Version: 18.07.21
+Version: 18.07.22
 */
 package scynt
 
@@ -47,7 +47,7 @@ var keywords = []string {"PROGRAM","SCRIPT","MODULE","UNIT", // UNIT WILL AUTOMA
 						"AND","OR", "NOT",
 						"END","BEGIN", // Begin will only be used as an alias for VOID MAIN in a program and VOID INIT in scripts and modules. So its function is NOT the same as in Pascal, although making it into a quick keyword WAS inpired by Pascal :P
 						"PRIVATE","PUBLIC",
-						"VAR","CONST","OPTION","TYPE",
+						"VAR","CONST","ENUM","OPTION","TYPE",
 						"INTEGER","FLOAT","STRING","BOOLEAN","MAP","ARRAY","VARIANT",
 						"IMPORT","INCLUDE","USE",
 						"OPTION","SUPPORT","PURECODE",
@@ -87,6 +87,6 @@ var SYSTEMDIR = ""
 
 
 func init(){
-mkl.Version("Scyndi Programming Language - progconfigvars.go","18.07.21")
+mkl.Version("Scyndi Programming Language - progconfigvars.go","18.07.22")
 mkl.Lic    ("Scyndi Programming Language - progconfigvars.go","GNU General Public License 3")
 }
