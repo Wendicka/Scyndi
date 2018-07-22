@@ -20,7 +20,7 @@
 		
 	Exceptions to the standard GNU license are available with Jeroen's written permission given prior 
 	to the project the exceptions are needed for.
-Version: 18.07.21
+Version: 18.07.22
 */
 package scynt
 
@@ -403,8 +403,8 @@ func (self *tsource) declarechunk(ol *tori) *tchunk{
 // Organising the code blocks
 func (self *tsource) Organize(){
 	var mychunk  *tchunk
-	agroundkeys:=[]string{"BEGIN","VOID","PROCEDURE","PROC","FUNC","FUNCTION","DEF","VAR","TYPE","USE","XUSE","PRIVATE","PUBLIC","IMPORT"} // On "ground level" only these keywords are allowed.
-	ogroundkeys:=[]string{"BEGIN","VOID","PROCEDURE","PROC","FUNC","FUNCTION","DEF","TYPE","USE","XUSE","PRIVATE","PUBLIC","IMPORT"}       // These keywords are ONLY allowed on "ground level".
+	agroundkeys:=[]string{"BEGIN","VOID","PROCEDURE","PROC","FUNC","FUNCTION","DEF","VAR","TYPE","USE","XUSE","PRIVATE","PUBLIC","IMPORT","CONST","ENUM"} // On "ground level" only these keywords are allowed.
+	ogroundkeys:=[]string{"BEGIN","VOID","PROCEDURE","PROC","FUNC","FUNCTION","DEF","TYPE","USE","XUSE","PRIVATE","PUBLIC","IMPORT","CONST","ENUM"}       // These keywords are ONLY allowed on "ground level".
 	ltype:="ground"
 	doing("Organising: ",self.filename)
 	self.levels=[]*tstatementspot{}
@@ -435,6 +435,15 @@ func (self *tsource) Organize(){
 					case "END": ol.throw("Unexpected END") 
 					case "PRIVATE": self.private=true;  if len(sl)>1 { ol.throw("PRIVATE takes no parameters") }
 					case "PUBLIC":  self.private=false; if len(sl)>1 { ol.throw("PUBLIC takes no parameters") }
+					case "CONST":
+						if len(sl)!=1 { self.defconst(sl[1:]) } else { 
+							ltype="const" 
+							self.levels=append(self.levels,&tstatementspot{ol.ln,"Constant definition block",0})
+						}
+					case "ENUM":
+						self.enumstart(ol)
+						ltype="enum"
+						self.levels=append(self.levels,&tstatementspot{ol.ln,"ENUM block",0})
 					case "IMPORT":
 						id,name:=self.performimport(ol)
 						if _,ok:=self.identifiers[name];ok { ol.throw("Duplicate identifier by import request") }
@@ -464,6 +473,21 @@ func (self *tsource) Organize(){
 						}
 					default:
 						ol.throw("Unexpected "+pt.Word+"!! (Very likely a bug in the Scyndi compiler! Please report!)")
+				}
+			} else if ltype=="enum" {
+				if pt.Word=="END" {
+					self.levels=self.levels[:len(self.levels)-1]
+					ltype="ground"
+				} else {
+					self.enumid(ol)
+				}
+			} else if ltype=="const" {
+				if pt.Word=="END" {
+					self.levels=self.levels[:len(self.levels)-1]
+					pchat("CONST-block ended on line "+fmt.Sprintf("%5d",ol.ln))
+					ltype="ground"
+				} else {
+					self.defconst(sl)
 				}
 			} else if ltype=="var" {
 				if pt.Word=="END" {
