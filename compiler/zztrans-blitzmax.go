@@ -20,7 +20,7 @@
 		
 	Exceptions to the standard GNU license are available with Jeroen's written permission given prior 
 	to the project the exceptions are needed for.
-Version: 18.07.21
+Version: 18.07.22
 */
 package scynt
 
@@ -135,7 +135,7 @@ End Type
 
 func init(){
 mkl.Lic    ("Scyndi Programming Language - zztrans-blitzmax.go","GNU General Public License 3")
-mkl.Version("Scyndi Programming Language - zztrans-blitzmax.go","18.07.21")
+mkl.Version("Scyndi Programming Language - zztrans-blitzmax.go","18.07.22")
 
 	
 	TransMod["BlitzMax"] = &T_TransMod {}
@@ -182,7 +182,11 @@ mkl.Version("Scyndi Programming Language - zztrans-blitzmax.go","18.07.21")
 		for vname,vdata:=range src.identifiers {
 			if vdata.idtype=="VAR" {
 				if src.orilinerem { ret += "\t\t' VAR "+vname+"\n"}
-				ret += "Global "+vdata.translateto
+				if vdata.constant{
+					ret += "Const "+vdata.translateto
+				} else {
+					ret += "Global "+vdata.translateto
+				}
 				switch vdata.dttype {
 					case "STRING":  ret +=":String"
 					case "INTEGER": ret +=":Long"
@@ -346,6 +350,7 @@ mkl.Version("Scyndi Programming Language - zztrans-blitzmax.go","18.07.21")
 	}
 	
 	tmw.createindexvar = func(indexedvariable string,indexedidentifier *tidentifier,sex string) (ivar string,iid *tidentifier){
+		doingln("Indexing: ",indexedvariable) // debug
 		iid = &tidentifier{}
 		if indexedidentifier.dttype=="STRING" {
 			ivar=indexedvariable+"["+sex+"]"
@@ -365,7 +370,8 @@ mkl.Version("Scyndi Programming Language - zztrans-blitzmax.go","18.07.21")
 			case "MAP":
 				throw("Map indexing not yet supported in BlitzMax")
 			case "ARRAY":
-				ivar=indexedvariable+"["+sex+"].Value"
+				ivar=indexedvariable+".V["+sex+"]"
+				doingln("Created: ",ivar)
 				// Some more stuff will be needed when more complex stuff comes into play
 				
 				// Make fake identifier
