@@ -20,7 +20,7 @@
 		
 	Exceptions to the standard GNU license are available with Jeroen's written permission given prior 
 	to the project the exceptions are needed for.
-Version: 18.07.21
+Version: 18.07.23
 */
 package scynt
 import(
@@ -142,8 +142,12 @@ func (self *tsource)  translatefunctions() string{
 					nxt:=ol.sline[pos]
 					switch nxt.Word{
 						case "++":
+							if rti.dttype!="INTEGER" && rti.dttype!="FLOAT" { ol.throw("Incorrect increment type") }
+							if rti.idtype!="VAR" || rti.constant { ol.throw("I can only use ++ on variables") }
 							ret+=trans.plusone(idname)+"\n"
 						case "--":
+							if rti.idtype!="VAR" || rti.constant { ol.throw("I can only use -- on variables") }
+							if rti.dttype!="INTEGER" && rti.dttype!="FLOAT" { ol.throw("Incorrect deccrement type") }
 							ret+=trans.minusone(idname)+"\n"
 						case ":+","+=":
 							ol.throw(":+/+= altering not yet supported! (coming soon)")
