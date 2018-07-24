@@ -20,7 +20,7 @@
 		
 	Exceptions to the standard GNU license are available with Jeroen's written permission given prior 
 	to the project the exceptions are needed for.
-Version: 18.07.22
+Version: 18.07.24
 */
 package scynt
 
@@ -28,6 +28,7 @@ import (
 		"trickyunits/qff"
 jcr		"trickyunits/jcr6/jcr6main"
 		"trickyunits/qstr"
+		"trickyunits/mkl"
 
 		"strings"
 		"fmt"
@@ -346,6 +347,9 @@ func (self *tsource) declarechunk(ol *tori) *tchunk{
 					case 2:
 							if qt.Word=="..." {
 								endless=true
+								//aid.endless=true
+								args.a=args.a[:len(args.a)-1]
+								args.endless=arg
 							} else if qt.Word!="STRING" && qt.Word!="INTEGER" && qt.Word!="BOOLEAN" && qt.Word!="FLOAT" && qt.Word!="VARIANT" {
 								ol.throw("Unknown type: "+qt.Word)
 								aid.dttype=qt.Word
@@ -543,10 +547,13 @@ func CompileFile(file string,t string) (string, *tsource) {
 
 func (self *tsource) Translate() string {
 	doingln("Sorting out dependencies for translating: ",self.filename)
-	trans:=TransMod[TARGET]
+	trans,present:=TransMod[TARGET]
+	if !present { throw("Target "+TARGET+" is not supported") }
 	//trans.NameIdentifiers(self)
 	blocks:=map[string]string{}
-	if trans.SealBlocks!=nil { trans.SealBlocks(&blocks) }
+	if trans.SealBlocks!=nil { 
+		trans.SealBlocks(&blocks) 
+	}
 	blocks["USE"]=""
 	useblock(TransMod,self,&blocks)
 	doingln("Translating: ",self.filename)
@@ -559,4 +566,9 @@ func (self *tsource) SaveTranslation(strans,outputpath string) {
 	doingln("Saving: ","Translation")
 	trans:=TransMod[TARGET]
 	trans.savetrans(self,strans,outputpath)
+}
+
+func init(){
+mkl.Lic    ("Scyndi Programming Language - parse.go","GNU General Public License 3")
+mkl.Version("Scyndi Programming Language - parse.go","18.07.24")
 }
