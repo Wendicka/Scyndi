@@ -4,6 +4,7 @@ test*
 bin
 !bin/readme.md
 *scyndi.translation*
+*.lua
 okki
 okki.o
 *.goi*
