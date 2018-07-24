@@ -20,7 +20,7 @@
 		
 	Exceptions to the standard GNU license are available with Jeroen's written permission given prior 
 	to the project the exceptions are needed for.
-Version: 18.07.22
+Version: 18.07.24
 */
 package scynt
 
@@ -125,10 +125,14 @@ type tchunk struct {
 	locals map[string]*tidentifier
 	args *targs
 	returntype string
+	xreturn string
+	varpars []int
+	retsincelastend bool
 	from *tori
 	forid map[string]*tidentifier
 	fors map[int] bool
 	forline2ins map[int]*tinstruction
+	endless bool
 
 }
 
