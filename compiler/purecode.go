@@ -20,13 +20,14 @@
 		
 	Exceptions to the standard GNU license are available with Jeroen's written permission given prior 
 	to the project the exceptions are needed for.
-Version: 18.07.21
+Version: 18.07.24
 */
 package scynt
 
 import(
 //		"fmt"
 		"strings"
+		"trickyunits/mkl"
 )
 
 func purecode(s *tsource,c *tchunk,ol *tori) string {
@@ -36,7 +37,7 @@ func purecode(s *tsource,c *tchunk,ol *tori) string {
 		fmt.Println(i,"\t",w.Wtype,"\t",w.Word)
 	}
 	// */
-	if len(ol.sline)!=4 { ol.throw("Invalid PURCODE instruction") }
+	if len(ol.sline)!=4 { ol.throw("Invalid PURECODE instruction") }
 	tar:=ol.sline[1]
 	comma:=ol.sline[2]
 	code:=ol.sline[3]
@@ -59,4 +60,9 @@ func purecode(s *tsource,c *tchunk,ol *tori) string {
 	}
 	
 	return ret
+}
+
+func init(){
+mkl.Lic    ("Scyndi Programming Language - purecode.go","GNU General Public License 3")
+mkl.Version("Scyndi Programming Language - purecode.go","18.07.24")
 }
