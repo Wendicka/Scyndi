@@ -1,0 +1,14 @@
+module System
+
+
+import "string.char" function chr:string integer
+
+void Write t:...string
+	PureCode "Lua","for i,tx in scynipairs($C{T}C$) do\n\t\tio.write(tx)\n\t\tif i~=#$C{T}C$ then io.write(\" \") end\n\tend\n"
+end
+
+void WriteLn t:...string
+	PureCode "Lua","for i,tx in scynipairs($C{T}C$) do\n\t\tio.write(tx)\n\t\tif i~=#$C{T}C$ then io.write(\" \") end\n\tend\n\tio.write(string.char(10))\n"
+end
+
+

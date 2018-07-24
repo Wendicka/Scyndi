@@ -50,6 +50,7 @@ func bmx_transtype(dttype string,o *tori) string{
 
 const bmxbig=`Function CRASH(A$) 
 	Print("Scyndi-RuntimeError:~t"+A) 
+	end
 End Function
 	
 Function FIRange:Long[](start:Long,eind:Long,steps:Long=1,tu$="to")
@@ -373,7 +374,7 @@ mkl.Version("Scyndi Programming Language - zztrans-blitzmax.go","18.07.24")
 	}
 	
 	tmw.createindexvar = func(indexedvariable string,indexedidentifier *tidentifier,sex string) (ivar string,iid *tidentifier){
-		doingln("Indexing: ",indexedvariable) // debug
+		//doingln("Indexing: ",indexedvariable) // debug
 		iid = &tidentifier{}
 		if indexedidentifier.dttype=="STRING" {
 			ivar=indexedvariable+"["+sex+"]"
@@ -431,7 +432,7 @@ mkl.Version("Scyndi Programming Language - zztrans-blitzmax.go","18.07.24")
 		return ret
 	}
 	
-	tmw.FuncEndless = func(s *tsource,ol *tori,epos *int,a *targ ,retargs []string) (ret []string) {
+	tmw.FuncEndless = func(s *tsource,ol *tori,c *tchunk, epos *int,a *targ ,retargs []string) (ret []string) {
 		ol.throw("BlitzMax cannot support endless arguments properly")
 		/*
 		ret=retargs

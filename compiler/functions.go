@@ -20,7 +20,7 @@
 		
 	Exceptions to the standard GNU license are available with Jeroen's written permission given prior 
 	to the project the exceptions are needed for.
-Version: 18.07.23
+Version: 18.07.24
 */
 package scynt
 import(
@@ -80,8 +80,9 @@ func (self *tsource) callfunction(c *tchunk, ol *tori, mustreturn bool, funpos i
 		}
 	}
 	// Infinite parameters
-	
-	
+	if id.args.endless!=nil{
+		tvargs=trans.FuncEndless(self,ol,c,&epos,id.args.endless,tvargs)
+	}
 	cf=id.translateto
 	if mustreturn || (!trans.procnoneedbracket) { cf +="(" } else {cf +=" "}
 	for ai,at:=range tvargs{
@@ -89,6 +90,7 @@ func (self *tsource) callfunction(c *tchunk, ol *tori, mustreturn bool, funpos i
 		if ai!=0 { cf += ", " }
 		cf += at
 	}
+	if mustreturn || (!trans.procnoneedbracket) { cf +=")" } 
 	
 	return 
 }
