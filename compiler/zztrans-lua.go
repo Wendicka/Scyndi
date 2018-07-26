@@ -20,7 +20,7 @@
 		
 	Exceptions to the standard GNU license are available with Jeroen's written permission given prior 
 	to the project the exceptions are needed for.
-Version: 18.07.24
+Version: 18.07.26
 */
 package scynt
 
@@ -49,8 +49,23 @@ end
 		end
 	end
 	
-	function i2scyntab(a)
+	function scynmpairs(a)
 		if type(a)~="table" then CRASH("Table expected for iteration!") end
+		local tk = {}
+		local tv = {}
+		for k,v in pairs(a) do
+			tk[#tk+1]=k
+			tv[#tv+1]=v
+		end
+		i=0
+		return function()
+			i=i+1
+			return tk[i],tv[i]
+		end
+	end
+	
+	function i2scyntab(a)
+		if type(a)~="table" then CRASH("Table expected for conversion!") end
 		ret = {}
 		for i=1,#a do ret[i-1]=a[i] end
 		return ret
@@ -72,7 +87,7 @@ end
 
 func init(){
 mkl.Lic    ("Scyndi Programming Language - zztrans-lua.go","GNU General Public License 3")
-mkl.Version("Scyndi Programming Language - zztrans-lua.go","18.07.24")
+mkl.Version("Scyndi Programming Language - zztrans-lua.go","18.07.26")
 
 	
 	TransMod["Lua"] = &T_TransMod {}
@@ -414,6 +429,17 @@ mkl.Version("Scyndi Programming Language - zztrans-lua.go","18.07.24")
 		wto:="To"
 		if fortype=="FORU" { wto="Until" }
 		ret:= fmt.Sprintf("for %s in forloop(%s,%s,%s,'%s') do",index.translateto,sxu,exu,step,wto)
+		return ret
+	}
+	
+	tmw.startforeach = func(eachi, fkey,fvalue *tidentifier,arrayORmap string,self *tsource,chf *tchunk,ol *tori) string{
+		f:=""
+		switch arrayORmap{
+			case "array":	f="scynipairs"
+			case "map":		f="scynmpairs"
+			default:		ol.throw("Internal error! ForEach misdefinition! ("+arrayORmap+"). Please report!")
+		}
+		ret:=fmt.Sprintf("for %s,%s in %s(%s) do ",fkey.translateto,fvalue.translateto,f,eachi.translateto)
 		return ret
 	}
 

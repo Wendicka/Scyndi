@@ -20,7 +20,7 @@
 		
 	Exceptions to the standard GNU license are available with Jeroen's written permission given prior 
 	to the project the exceptions are needed for.
-Version: 18.07.24
+Version: 18.07.26
 */
 package scynt
 
@@ -145,7 +145,7 @@ End Type
 
 func init(){
 mkl.Lic    ("Scyndi Programming Language - zztrans-blitzmax.go","GNU General Public License 3")
-mkl.Version("Scyndi Programming Language - zztrans-blitzmax.go","18.07.24")
+mkl.Version("Scyndi Programming Language - zztrans-blitzmax.go","18.07.26")
 
 	
 	TransMod["BlitzMax"] = &T_TransMod {}

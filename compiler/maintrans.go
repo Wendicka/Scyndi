@@ -20,7 +20,7 @@
 		
 	Exceptions to the standard GNU license are available with Jeroen's written permission given prior 
 	to the project the exceptions are needed for.
-Version: 18.07.24
+Version: 18.07.26
 */
 package scynt
 
@@ -50,6 +50,7 @@ type T_TransMod struct {
 	FuncHeader func(s *tsource,ch *tchunk) string
 	EndFunc func(s *tsource,ch *tchunk,trueend bool) string
 	StartFor func(fortype string,index *tidentifier,sxu,exu,step string,stepconstant bool) string
+	startforeach func(eachi, fkey,fvalue *tidentifier,arrayORmap string,self *tsource,chf *tchunk,ol *tori) string
 	savetrans func(s *tsource,trans, outp string)
 	plusone func(i interface{}) string
 	minusone func(i interface{}) string
@@ -109,7 +110,7 @@ func TargetsSupported() string {
 
 func init(){
 mkl.Lic    ("Scyndi Programming Language - maintrans.go","GNU General Public License 3")
-mkl.Version("Scyndi Programming Language - maintrans.go","18.07.24")
+mkl.Version("Scyndi Programming Language - maintrans.go","18.07.26")
 
 	dfo:=&defoperators
 	for _,k := range ([]string{"==","+","-","/","*","^","!=","<",">"}){

@@ -20,7 +20,7 @@
 		
 	Exceptions to the standard GNU license are available with Jeroen's written permission given prior 
 	to the project the exceptions are needed for.
-Version: 18.07.24
+Version: 18.07.26
 */
 package scynt
 
@@ -129,7 +129,7 @@ type tchunk struct {
 	varpars []int
 	retsincelastend bool
 	from *tori
-	forid map[string]*tidentifier
+	forid map[int] map[string]*tidentifier
 	fors map[int] bool
 	forline2ins map[int]*tinstruction
 	endless bool
@@ -170,9 +170,12 @@ type tsource struct {
 func (s *tsource) GetIdentifier(name string,c *tchunk, o *tori) *tidentifier {
 	var ret *tidentifier
 	if c!=nil {
-		flv:=c.forid
-		if fv,fok:=flv[name]; fok {
-			for i,b:=range c.fors{
+		//flv:=c.forid
+		//if fv,fok:=flv[name]; fok {
+		//	for i,b:=range c.fors{
+		for i,flv:=range c.forid {
+			b:=c.fors[i]
+			if fv,fok:=flv[name]; fok {
 				if b && strings.HasPrefix(fv.translateto,fmt.Sprintf("SCYNDI_FOR%X_",i)) { return fv }
 			}
 		}

@@ -20,10 +20,12 @@
 		
 	Exceptions to the standard GNU license are available with Jeroen's written permission given prior 
 	to the project the exceptions are needed for.
-Version: 18.07.24
+Version: 18.07.26
 */
 package scynt
 import(
+//							"trickyunits/qstr"
+							"trickyunits/mkl"
 							"strings"
 							"fmt"
 )
@@ -100,7 +102,7 @@ func (self *tsource)  translatefunctions() string{
 	ret:=trans.FuncHeaderRem()
 	for _,chf := range self.chunks {
 		ended:=false
-		chf.forid = map[string]*tidentifier{}
+		chf.forid = map[int] map[string]*tidentifier {}
 		chf.fors  = map[int]bool{}
 		chf.forline2ins = map[int]*tinstruction{}
 		ret += trans.FuncHeader(self,chf)
@@ -190,6 +192,62 @@ func (self *tsource)  translatefunctions() string{
 					ol.throw("Separator expected") 
 				}
 				ret+=fmt.Sprintf(trans.simplewhile,exu)+"\n"
+			} else if pt.Word=="FOREACH" {
+				fortotal++
+				chf.forline2ins[ol.ln]=ins
+				//exp,eache:=self.translateExpressions("chain", chf, ol,1,0)
+				exp:=1
+				eache:=ol.getword(exp)
+				if eache.Wtype!="identifier" { ol.throw("identifier expected as chainvar") }
+				eachi:=self.GetIdentifier(eache.Word,chf,ol)
+				exp++
+				if exp>=len(ol.sline) { ol.throw("FOREACH without iteration variables") }
+				if ol.sline[exp].Word!="," { ol.throw("Comma expected") }
+				exp++
+				a1:=ol.getword(exp)
+				if a1.Wtype!="identifier" { ol.throw("identifier expected as key var") }
+				var a2 *tword
+				if exp<len(ol.sline) { 
+					exp++
+					if ol.sline[exp].Word!="," { ol.throw("Comma or separator expected") }
+					exp++
+					a2=ol.getword(exp)
+					if a1.Wtype!="identifier" { ol.throw("identifier expected as value var") }
+				}
+				eacht:=eachi.dttype
+				tsplit:=strings.Split(eacht," ")
+				fkey:=&tidentifier {} //self.declarevar(div)
+				fval:=&tidentifier {} //self.declarevar(div)
+				fkey.idtype="VAR"
+				fkey.translateto=fmt.Sprintf("SCYNDI_FOR%X_KEY",fortotal)
+				fval.translateto=fmt.Sprintf("SCYNDI_FOR%X_VAL",fortotal)
+				if _,ok:=chf.forid[fortotal];!ok { chf.forid[fortotal] = map[string]*tidentifier {} }
+				chf.fors[fortotal]=true
+				switch tsplit[0]{
+					case "STRING":
+						ol.throw("Stringsplace FOREACH not yet supported, but it IS planned")
+					case "ARRAY":
+						fkey.dttype="INTEGER"
+						if a2==nil { 
+							chf.forid[fortotal][a1.Word]=fval
+						} else {
+							chf.forid[fortotal][a1.Word]=fkey
+							chf.forid[fortotal][a2.Word]=fval
+							//fmt.Println(a1.Word," becomes ",fkey.translateto," in ",fortotal)
+						}
+						ret += trans.startforeach(eachi,fkey,fval,"array",self,chf,ol)+"\n"
+					case "MAP":
+						fkey.dttype="STRING"
+						if a2==nil { 
+							chf.forid[fortotal][a1.Word]=fkey
+						} else {
+							chf.forid[fortotal][a1.Word]=fkey
+							chf.forid[fortotal][a2.Word]=fval
+						}
+						ret += trans.startforeach(eachi,fkey,fval,"map",self,chf,ol)+"\n"
+					default: ol.throw(eacht+" is not a valid type to use for FOREACH")
+				}
+				
 			} else if pt.Word=="FOR" || pt.Word=="FORU" {
 				fortotal++
 				chf.forline2ins[ol.ln]=ins
@@ -255,7 +313,8 @@ func (self *tsource)  translatefunctions() string{
 				div:=[]*tword{&dname,&ddpnt,&dtype}
 				_,index:=self.declarevar(div)
 				index.translateto=fmt.Sprintf("SCYNDI_FOR%X_INDEX",fortotal)
-				chf.forid[indexn]=&index
+				if _,ok:=chf.forid[fortotal];!ok { chf.forid[fortotal] = map[string]*tidentifier {} }
+				chf.forid[fortotal][indexn]=&index
 				ins.state.startfor=fortotal
 				chf.fors[fortotal]=true
 				ret+=trans.StartFor(pt.Word,&index,sxu,exu,step,stepconstant)+"\n"
@@ -315,4 +374,9 @@ func (self *tsource)  translatefunctions() string{
 		}
 	}
 	return ret // I must have this asa temp measyre or Go won't work (figures).
+}
+
+func init(){
+mkl.Version("Scyndi Programming Language - functions.go","18.07.26")
+mkl.Lic    ("Scyndi Programming Language - functions.go","GNU General Public License 3")
 }
