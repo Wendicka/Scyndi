@@ -20,7 +20,7 @@
 		
 	Exceptions to the standard GNU license are available with Jeroen's written permission given prior 
 	to the project the exceptions are needed for.
-Version: 18.07.24
+Version: 18.07.29
 */
 package scynt
 
@@ -54,6 +54,7 @@ var keywords = []string {"PROGRAM","SCRIPT","MODULE","UNIT", // UNIT WILL AUTOMA
 						"TRUE","FALSE","NEW",
 						"MOD",
 						"NIL", 
+						"RETURN",
 					}
 					
 var operators = []string { // It's very important here, that the longer ones come first and the smaller ones later, or things might go wrong here.
@@ -88,6 +89,6 @@ var SYSTEMDIR = ""
 var TARDIR = ""
 
 func init(){
-mkl.Version("Scyndi Programming Language - progconfigvars.go","18.07.24")
+mkl.Version("Scyndi Programming Language - progconfigvars.go","18.07.29")
 mkl.Lic    ("Scyndi Programming Language - progconfigvars.go","GNU General Public License 3")
 }
