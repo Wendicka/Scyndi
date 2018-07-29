@@ -20,7 +20,7 @@
 		
 	Exceptions to the standard GNU license are available with Jeroen's written permission given prior 
 	to the project the exceptions are needed for.
-Version: 18.07.29
+Version: 18.07.30
 */
 package scynt
 import(
@@ -41,6 +41,7 @@ func (self *tsource) callfunction(c *tchunk, ol *tori, mustreturn bool, funpos i
 	trans:=TransMod[TARGET]
 	if trans.AltFuncCall!=nil { return trans.AltFuncCall() }
 	id:=rti
+	//doing("Call to ",id.translateto)
 	if id.idtype!="PROCEDURE" && id.idtype!="FUNCTION" { ol.throw(rtt+" cannot be called as a function") }
 	epos++
 	//if mustreturn { epos++ } // ignore bracket we don't need here.
@@ -177,6 +178,10 @@ func (self *tsource)  translatefunctions() string{
 							ret+=scall+"\n"
 							pchat(fmt.Sprintf("%d",spos)) // just compiler distraction... for now
 					}
+				} else {
+					scall,spos:=self.callfunction(chf,ol,false,0)
+					ret+=scall+"\n"
+					pchat(fmt.Sprintf("%d",spos)) // just compiler distraction... for now
 				}
 			} else if pt.Word=="RETURN" {
 				returned=true
@@ -404,6 +409,6 @@ func (self *tsource)  translatefunctions() string{
 }
 
 func init(){
-mkl.Version("Scyndi Programming Language - functions.go","18.07.29")
+mkl.Version("Scyndi Programming Language - functions.go","18.07.30")
 mkl.Lic    ("Scyndi Programming Language - functions.go","GNU General Public License 3")
 }
