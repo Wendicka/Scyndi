@@ -20,7 +20,7 @@
 		
 	Exceptions to the standard GNU license are available with Jeroen's written permission given prior 
 	to the project the exceptions are needed for.
-Version: 18.07.22
+Version: 18.07.29
 */
 package scynt
 
@@ -209,5 +209,5 @@ func (s *tsource) translateExpressions(expect string, c *tchunk, ol *tori,start,
 
 func init(){
 mkl.Lic    ("Scyndi Programming Language - expressions.go","GNU General Public License 3")
-mkl.Version("Scyndi Programming Language - expressions.go","18.07.22")
+mkl.Version("Scyndi Programming Language - expressions.go","18.07.29")
 }
