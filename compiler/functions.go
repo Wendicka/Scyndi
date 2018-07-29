@@ -20,7 +20,7 @@
 		
 	Exceptions to the standard GNU license are available with Jeroen's written permission given prior 
 	to the project the exceptions are needed for.
-Version: 18.07.26
+Version: 18.07.29
 */
 package scynt
 import(
@@ -100,6 +100,7 @@ func (self *tsource) callfunction(c *tchunk, ol *tori, mustreturn bool, funpos i
 func (self *tsource)  translatefunctions() string{
 	trans:=TransMod[TARGET]
 	ret:=trans.FuncHeaderRem()
+	returned:=false
 	for _,chf := range self.chunks {
 		ended:=false
 		chf.forid = map[int] map[string]*tidentifier {}
@@ -111,7 +112,10 @@ func (self *tsource)  translatefunctions() string{
 			ol:=ins.ori
 			pt:=ol.sline[0]
 			for tab:=0;tab<ins.level;tab++{ 
-				if !((pt.Word=="END" || pt.Word=="UNTIL" || pt.Word=="FOREVER" || pt.Word=="LOOP" || pt.Word=="ELSEIF" || pt.Word=="ELIF" || pt.Word=="ELSE") && tab==ins.level-1) {ret+="\t" }
+				if !((pt.Word=="END" || pt.Word=="UNTIL" || pt.Word=="FOREVER" || pt.Word=="LOOP" || pt.Word=="ELSEIF" || pt.Word=="ELIF" || pt.Word=="ELSE") &&  tab==ins.level-1) {ret+="\t" } 
+				if (!(pt.Word=="END" || pt.Word=="UNTIL" || pt.Word=="FOREVER" || pt.Word=="LOOP" || pt.Word=="ELSEIF" || pt.Word=="ELIF" || pt.Word=="ELSE")) && returned {
+					ol.warn("This line comes after a return command while no proper ending took place.\n\t\tMost programming languages will simply ignore this line, some may even throw an error!")
+				} 	
 			}
 			if pt.Wtype=="identifier" {
 				/* old code
@@ -171,6 +175,27 @@ func (self *tsource)  translatefunctions() string{
 							scall,spos:=self.callfunction(chf,ol,false,0)
 							ret+=scall+"\n"
 							pchat(fmt.Sprintf("%d",spos)) // just compiler distraction... for now
+					}
+				}
+			} else if pt.Word=="RETURN" {
+				returned=true
+				if chf.pof==0 {
+					if len(ol.sline)>1 { ol.throw("Procedures don't take parameters for return") }
+					if trans.FormVoidReturn==nil {
+						ret+="return\n"
+					} else {
+						ret+=trans.FormVoidReturn(self,chf,ol)
+					}
+				} else {
+					if len(ol.sline)==1 { ol.throw("Function returns require values or expressions to be returned") }
+					exp,exu:=self.translateExpressions(strings.ToLower(chf.returntype), chf, ol,1,0)
+					if exp<len(ol.sline) { 
+						ol.throw("Separator expected") 
+					}
+					if trans.FormVoidReturn==nil {
+						ret+="return "+exu+"\n"
+					} else {
+						ret+=trans.FormFuncReturn(self,chf,ol,exu)+"\n"
 					}
 				}
 			} else if pt.Word=="IF" || pt.Word=="ELSEIF" || pt.Word=="ELIF" {
@@ -323,6 +348,7 @@ func (self *tsource)  translatefunctions() string{
 				if len(ol.sline)>1 { ol.throw("REPEAT and DO do not accept parameters") }
 			} else if pt.Word=="END" || pt.Word=="FOREVER" || pt.Word=="LOOP" || pt.Word=="UNTIL" {
 				//doingln("Ending:",ins.state.openinstruct) // debug only
+				returned=false
 				if (ins.state.openinstruct!="REPEAT" && ins.state.openinstruct!="REPEAT block" && ins.state.openinstruct!="DO" && ins.state.openinstruct!="DO block") && pt.Word!="END"{
 					ol.throw("Keyword "+pt.Word+" may ONLY be used to close REPEAT/DO loops")
 				}
@@ -377,6 +403,6 @@ func (self *tsource)  translatefunctions() string{
 }
 
 func init(){
-mkl.Version("Scyndi Programming Language - functions.go","18.07.26")
+mkl.Version("Scyndi Programming Language - functions.go","18.07.29")
 mkl.Lic    ("Scyndi Programming Language - functions.go","GNU General Public License 3")
 }
