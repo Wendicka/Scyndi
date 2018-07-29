@@ -6,6 +6,8 @@ var
 end}
 
  
+import "End" Void Halt
+import "Chr" func Chr:STRING INTEGER
 
 void Write a:...string
 	purecode "BlitzMax","For local a = Eachin $C{A}C$ "
@@ -31,6 +33,7 @@ end
 void BlitzTest a:string
 	purecode "BlitzMax","	Print $C{A}C$"
 end
+
 
 function Platform:String
 	purecode "BlitzMax","	?MacOS

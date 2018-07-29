@@ -2,10 +2,12 @@ module system
 
 var phpnlbr:boolean
 
+import "die" Void Halt
+
 void Write a:...string
 	purecode "php" "$a=$C{a}C$
 		for ( $i=0;$i<len($a);$i++ ){
-			echo \"$a "
+			echo \"$a \"
 		}
 	"
 end
@@ -13,10 +15,10 @@ end
 void WriteLn a:...string
 	purecode "php" "$a=$C{a}C$;
 		for ( $i=0;$i<len($a);$i++ ){
-			echo \"$a ";
+			echo \"$a \";
 		}
-		if $C{phpnlbr}C${ echo "<br />" }
-		echo "\n";
+		if $C{phpnlbr}C${ echo \"<br />\" }
+		echo \"\n\";
 	"
 end
 
