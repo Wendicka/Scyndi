@@ -20,7 +20,7 @@
 		
 	Exceptions to the standard GNU license are available with Jeroen's written permission given prior 
 	to the project the exceptions are needed for.
-Version: 18.07.24
+Version: 18.07.29
 */
 package scynt
 
@@ -412,8 +412,9 @@ func (self *tsource) Organize(){
 	ltype:="ground"
 	doing("Organising: ",self.filename)
 	self.levels=[]*tstatementspot{}
+	headerset:=false
 	for _,ol:=range self.source {
-		if ol.ln==1 {
+		if !headerset {
 			lassert(ol.sfile,ol.ln,len(ol.sline)==2,"Illegal source header!  "+fmt.Sprintf("(%d)",len(ol.sline)))
 			sl:=ol.sline
 			pt:=sl[0]
@@ -429,6 +430,7 @@ func (self *tsource) Organize(){
 			did.translateto="SCYNDI_SOURCEGROUP_"+id.Word
 			self.srctype=pt.Word
 			self.srcname=id.Word
+			headerset=true
 		} else {
 			sl:=ol.sline
 			pt:=sl[0]
@@ -570,5 +572,5 @@ func (self *tsource) SaveTranslation(strans,outputpath string) {
 
 func init(){
 mkl.Lic    ("Scyndi Programming Language - parse.go","GNU General Public License 3")
-mkl.Version("Scyndi Programming Language - parse.go","18.07.24")
+mkl.Version("Scyndi Programming Language - parse.go","18.07.29")
 }
