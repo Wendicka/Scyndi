@@ -157,10 +157,14 @@ func defaultexpressiontranslation(expect string,source *tsource, c *tchunk, ol *
 					ex+=indexedvariable
 					rti=indexedidentifier
 					indexedvariable,indexedidentifier = "",nil
-					
 				}
 				//ol.throw("Array indexes and map keys are not YET supported, they will be taken care of as soon as possible (Hey! Rome wasn't built in one day, either, ya know)") 
-			} else if sexi.Word=="(" {ol.throw("Function calls are not YET supported in expressions, they will be taken care of as soon as possible (Hey! Rome wasn't built in one day, either, ya know)") 
+			} else if sexi.Word=="(" {
+				 //ol.warn (fmt.Sprintf("Haakjes: %d",haakjelevel))
+				 cc,cp:=source.callfunction(c, ol, true, endpos) //(cf string, epos int)
+				 ex += cc
+				 endpos=cp
+				//ol.throw("Function calls are not YET supported in expressions, they will be taken care of as soon as possible (Hey! Rome wasn't built in one day, either, ya know)") 
 			} else if sexi.Word==")" {
 				if haakjelevel==0 {break}
 				haakjelevel--

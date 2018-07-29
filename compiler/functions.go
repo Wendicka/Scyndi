@@ -43,6 +43,7 @@ func (self *tsource) callfunction(c *tchunk, ol *tori, mustreturn bool, funpos i
 	id:=rti
 	if id.idtype!="PROCEDURE" && id.idtype!="FUNCTION" { ol.throw(rtt+" cannot be called as a function") }
 	epos++
+	//if mustreturn { epos++ } // ignore bracket we don't need here.
 	tvargs:=[]string{}
 	ending:=len(id.args.a)+funpos+1
 	nomore:=false
@@ -85,7 +86,7 @@ func (self *tsource) callfunction(c *tchunk, ol *tori, mustreturn bool, funpos i
 	if id.args.endless!=nil{
 		tvargs=trans.FuncEndless(self,ol,c,&epos,id.args.endless,tvargs)
 	}
-	cf=id.translateto
+	if !mustreturn {cf=id.translateto} // (In "must return" cases the function name is already in the expression!)
 	if mustreturn || (!trans.procnoneedbracket) { cf +="(" } else {cf +=" "}
 	for ai,at:=range tvargs{
 		//fmt.Println(ai,at)
