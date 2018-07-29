@@ -20,7 +20,7 @@
 		
 	Exceptions to the standard GNU license are available with Jeroen's written permission given prior 
 	to the project the exceptions are needed for.
-Version: 18.07.21
+Version: 18.07.30
 */
 package scynt
 
@@ -89,10 +89,10 @@ func (s *tsource) performimport(ol *tori) (*tidentifier,string){
 	isprocedure:=imptype=="PROCEDURE" || imptype=="PROC" || imptype=="VOID"
 	if (!isprocedure) && imptype!="VAR" && imptype!="FUNCTION" && imptype!="FUNC" && imptype!="DEF" { ol.throw("Syntax error. I do not understand the word "+imptype+" in this import instruction") }
 	impid:=ol.getword(3);
-	if impid.Wtype!="identifier" { ol.throw("Unexpected "+impid.Wtype+". I expected an identifier to tie an imported identifier to") }
-	dubbelepunt:=ol.getword(4).Word;
+	if impid.Wtype!="identifier" { ol.throw("Unexpected "+impid.Wtype+". I expected an identifier to tie an imported identifier to") }	
 	qw:=5;
 	if !isprocedure {
+		dubbelepunt:=ol.getword(4).Word;
 		if dubbelepunt!=":" { ol.throw("':' expected") }
 		dpte:=ol.getword(5)
 		if dpte.Word=="VARIANT" { ol.throw("VARIANT not allowed for imported identifiers") }
@@ -106,6 +106,7 @@ func (s *tsource) performimport(ol *tori) (*tidentifier,string){
 		if imptype=="VAR" { 
 			ol.throw("Variables do not accept parameters")  // Procedure type variables will (for now) not be importable. Perhaps in the future...
 		} else {
+			// warn("Test "+ol.sline[2].Word)
 			wantcomma:=false
 			endless:=false
 			for i:=qw;i<len(ol.sline);i++{				
@@ -153,9 +154,10 @@ func (s *tsource) performimport(ol *tori) (*tidentifier,string){
 		default:
 			ol.throw("Cannot import '"+tar.idtype+"'")
 	}
+	
 	tar.translateto = imptar
 	tar.tarformed = true
-	
+	//doingln("Imported: ",tar.translateto)
 	
 	return tar,impid.Word // Allow the translator to do what is right here. 
 }
