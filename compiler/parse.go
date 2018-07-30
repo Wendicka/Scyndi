@@ -84,6 +84,8 @@ func gettype(word string,file string,line int) string{
 				ok =ok || (word[i]>='0' && word[i]<='9')
 				lassert(file,line,ok,"Invalid identifier: "+word)
 			}
+		case '#':
+			t = "Preprocessor tag"
 		default:
 			lthrow(file,line,"Unknown series of characters: "+word)
 	} 
@@ -417,8 +419,42 @@ func (self *tsource) Organize(){
 	doing("Organising: ",self.filename)
 	self.levels=[]*tstatementspot{}
 	headerset:=false
+	ppb:=false // Pre-Process block
+	localdefs:=map[string] bool {}
+	for k,_:=range TransMod { globaldefs["$TARGET_"+strings.ToUpper(k)]=k==TARGET }
 	for _,ol:=range self.source {
-		if !headerset {
+		//doingln("let's parse: ",ol.sline[0].Word)
+		if qstr.Prefixed(ol.sline[0].Word,"#") {
+			switch ol.sline[0].Word {
+				case "#DEFINE","#UNDEF":
+					for i:=1;i<len(ol.sline);i++{
+						mydef:=ol.sline[i].Word
+						switch mydef[0]{
+							case '$':	ol.throw("$ prefix is reserved for system based definitions and may not be used in a #DEFINE or #UNDEF statement so "+mydef+" is invalid!")
+							case '#':	localdefs[mydef]=ol.sline[0].Word=="DEFINE"
+							default:	globaldefs[mydef]=ol.sline[0].Word=="DEFINE"
+						}
+					}
+				case "#IF","#IFNOT":
+					ppb=true
+					doing("#","IF")
+					for i:=1;i<len(ol.sline);i++{
+						mydef:=ol.sline[i].Word						
+						switch mydef[0]{
+							case '#':	if _,ok:=localdefs[mydef];!ok{localdefs[mydef]=false}
+										ppb = ppb && localdefs[mydef]
+							default:	if _,ok:=globaldefs[mydef];!ok{globaldefs[mydef]=false}
+										ppb = ppb && globaldefs[mydef]
+						}
+						fmt.Println("#IF",i,ol.sline[i].Word,ppb)
+					}
+					
+					if ol.sline[0].Word=="#IF" {ppb=!ppb}
+				case "#ENDIF","#FI":
+					ppb=false
+				default: ol.throw("Unknown preprocessor definition: "+ol.sline[0].Word)
+			}
+		} else if (!headerset) && (!ppb) {
 			lassert(ol.sfile,ol.ln,len(ol.sline)==2,"Illegal source header!  "+fmt.Sprintf("(%d)",len(ol.sline)))
 			sl:=ol.sline
 			pt:=sl[0]
@@ -435,7 +471,7 @@ func (self *tsource) Organize(){
 			self.srctype=pt.Word
 			self.srcname=id.Word
 			headerset=true
-		} else {
+		} else if !ppb {
 			sl:=ol.sline
 			pt:=sl[0]
 			if ltype=="ground" {

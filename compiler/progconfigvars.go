@@ -20,7 +20,7 @@
 		
 	Exceptions to the standard GNU license are available with Jeroen's written permission given prior 
 	to the project the exceptions are needed for.
-Version: 18.07.29
+Version: 18.07.30
 */
 package scynt
 
@@ -77,6 +77,8 @@ var operators = []string { // It's very important here, that the longer ones com
 	                      ",", // Strictly speaking not an operator, but for the splitting routines it'll count as one.
 					  }
 
+var globaldefs = map[string] bool {}
+
 // NLSEP will if set to true (default value) accept a new line as a separator (and then you don't need a semi-colon at the end of each line), turning it off will require such a thing. Please note when putting multiple instructions on one line, the semi-colon will always be required to separate those.
 var NLSEP = true
 
@@ -89,6 +91,6 @@ var SYSTEMDIR = ""
 var TARDIR = ""
 
 func init(){
-mkl.Version("Scyndi Programming Language - progconfigvars.go","18.07.29")
+mkl.Version("Scyndi Programming Language - progconfigvars.go","18.07.30")
 mkl.Lic    ("Scyndi Programming Language - progconfigvars.go","GNU General Public License 3")
 }
