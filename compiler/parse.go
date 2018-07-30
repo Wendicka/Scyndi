@@ -427,6 +427,7 @@ func (self *tsource) Organize(){
 		if qstr.Prefixed(ol.sline[0].Word,"#") {
 			switch ol.sline[0].Word {
 				case "#DEFINE","#UNDEF":
+					if ppb { break }
 					for i:=1;i<len(ol.sline);i++{
 						mydef:=ol.sline[i].Word
 						switch mydef[0]{
@@ -437,7 +438,7 @@ func (self *tsource) Organize(){
 					}
 				case "#IF","#IFNOT":
 					ppb=true
-					doing("#","IF")
+					//doing("#","IF")
 					for i:=1;i<len(ol.sline);i++{
 						mydef:=ol.sline[i].Word						
 						switch mydef[0]{
@@ -446,12 +447,21 @@ func (self *tsource) Organize(){
 							default:	if _,ok:=globaldefs[mydef];!ok{globaldefs[mydef]=false}
 										ppb = ppb && globaldefs[mydef]
 						}
-						fmt.Println("#IF",i,ol.sline[i].Word,ppb)
+						//fmt.Println("#IF",i,ol.sline[i].Word,ppb)
 					}
 					
 					if ol.sline[0].Word=="#IF" {ppb=!ppb}
 				case "#ENDIF","#FI":
 					ppb=false
+				case "#ELSE":
+					ppb=!ppb
+				case "#ERROR":
+					if len(ol.sline)<=1 { ol.throw("#ERROR requires a message to throw!") }
+					if !ppb { 
+						cerr:=""
+						for i:=1;i<len(ol.sline);i++ { cerr += ol.sline[i].Word + " "}
+						ol.throw("Custom Error: "+cerr)
+					}
 				default: ol.throw("Unknown preprocessor definition: "+ol.sline[0].Word)
 			}
 		} else if (!headerset) && (!ppb) {
