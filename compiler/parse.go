@@ -20,7 +20,7 @@
 		
 	Exceptions to the standard GNU license are available with Jeroen's written permission given prior 
 	to the project the exceptions are needed for.
-Version: 18.07.29
+Version: 18.07.30
 */
 package scynt
 
@@ -48,6 +48,8 @@ func Grabfromfile(sourcefile string) *[]byte{
 	bank,e:=qff.EGetFile(sourcefile)
 	if e!=nil { ethrow(e) }
 	if bank[0]=='"' { throw("Not a single file in Scyndi may start with a \"!") }
+	bank=append(bank,';')
+	bank=append(bank,10)
 	done()
 	return &bank
 }
@@ -57,6 +59,8 @@ func Grabfromjcr(j jcr.TJCR6Dir,entry string) *[]byte{
 	bank:=jcr.JCR_B(j,entry)
 	if jcr.JCR6Error!="" { throw(jcr.JCR6Error) }
 	if bank[0]=='"' { throw("Not a single file in Scyndi may start with a \"!") }
+	bank=append(bank,';')
+	bank=append(bank,10)
 	done()
 	return &bank
 }
@@ -572,5 +576,5 @@ func (self *tsource) SaveTranslation(strans,outputpath string) {
 
 func init(){
 mkl.Lic    ("Scyndi Programming Language - parse.go","GNU General Public License 3")
-mkl.Version("Scyndi Programming Language - parse.go","18.07.29")
+mkl.Version("Scyndi Programming Language - parse.go","18.07.30")
 }
