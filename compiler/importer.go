@@ -99,7 +99,7 @@ func (s *tsource) performimport(ol *tori) (*tidentifier,string){
 		if dpte.Word=="INTEGER" || dpte.Word=="STRING" || dpte.Word=="FLOAT" || dpte.Word=="BOOLEAN" || dpte.Wtype=="identifier" {
 			tar.dttype=dpte.Word
 		} else { ol.throw("Identifier expected for imported "+imptype) }
-		qw+=2
+		qw++
 	} else { qw=4 }
 	//fmt.Println("Start",qw,len(ol.sline))
 	if len(ol.sline)>4 {
