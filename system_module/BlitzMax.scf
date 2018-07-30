@@ -5,10 +5,14 @@ var
 	test:string="lul"
 end}
 
- 
+
+{ Let's "COPY" }
 import "End" Void Halt
 import "Chr" func Chr:STRING INTEGER
+Import "Input" func ReadLn:String String
 
+
+{ Let's put in some "REAL" code }
 void Write a:...string
 	purecode "BlitzMax","For local a = Eachin $C{A}C$ "
 	purecode "BlitzMax","	WriteStdOut a "

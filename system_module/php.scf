@@ -3,11 +3,12 @@ module system
 var phpnlbr:boolean
 
 import "die" Void Halt
+import "chr" func string asciivalue:integer
 
 void Write a:...string
 	purecode "php" "$a=$C{a}C$
 		for ( $i=0;$i<len($a);$i++ ){
-			echo \"$a \"
+			echo \"$a \";
 		}
 	"
 end
@@ -21,6 +22,9 @@ void WriteLn a:...string
 		echo \"\n\";
 	"
 end
+
+func GET :string key:string; purecode "php","\treturn $_GET['$C{key}C$'];"; end
+func POST:string key:string; purecode "php","\treturn $_GET['$C{key}C$'];"; end
 
 void init
 	phpblbr:=true

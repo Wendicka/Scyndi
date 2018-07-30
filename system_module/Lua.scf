@@ -1,9 +1,15 @@
 module System
 
+{ These are just functions "copied" from Lua }
 
 import "string.char" function chr:string integer
 import "os.exit" void Halt
 
+{func chr:string a:integer
+	purecode "Lua","return string.char($C{AC$)"
+end}
+
+{ And these are just setup to make translated code properly connect to Lua }
 void Write t:...string
 	PureCode "Lua","for i,tx in scynipairs($C{T}C$) do\n\t\tio.write(tx)\n\t\tif i~=#$C{T}C$ then io.write(\" \") end\n\tend\n"
 end
@@ -13,3 +19,7 @@ void WriteLn t:...string
 end
 
 
+function ReadLn:String question:string
+	write question
+	purecode "Lua","return io.read('*l')" 
+end
