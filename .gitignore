@@ -13,3 +13,7 @@ okki.o
 # no output
 *.bmx
 
+# No mac crap
+._*
+.DS_Store
+
