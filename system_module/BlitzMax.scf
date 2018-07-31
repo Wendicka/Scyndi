@@ -39,7 +39,7 @@ void BlitzTest a:string
 end
 
 
-function Platform:String
+def Platform:String
 	purecode "BlitzMax","	?MacOS
 		return \"MacOS\"
 	?Win32
