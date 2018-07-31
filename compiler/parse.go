@@ -20,7 +20,7 @@
 		
 	Exceptions to the standard GNU license are available with Jeroen's written permission given prior 
 	to the project the exceptions are needed for.
-Version: 18.07.30
+Version: 18.07.31
 */
 package scynt
 
@@ -29,7 +29,7 @@ import (
 jcr		"trickyunits/jcr6/jcr6main"
 		"trickyunits/qstr"
 		"trickyunits/mkl"
-
+fpath	"path/filepath"
 		"strings"
 		"fmt"
 )
@@ -409,6 +409,29 @@ func (self *tsource) declarechunk(ol *tori) *tchunk{
 	return rc
 }
 
+func (self *tsource) doinclude(ol *tori, file string) (dump []*tori){
+	workfile:=""
+	if (qstr.Prefixed(file,"/") || file[1]==':'){
+		if qff.IsFile(file) { workfile=file }
+	} else {
+		//doingln("f:",self.filename)
+		paths:=[]string{ fpath.Dir(self.filename) }
+		for _,spath:=range paths {
+			path:=strings.Replace(spath,"\\","/",-1)
+			if !qstr.Suffixed(path,"/") { path+="/" }
+			//doingln("#INCLUDE: Trying: ",path+file)
+			if qff.IsFile(path+file) { workfile=path+file; break }
+		}
+	}
+	if workfile=="" { ol.throw("I could not find \""+file+"\" for #INCLUDE request") }
+	doing("\nIncluding: ",workfile)
+	tempbank:=Grabfromfile(workfile)
+	tempsrc:=Sepsource(tempbank,workfile)
+	tempsrc.Organize()
+	dump=tempsrc.source
+	return
+}
+
 // Basically step #2 in compiling.
 // Organising the code blocks
 func (self *tsource) Organize(){
@@ -421,7 +444,23 @@ func (self *tsource) Organize(){
 	headerset:=false
 	ppb:=false // Pre-Process block
 	localdefs:=map[string] bool {}
+	// Presearch for includes
+	subsource:=[]*tori{}
+	for _,ol:=range self.source {
+		if ol.sline[0].Word=="#INCLUDE" {
+			if len(ol.sline)!=2 { ol.throw("Invalid #INCLUDE request") }
+			if ol.sline[1].Wtype!="string" { ol.throw("Constant string expected for #INCLUDE request") }
+			for _,iol:=range self.doinclude(ol,ol.sline[1].Word) {
+				subsource=append(subsource,iol)
+			}
+		} else {
+			subsource=append(subsource,ol)
+		}
+	}
+	self.source=subsource
+	// Default defines
 	for k,_:=range TransMod { globaldefs["$TARGET_"+strings.ToUpper(k)]=k==TARGET }
+	// Let's go
 	for _,ol:=range self.source {
 		//doingln("let's parse: ",ol.sline[0].Word)
 		if qstr.Prefixed(ol.sline[0].Word,"#") {
@@ -622,5 +661,5 @@ func (self *tsource) SaveTranslation(strans,outputpath string) {
 
 func init(){
 mkl.Lic    ("Scyndi Programming Language - parse.go","GNU General Public License 3")
-mkl.Version("Scyndi Programming Language - parse.go","18.07.30")
+mkl.Version("Scyndi Programming Language - parse.go","18.07.31")
 }
