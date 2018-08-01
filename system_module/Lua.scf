@@ -19,7 +19,7 @@ void WriteLn t:...string
 end
 
 
-function ReadLn:String question:string
+func ReadLn:String question:string
 	write question
 	purecode "Lua","return io.read('*l')" 
 end
