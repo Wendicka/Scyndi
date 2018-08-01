@@ -20,7 +20,7 @@
 		
 	Exceptions to the standard GNU license are available with Jeroen's written permission given prior 
 	to the project the exceptions are needed for.
-Version: 18.07.31
+Version: 18.08.01
 */
 package scynt
 
@@ -424,11 +424,13 @@ func (self *tsource) doinclude(ol *tori, file string) (dump []*tori){
 		}
 	}
 	if workfile=="" { ol.throw("I could not find \""+file+"\" for #INCLUDE request") }
-	doing("\nIncluding: ",workfile)
+	hey()
+	doingln("Including: ",workfile)
 	tempbank:=Grabfromfile(workfile)
 	tempsrc:=Sepsource(tempbank,workfile)
 	tempsrc.Organize()
 	dump=tempsrc.source
+	doing("Resuming organisation of: ",self.filename)
 	return
 }
 
@@ -530,6 +532,20 @@ func (self *tsource) Organize(){
 					case "END": ol.throw("Unexpected END") 
 					case "PRIVATE": self.private=true;  if len(sl)>1 { ol.throw("PRIVATE takes no parameters") }
 					case "PUBLIC":  self.private=false; if len(sl)>1 { ol.throw("PUBLIC takes no parameters") }
+					case "USE":
+						if len(sl)>=2 { 
+							for i:=1;i<len(sl);i++ {
+								switch sl[i].Wtype{
+									case "string": self.userequested=append(self.userequested,sl[i].Word) 
+									case "identifier": self.userequested=append(self.userequested,strings.ToLower(sl[i].Word) )
+								}
+								//doing("REQUESTED FOR USE:",sl[i].Word)
+							}
+						} else if len(sl)==1 { 
+							ltype="use"
+						} else {
+							ol.throw("Misunderstood USE request")
+						}
 					case "CONST":
 						if len(sl)!=1 { self.defconst(sl[1:]) } else { 
 							ltype="const" 
@@ -567,7 +583,15 @@ func (self *tsource) Organize(){
 							self.levels=append(self.levels,&tstatementspot{ol.ln,"Global VAR declaration block",0})
 						}
 					default:
-						ol.throw("Unexpected "+pt.Word+"!! (Very likely a bug in the Scyndi compiler! Please report!)")
+						ol.throw("Unexpected "+pt.Word+"!!") // (Very likely a bug in the Scyndi compiler! Please report!)")
+				}
+			} else if ltype=="use" {
+				for _,w:=range sl {
+					if w.Word=="END" { 
+						ltype="ground"
+					} else if w.Wtype=="string" || w.Wtype=="identifier" {
+						self.userequested=append(self.userequested,w.Word) 
+					}
 				}
 			} else if ltype=="enum" {
 				if pt.Word=="END" {
@@ -661,5 +685,5 @@ func (self *tsource) SaveTranslation(strans,outputpath string) {
 
 func init(){
 mkl.Lic    ("Scyndi Programming Language - parse.go","GNU General Public License 3")
-mkl.Version("Scyndi Programming Language - parse.go","18.07.31")
+mkl.Version("Scyndi Programming Language - parse.go","18.08.01")
 }

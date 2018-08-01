@@ -20,13 +20,14 @@
 		
 	Exceptions to the standard GNU license are available with Jeroen's written permission given prior 
 	to the project the exceptions are needed for.
-Version: 18.07.21
+Version: 18.08.01
 */
 package scynt
 
 import (
 			"strings"
 			"trickyunits/qff"
+			"trickyunits/qstr"
 )
 
 func use_from_interface(trans map[string] *T_TransMod,s *tsource, blocks *map[string]string,module string){
@@ -40,6 +41,27 @@ func use(transm map[string] *T_TransMod,s *tsource, blocks *map[string]string,mo
 		file=SYSTEMDIR
 		if !strings.HasSuffix(file,"/") { file += "/" }
 		file += TARGET+".scf"
+	} else {
+		if strings.ToLower(module)!=module { warn( module+" appears to contain some uppercase characters. In order to assure full compatibility with case sensitive filesystems (such as Linux and other Unix based systems) it is strongly recommended to make module names in lower case only") }
+		for _,epath:=range USEPATH {
+			path:=strings.Replace(epath,"\\","/",-1)
+			if qstr.Right(path,1)!="/" { path+="/" }
+			if qff.IsFile(path+module+".ssf") {
+				file=path+module+".ssf"
+			} else if qff.IsFile(path+module+"/"+TARGET+".ssf") {
+				file=path+module+"/"+TARGET+".ssf"
+			} else if qff.IsFile(path+module+"/"+TARGET+".scf") {
+				file=path+module+"/"+TARGET+".scf"
+			} else if qff.IsFile(path+module+"/_other.scf") {
+				file=path+module+"/_other.scf"
+			} else if qff.IsFile(path+module+"/_other.ssf") {
+				file=path+module+"/_other.ssf"
+			} else if qff.IsFile(path+module+"/"+module+".ssf") {
+				file=path+module+"/"+module+".ssf"
+			} else if qff.IsFile(path+module+"/"+module+".scf") {
+				file=path+module+"/"+module+".scf"
+			}
+		}
 	}
 	// Already used or not
 	cmodule:=strings.ToUpper(module)
@@ -55,7 +77,13 @@ func use(transm map[string] *T_TransMod,s *tsource, blocks *map[string]string,mo
 		return
 	} 
 	// What, we don't have the file?
-	if file=="" { throw("No way found to use module: "+module) }
+	if file=="" {
+		doingln("The next directories are available for finding modules:","")
+		for i,mp:=range USEPATH{
+			sumdot(i+1); doingln("",mp)
+		} 
+		throw("No way found to use module: "+module) 
+	}
 	// Let's do it
 	usetranslation,usesource:=CompileFile(file,"MODULE")
 	s.usedmap.m[cmodule]=usesource

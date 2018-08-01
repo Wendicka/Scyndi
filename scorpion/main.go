@@ -20,7 +20,7 @@
 		
 	Exceptions to the standard GNU license are available with Jeroen's written permission given prior 
 	to the project the exceptions are needed for.
-Version: 18.07.27
+Version: 18.08.01
 */
 package main
 
@@ -31,20 +31,25 @@ import "trickyunits/mkl"
 import "os"
 import "fmt"
 import "strings"
+import "path/filepath"
 import "trickyunits/gini"
 import "trickyunits/dirry"
+//import "trickyunits/qstr"
 
 var sourcefile string
 var outputpath string
+var pathsplitter = ":"
+var flagpath *string
 
 func init(){
-mkl.Version("Scyndi Programming Language - main.go","18.07.27")
+mkl.Version("Scyndi Programming Language - main.go","18.08.01")
 mkl.Lic    ("Scyndi Programming Language - main.go","GNU General Public License 3")
 	nonl:=flag.Bool("sco",false,"If set new lines will not count as the end of an instruction and all instructions will have to be ended with a semi-colon")
 	trgt:=flag.String("target","Wendicka","Set the target to translate to. (Supported targets: "+Scyndi.TargetsSupported()+")")
 	outp:=flag.String("o","","Output file/dir. Please note that the output effect can be different depending on the chosen target")
 	ver :=flag.Bool("version",false,"Show version information of all used source files to build Scorpion")
 	ansi:=flag.String("ansi","","ON = force ANSI to be ON or OFF")
+	flagpath=flag.String("use","","Can be used to add extra directories to the use path")
 	flag.Parse()
 	switch strings.ToUpper(*ansi) {
 		case "ON":	ans.ANSI_Use=true
@@ -83,6 +88,24 @@ func ReadConfig(){
 	cdir:=dirry.Dirry("$AppSupport$/ScyndiScorpio/")
 	g:=gini.ReadFromFile(cdir+"scorpion.gini")
 	Scyndi.SYSTEMDIR=g.C("SystemMods")
+	// USE PATH
+	Scyndi.USEPATH = append(Scyndi.USEPATH,filepath.Dir(sourcefile))
+	for _,p:=range g.List("UsePath") {
+		Scyndi.USEPATH = append(Scyndi.USEPATH,p)
+	}
+	e:=os.Getenv("SCYNDI_USE_PATH")
+	if e!=""{
+		es:=strings.Split(e,pathsplitter)
+		for _,p:=range es {
+			Scyndi.USEPATH = append(Scyndi.USEPATH,p)
+		}
+	}
+	if *flagpath!=""{
+		for _,p:=range strings.Split(*flagpath,pathsplitter) {
+			Scyndi.USEPATH = append(Scyndi.USEPATH,p)
+		}
+	}
+
 }
 
 

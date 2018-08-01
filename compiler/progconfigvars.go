@@ -20,7 +20,7 @@
 		
 	Exceptions to the standard GNU license are available with Jeroen's written permission given prior 
 	to the project the exceptions are needed for.
-Version: 18.07.30
+Version: 18.08.01
 */
 package scynt
 
@@ -87,10 +87,11 @@ var TARGET = "Wendicka"
 
 // Compilers will have to define the path here where all the system unit source files can be found for each target.
 var SYSTEMDIR = "" 
+var USEPATH = []string{}
 
 var TARDIR = ""
 
 func init(){
-mkl.Version("Scyndi Programming Language - progconfigvars.go","18.07.30")
+mkl.Version("Scyndi Programming Language - progconfigvars.go","18.08.01")
 mkl.Lic    ("Scyndi Programming Language - progconfigvars.go","GNU General Public License 3")
 }

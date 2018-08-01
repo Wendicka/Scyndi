@@ -20,11 +20,12 @@
 		
 	Exceptions to the standard GNU license are available with Jeroen's written permission given prior 
 	to the project the exceptions are needed for.
-Version: 18.07.21
+Version: 18.08.01
 */
 package scynt
 
 import "trickyunits/ansistring"
+import "trickyunits/mkl"
 import "fmt"
 import "os"
 
@@ -107,4 +108,14 @@ func (s *tori) pthrow(e string) {
 func done() {
 	if !Showdo { return }
 	fmt.Println(ansistring.SCol("Done!     ",ansistring.A_Green,0))
+}
+
+func hey() {
+	if !Showdo { return }
+	fmt.Println(ansistring.SCol("HEY!     ",ansistring.A_Magenta,0))
+}
+
+func init(){
+mkl.Lic    ("Scyndi Programming Language - welcome to the show.go","GNU General Public License 3")
+mkl.Version("Scyndi Programming Language - welcome to the show.go","18.08.01")
 }
