@@ -115,7 +115,7 @@ mkl.Lic    ("Scyndi Programming Language - maintrans.go","GNU General Public Lic
 mkl.Version("Scyndi Programming Language - maintrans.go","18.08.02")
 
 	dfo:=&defoperators
-	for _,k := range ([]string{"==","+","-","/","*","^","!=","<",">"}){
+	for _,k := range ([]string{"==","+","-","/","*","^","!=","<",">","<=",">="}){
 		(*dfo)[k]=k
 	}
 	(*dfo)["NOT"]="!"
@@ -126,6 +126,7 @@ mkl.Version("Scyndi Programming Language - maintrans.go","18.08.02")
 	(*dfo)["="] ="=="
 	(*dfo)["<>"]="!="
 	(*dfo)["~="]="!="
+		
 	
 	(*dfo)["concat"]="+"
 	
