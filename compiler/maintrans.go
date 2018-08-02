@@ -20,7 +20,7 @@
 		
 	Exceptions to the standard GNU license are available with Jeroen's written permission given prior 
 	to the project the exceptions are needed for.
-Version: 18.07.29
+Version: 18.08.02
 */
 package scynt
 
@@ -111,7 +111,7 @@ func TargetsSupported() string {
 
 func init(){
 mkl.Lic    ("Scyndi Programming Language - maintrans.go","GNU General Public License 3")
-mkl.Version("Scyndi Programming Language - maintrans.go","18.07.29")
+mkl.Version("Scyndi Programming Language - maintrans.go","18.08.02")
 
 	dfo:=&defoperators
 	for _,k := range ([]string{"==","+","-","/","*","^","!=","<",">"}){
@@ -127,4 +127,7 @@ mkl.Version("Scyndi Programming Language - maintrans.go","18.07.29")
 	(*dfo)["~="]="!="
 	
 	(*dfo)["concat"]="+"
+	
+	(*dfo)["true"] ="true"
+	(*dfo)["false"]="false"
 }

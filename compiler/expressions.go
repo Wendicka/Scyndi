@@ -20,7 +20,7 @@
 		
 	Exceptions to the standard GNU license are available with Jeroen's written permission given prior 
 	to the project the exceptions are needed for.
-Version: 18.07.29
+Version: 18.08.02
 */
 package scynt
 
@@ -127,6 +127,10 @@ func defaultexpressiontranslation(expect string,source *tsource, c *tchunk, ol *
 						wantcov = false
 					case "keyword":
 						switch sexi.Word{
+							case "TRUE":
+								ex += trans.operators["true"]
+							case "FALSE":
+								ex += trans.operators["false"]
 							case "NOT":
 								if expect=="identifier" { ol.throw("That is NOT where you place NOT") }
 								if cexpect!="boolean" { ol.throw("Keyword 'NOT' only works in BOOLEAN expressions!") }
@@ -209,5 +213,5 @@ func (s *tsource) translateExpressions(expect string, c *tchunk, ol *tori,start,
 
 func init(){
 mkl.Lic    ("Scyndi Programming Language - expressions.go","GNU General Public License 3")
-mkl.Version("Scyndi Programming Language - expressions.go","18.07.29")
+mkl.Version("Scyndi Programming Language - expressions.go","18.08.02")
 }
