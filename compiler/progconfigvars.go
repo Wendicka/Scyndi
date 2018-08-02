@@ -20,7 +20,7 @@
 		
 	Exceptions to the standard GNU license are available with Jeroen's written permission given prior 
 	to the project the exceptions are needed for.
-Version: 18.08.01
+Version: 18.08.02
 */
 package scynt
 
@@ -93,6 +93,6 @@ var USEPATH = []string{}
 var TARDIR = ""
 
 func init(){
-mkl.Version("Scyndi Programming Language - progconfigvars.go","18.08.01")
+mkl.Version("Scyndi Programming Language - progconfigvars.go","18.08.02")
 mkl.Lic    ("Scyndi Programming Language - progconfigvars.go","GNU General Public License 3")
 }
