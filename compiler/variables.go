@@ -20,7 +20,7 @@
 		
 	Exceptions to the standard GNU license are available with Jeroen's written permission given prior 
 	to the project the exceptions are needed for.
-Version: 18.07.21
+Version: 18.08.02
 */
 package scynt
 
@@ -89,7 +89,7 @@ func (s *tsource) declarevar(line []*tword) (string,tidentifier){
 		} else { return "er:Syntax error!",vr } // Now it's really beyond me what you were trying to do.... :-/
 	} else {
 		switch vr.dttype {			
-			case "STRING": vr.defaultvalue = ""
+			case "STRING": vr.defaultvalue = ""; vr.defstring=true
 			case "INTEGER","FLOAT": vr.defaultvalue="0"
 			case "BOOLEAN":  vr.defaultvalue="FALSE"
 		}

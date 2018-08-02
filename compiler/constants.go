@@ -20,7 +20,7 @@
 		
 	Exceptions to the standard GNU license are available with Jeroen's written permission given prior 
 	to the project the exceptions are needed for.
-Version: 18.07.22
+Version: 18.08.02
 */
 package scynt
 
@@ -71,6 +71,7 @@ func (s *tsource) defconst(line []*tword){
 	switch value.Wtype{
 		case "string":
 			id.dttype="STRING"
+			id.defstring=true
 		case "float":
 			id.dttype="FLOAT"
 		case "integer":
@@ -145,5 +146,5 @@ func (s *tsource) enumid(ol *tori){
 
 func init(){
 mkl.Lic    ("Scyndi Programming Language - constants.go","GNU General Public License 3")
-mkl.Version("Scyndi Programming Language - constants.go","18.07.22")
+mkl.Version("Scyndi Programming Language - constants.go","18.08.02")
 }
