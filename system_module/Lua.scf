@@ -1,5 +1,5 @@
 module System
-
+ 
 { These are just functions "copied" from Lua }
 
 import "string.char" function chr:string integer
@@ -31,7 +31,7 @@ func ReadInt:integer question:string
 	purecode "Lua","
 	repeat
 		local sret = io.read('*l')
-		local ret = sret:tonumber()
+		local ret = tonumber(sret)
 		if (not ret) or ret<math.floor(ret) or ret>math.floor(ret) then
 			print($C{READINTERROR}C$)
 		else
@@ -40,3 +40,6 @@ func ReadInt:integer question:string
 	until false
 	"
 end
+
+import "string.upper" func UCase:string string
+import "string.lower" func LCase:string string
