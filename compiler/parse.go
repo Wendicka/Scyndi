@@ -633,7 +633,7 @@ func (self *tsource) Organize(){
 				//fmt.Println(mychunk,ltype)
 				mychunk.instructions = append(mychunk.instructions,ins)
 				pchat("Instruction line added >> "+pt.Word)
-				if pt.Word=="IF" || pt.Word=="WHILE" || pt.Word=="DO" || pt.Word=="REPEAT" || pt.Word=="FOR" || pt.Word=="FORU" || pt.Word=="FOREACH" {
+				if pt.Word=="IF" || pt.Word=="WHILE" || pt.Word=="DO" || pt.Word=="REPEAT" || pt.Word=="FOR" || pt.Word=="FORU" || pt.Word=="FOREACH" || pt.Word=="SELECT" || pt.Word=="SWITCH" {
 					self.levels=append(self.levels,&tstatementspot{ol.ln,pt.Word+" block",0})
 				}
 				if pt.Word=="LOOP" || pt.Word=="UNTIL" || pt.Word=="FOREVER" {

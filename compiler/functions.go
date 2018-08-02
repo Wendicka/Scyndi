@@ -108,6 +108,7 @@ func (self *tsource)  translatefunctions() string{
 	trans:=TransMod[TARGET]
 	ret:=trans.FuncHeaderRem()
 	returned:=false
+	casevar:=map[int] *tidentifier { }
 	for _,chf := range self.chunks {
 		ended:=false
 		chf.forid = map[int] map[string]*tidentifier {}
@@ -119,8 +120,8 @@ func (self *tsource)  translatefunctions() string{
 			ol:=ins.ori
 			pt:=ol.sline[0]
 			for tab:=0;tab<ins.level;tab++{ 
-				if !((pt.Word=="END" || pt.Word=="UNTIL" || pt.Word=="FOREVER" || pt.Word=="LOOP" || pt.Word=="ELSEIF" || pt.Word=="ELIF" || pt.Word=="ELSE") &&  tab==ins.level-1) {ret+="\t" } 
-				if (!(pt.Word=="END" || pt.Word=="UNTIL" || pt.Word=="FOREVER" || pt.Word=="LOOP" || pt.Word=="ELSEIF" || pt.Word=="ELIF" || pt.Word=="ELSE")) && returned {
+				if !((pt.Word=="END" || pt.Word=="UNTIL" || pt.Word=="FOREVER" || pt.Word=="LOOP" || pt.Word=="ELSEIF" || pt.Word=="ELIF" || pt.Word=="ELSE" || pt.Word=="DEFAULT" || pt.Word=="CASE") &&  tab==ins.level-1) {ret+="\t" } 
+				if (!(pt.Word=="END" || pt.Word=="UNTIL" || pt.Word=="FOREVER" || pt.Word=="LOOP" || pt.Word=="ELSEIF" || pt.Word=="ELIF" || pt.Word=="ELSE" || pt.Word=="CASE" || pt.Word=="DEFAULT")) && returned {
 					ol.warn("This line comes after a return command while no proper ending took place.\n\t\tMost programming languages will simply ignore this line, some may even throw an error!")
 				} 	
 			}
@@ -224,6 +225,64 @@ func (self *tsource)  translatefunctions() string{
 			} else if pt.Word=="ELSE" {
 				if ins.state.openinstruct!="IF" && ins.state.openinstruct!="IF block" { ol.throw(pt.Word+" can only be used within an IF block") }
 				ret += trans.simpleelse+"\n"
+			} else if pt.Word=="SELECT" || pt.Word=="SWITCH" {
+				if len(ol.sline)!=2 { ol.throw("Invalid SWITCH/SELECT!") }
+				ag:=ol.sline[1]
+				if ag.Wtype!="identifier" { ol.throw("Identifier expected for SWTICH/SELECT but I got "+ag.Wtype+": "+ag.Word) }
+				id:=self.GetIdentifier(ag.Word,chf,ol)
+				if id.idtype!="VAR" { ol.throw(ag.Word+" is an illegal identifier for casing") }
+				if id.dttype!="STRING" && id.dttype!="INTEGER" && id.dttype!="FLOAT" && id.dttype!="BOOLEAN" { ol.throw(ag.Word+" is an uncasable variable") }
+				if id.constant { ol.warn("I can case "+ag.Word+", but please keep in mind that it's a constant and not a variable!") }
+				casevar[ins.level+1]=id //.translateto
+				if !trans.nocasesupported { 
+					ol.throw("Call it irony, but languages that support casing systems themselves are not yet supported. Come back later") 
+				} else {
+					ret += fmt.Sprintf(trans.simpleif,trans.operators["false"])+"\n"
+				}
+			} else if pt.Word=="CASE" {
+				returned=false
+				if ins.state.openinstruct!="SELECT" && ins.state.openinstruct!="SELECT block" && ins.state.openinstruct!="SWITCH" && ins.state.openinstruct!="SWITCH block" { ol.throw(pt.Word+" can only be used within an SWITCH block") }
+				if len(ol.sline)!=2 { ol.throw("Invalid CASE!") }
+				id,ok:=casevar[ins.level]
+				wantword:=ol.sline[1]
+				want:=""
+				if !ok { ol.throw("Internal error! Something went wrong with the CASE-variable preserveation! Please report!") }
+				switch id.dttype {
+					case "STRING": 
+						if wantword.Wtype!="string" { ol.throw("I want a string for this CASE!") }
+						want=trans.setstring(wantword.Word)
+					case "INTEGER":
+						if wantword.Wtype!="integer" { ol.throw("I want an integer for this CASE!") }
+						want=wantword.Word
+					case "FLOAT":
+						if wantword.Wtype=="integer" {
+							want=wantword.Word+".0"
+						} else if wantword.Wtype=="float" {
+							want=wantword.Word
+						} else { ol.throw("I want a number for this CASE!") }
+					case "BOOLEAN":
+						switch wantword.Word{
+							case "TRUE":	want=trans.operators["true"]
+							case "FASLE":	want=trans.operators["false"]
+							default:		ol.throw("TRUE of FALSE exptected for this CASE!") 
+						}
+					default:
+						ol.throw("CASE DEFINTION ERROR")
+				}
+				if !trans.nocasesupported { 
+					ol.throw("Call it irony, but languages that support casing systems themselves are not yet supported. Come back later") 
+				} else {
+					tex := id.translateto + trans.operators["="] + want
+					ret += fmt.Sprintf(trans.simpleelif,tex)+"\n"
+				}
+			} else if pt.Word=="DEFAULT" {
+				returned=false
+				if ins.state.openinstruct!="SELECT" && ins.state.openinstruct!="SELECT block" && ins.state.openinstruct!="SWITCH" && ins.state.openinstruct!="SWITCH block" { ol.throw(pt.Word+" can only be used within an SWITCH block") }
+				if !trans.nocasesupported { 
+					ol.throw("Call it irony, but languages that support casing systems themselves are not yet supported. Come back later") 
+				} else {
+					ret += trans.simpleelse+"\n"
+				}				
 			} else if pt.Word=="WHILE" {
 				exp,exu:=self.translateExpressions("boolean", chf, ol,1,0)
 				if exp<len(ol.sline) { 
@@ -385,6 +444,12 @@ func (self *tsource)  translatefunctions() string{
 						ret += trans.simpleendif+"\n"
 					case "WHILE","WHILE block":
 						ret += trans.simpleendwhile+"\n"
+					case "SWITCH","SWITCH block","SELECT","SELECT block":
+						if !trans.nocasesupported {
+							ret += trans.simplecaseend+"\n"
+						} else {
+							ret += trans.simpleendif+"\n"
+						}
 					case "DO","REPEAT","DO block","REPEAT block":
 						switch pt.Word{
 							case "END","LOOP","FOREVER":

@@ -93,8 +93,11 @@ mkl.Version("Scyndi Programming Language - zztrans-lua.go","18.08.02")
 	TransMod["Lua"] = &T_TransMod {}
 	tmw:=TransMod["Lua"]
 	
+	
 	tmw.extension="lua"
 	tmw.constantsupport = false
+	tmw.nocasesupported=true
+
 	
 	tmw.simpleif="if %s then"
 	tmw.simpleelif="elseif %s then"

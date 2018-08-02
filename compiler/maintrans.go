@@ -85,6 +85,12 @@ type T_TransMod struct {
 	FuncEndless func(s *tsource,ol *tori,c *tchunk, epos *int,a *targ ,retargs []string) (r []string)
 	FormVoidReturn func(s *tsource, c *tchunk, ol *tori) string
 	FormFuncReturn func(s *tsource, c *tchunk, ol *tori, expression string) string
+	nocasesupported bool // if set to "true", Scyndi will replace the casing sessions with if statements
+	casefallsthrough bool // Scyndi will NOT support this, as most programming language don't, but Scyndi must be able to detect it properly and this this variable
+	simplecasestart string
+	simplecaseoneitem string
+	simplecasemultiitem func(want string,ol *tori) string
+	simplecaseend string
 }
 
 var TransMod = map[string] *T_TransMod{}

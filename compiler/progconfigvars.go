@@ -40,7 +40,7 @@ var keywords = []string {"PROGRAM","SCRIPT","MODULE","UNIT", // UNIT WILL AUTOMA
 						"PROCEDURE","VOID","PROC",
 						"FUNCTION","FUNC","DEF",
 						"IF","ELSE","ELSEIF","ELIF",
-						"SWITCH","CASE","DEFAULT",
+						"SWITCH","SELECT","CASE","DEFAULT",
 						"WHILE",
 						"FOR","FOREACH","FORU", // FORU = For Until It has only a very small difference with FOR, but still one with significant effect ;)
 						"REPEAT","UNTIL","DO","LOOP","FOREVER",
