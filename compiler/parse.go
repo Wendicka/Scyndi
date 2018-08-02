@@ -20,7 +20,7 @@
 		
 	Exceptions to the standard GNU license are available with Jeroen's written permission given prior 
 	to the project the exceptions are needed for.
-Version: 18.08.01
+Version: 18.08.02
 */
 package scynt
 
@@ -409,7 +409,7 @@ func (self *tsource) declarechunk(ol *tori) *tchunk{
 	return rc
 }
 
-func (self *tsource) doinclude(ol *tori, file string) (dump []*tori){
+func (self *tsource) doinclude(ol *tori, file string) (dump []*tori,dumpid map[string]*tidentifier){
 	workfile:=""
 	if (qstr.Prefixed(file,"/") || file[1]==':'){
 		if qff.IsFile(file) { workfile=file }
@@ -428,6 +428,8 @@ func (self *tsource) doinclude(ol *tori, file string) (dump []*tori){
 	doingln("Including: ",workfile)
 	tempbank:=Grabfromfile(workfile)
 	tempsrc:=Sepsource(tempbank,workfile)
+	tempsrc.noheader=true
+	tempsrc.identifiers=map[string]*tidentifier{}
 	tempsrc.Organize()
 	dump=tempsrc.source
 	doing("Resuming organisation of: ",self.filename)
@@ -443,7 +445,7 @@ func (self *tsource) Organize(){
 	ltype:="ground"
 	doing("Organising: ",self.filename)
 	self.levels=[]*tstatementspot{}
-	headerset:=false
+	headerset:=self.noheader
 	ppb:=false // Pre-Process block
 	localdefs:=map[string] bool {}
 	// Presearch for includes
@@ -452,8 +454,12 @@ func (self *tsource) Organize(){
 		if ol.sline[0].Word=="#INCLUDE" {
 			if len(ol.sline)!=2 { ol.throw("Invalid #INCLUDE request") }
 			if ol.sline[1].Wtype!="string" { ol.throw("Constant string expected for #INCLUDE request") }
-			for _,iol:=range self.doinclude(ol,ol.sline[1].Word) {
+			incori,incid:=self.doinclude(ol,ol.sline[1].Word)
+			for _,iol:=range incori {
 				subsource=append(subsource,iol)
+			}
+			for ikey,iid:=range incid{
+				self.identifiers[ikey]=iid
 			}
 		} else {
 			subsource=append(subsource,ol)
@@ -653,6 +659,7 @@ func CompileFile(file string,t string) (string, *tsource) {
 	doingln("Processing:",file)
 	k:=Grabfromfile(file)
 	s:=Sepsource(k,file)
+	s.noheader=false
 	s.Organize()
 	if s.srctype!=t && s.srctype!="SCRIPT" { throw("Source "+file+" may not be used for the purpose that it's been attempted to use\nWanted: "+t+"\nGot:    "+s.srctype) }
 	return s.Translate(),s
@@ -685,5 +692,5 @@ func (self *tsource) SaveTranslation(strans,outputpath string) {
 
 func init(){
 mkl.Lic    ("Scyndi Programming Language - parse.go","GNU General Public License 3")
-mkl.Version("Scyndi Programming Language - parse.go","18.08.01")
+mkl.Version("Scyndi Programming Language - parse.go","18.08.02")
 }

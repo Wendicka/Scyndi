@@ -20,7 +20,7 @@
 		
 	Exceptions to the standard GNU license are available with Jeroen's written permission given prior 
 	to the project the exceptions are needed for.
-Version: 18.07.26
+Version: 18.08.02
 */
 package scynt
 
@@ -152,6 +152,7 @@ type tsource struct {
 	source []*tori
 	varblock []*tori
 	constblock string
+	noheader bool
 	// orilinerem will place the original line in the translation as a comment or remark
 	// write traceback will instruct the parser of the translated code to process the traceback data, providing the target language has any way to support such a thing.
 	// nlsep will if turned on (default value) accept a new line as a separator (and then you don't need a semi-colon at the end of each line), turning it off will require such a thing. Please note when putting multiple instructions on one line, the semi-colon will always be required to separate those.
