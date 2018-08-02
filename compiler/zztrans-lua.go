@@ -98,6 +98,7 @@ mkl.Version("Scyndi Programming Language - zztrans-lua.go","18.08.02")
 	
 	tmw.simpleif="if %s then"
 	tmw.simpleelif="elseif %s then"
+	tmw.simpleelse="else"
 	tmw.simpleendif="end"
 	
 	tmw.simplewhile="while %s do"

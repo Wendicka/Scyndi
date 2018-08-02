@@ -20,7 +20,7 @@
 		
 	Exceptions to the standard GNU license are available with Jeroen's written permission given prior 
 	to the project the exceptions are needed for.
-Version: 18.07.30
+Version: 18.08.02
 */
 package scynt
 import(
@@ -216,6 +216,9 @@ func (self *tsource)  translatefunctions() string{
 				} else {
 					ret+=fmt.Sprintf(trans.simpleelif,exu)+"\n"
 				}
+			} else if pt.Word=="ELSE" {
+				if ins.state.openinstruct!="IF" && ins.state.openinstruct!="IF block" { ol.throw(pt.Word+" can only be used within an IF block") }
+				ret += trans.simpleelse+"\n"
 			} else if pt.Word=="WHILE" {
 				exp,exu:=self.translateExpressions("boolean", chf, ol,1,0)
 				if exp<len(ol.sline) { 
@@ -409,6 +412,6 @@ func (self *tsource)  translatefunctions() string{
 }
 
 func init(){
-mkl.Version("Scyndi Programming Language - functions.go","18.07.30")
+mkl.Version("Scyndi Programming Language - functions.go","18.08.02")
 mkl.Lic    ("Scyndi Programming Language - functions.go","GNU General Public License 3")
 }

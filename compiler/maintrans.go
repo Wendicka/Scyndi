@@ -71,6 +71,7 @@ type T_TransMod struct {
 	iflt2string string
 	simpleif string
 	simpleelif string
+	simpleelse string
 	simpleendif string
 	simplewhile string
 	simpleendwhile string
