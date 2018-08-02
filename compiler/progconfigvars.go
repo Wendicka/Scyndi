@@ -66,6 +66,7 @@ var operators = []string { // It's very important here, that the longer ones com
 	                      "==",
 	                      ">=",
 	                      "<=",
+	                      "<>","!=","~=",
 	                      "..",
 	                      "=",
 	                      ">",
