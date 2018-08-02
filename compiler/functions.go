@@ -46,11 +46,11 @@ func (self *tsource) callfunction(c *tchunk, ol *tori, mustreturn bool, funpos i
 	epos++
 	//if mustreturn { epos++ } // ignore bracket we don't need here.
 	tvargs:=[]string{}
-	ending:=len(id.args.a)+funpos+1
+	ending:=len(id.args.a)+funpos+((len(id.args.a)*2)-1)
 	nomore:=false
 	// regular paramters
 	for ac,aa:=range id.args.a {
-		fmt.Println(fmt.Sprintf("%5d: Processing arg %s #%d  (nomore: %t)",ol.ln,id.translateto,ac,nomore))
+		//fmt.Println(fmt.Sprintf("%5d: Processing arg %s #%d  (nomore: %t)",ol.ln,id.translateto,ac,nomore))
 		want:=""
 		switch aa.arg.dttype {
 			case "VARIANT":
@@ -61,16 +61,18 @@ func (self *tsource) callfunction(c *tchunk, ol *tori, mustreturn bool, funpos i
 				want=aa.arg.dttype
 		}
 		if nomore {
-			if !aa.optional { ol.throw("Missing parameter!") }
+			if !aa.optional { ol.throw(fmt.Sprintf("Missing parameter! %d expected but I only have %d!",len(id.args.a),ac)) }
 			tvargs=append(tvargs,aa.arg.defaultvalue)
 		} else {
 			ep,eu:=self.translateExpressions(want, c, ol,epos,0)
+			//fmt.Println(eu)
 			tvargs=append(tvargs,eu)
 			epos=ep
-			//fmt.Println(epos,ending)
+			////fmt.Println(epos,ending)
 			if epos+1>=len(ol.sline) {
+				//fmt.Println("epos+1 tb",epos,len(ol.sline))
 				nomore=true
-			} else if epos<ending { 
+			} else if epos<=ending { 
 				c:=ol.sline[epos]
 				if c.Word==")" {
 					nomore=true
@@ -80,7 +82,10 @@ func (self *tsource) callfunction(c *tchunk, ol *tori, mustreturn bool, funpos i
 					ol.throw("Comma expected") 
 				}
 				epos++
-			} else { nomore = true }
+			} else { 
+				//fmt.Println("???",ending)
+				nomore = true 
+			}
 		}
 	}
 	// Infinite parameters
@@ -90,7 +95,7 @@ func (self *tsource) callfunction(c *tchunk, ol *tori, mustreturn bool, funpos i
 	if !mustreturn {cf=id.translateto} // (In "must return" cases the function name is already in the expression!)
 	if mustreturn || (!trans.procnoneedbracket) { cf +="(" } else {cf +=" "}
 	for ai,at:=range tvargs{
-		//fmt.Println(ai,at)
+		////fmt.Println(ai,at)
 		if ai!=0 { cf += ", " }
 		cf += at
 	}

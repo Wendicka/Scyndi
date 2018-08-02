@@ -33,7 +33,7 @@ func ReadInt:integer question:string
 		local sret = io.read('*l')
 		local ret = sret:tonumber()
 		if (not ret) or ret<math.floor(ret) or ret>math.floor(ret) then
-			print($C{$READINTERROR}C$)
+			print($C{READINTERROR}C$)
 		else
 			return ret
 		end
