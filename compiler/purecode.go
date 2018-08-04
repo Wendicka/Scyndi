@@ -20,7 +20,7 @@
 		
 	Exceptions to the standard GNU license are available with Jeroen's written permission given prior 
 	to the project the exceptions are needed for.
-Version: 18.07.24
+Version: 18.08.04
 */
 package scynt
 
@@ -28,6 +28,7 @@ import(
 //		"fmt"
 		"strings"
 		"trickyunits/mkl"
+		"trickyunits/qff"
 )
 
 func purecode(s *tsource,c *tchunk,ol *tori) string {
@@ -44,6 +45,13 @@ func purecode(s *tsource,c *tchunk,ol *tori) string {
 	if comma.Word!="," { ol.throw("Comma expected") }
 	if tar.Word!=TARGET { return "" } // Only do this if the target is correct
 	ret:=code.Word
+	if strings.HasPrefix(strings.ToUpper(ret),"IMPORT:"){
+		fname:=ret[7:]
+		doingln("Importing pure "+TARGET+" code: ",fname)
+		r,e:=qff.EGetString(fname)
+		if e!=nil { ol.ethrow(e) }
+		ret=r
+	}
 	// replace locals *if* within a function
 	if c!=nil {
 		for k,i:=range c.locals {
@@ -64,5 +72,5 @@ func purecode(s *tsource,c *tchunk,ol *tori) string {
 
 func init(){
 mkl.Lic    ("Scyndi Programming Language - purecode.go","GNU General Public License 3")
-mkl.Version("Scyndi Programming Language - purecode.go","18.07.24")
+mkl.Version("Scyndi Programming Language - purecode.go","18.08.04")
 }
