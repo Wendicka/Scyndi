@@ -20,7 +20,7 @@
 		
 	Exceptions to the standard GNU license are available with Jeroen's written permission given prior 
 	to the project the exceptions are needed for.
-Version: 18.08.02
+Version: 18.08.04
 */
 package scynt
 
@@ -274,6 +274,7 @@ func (self *tsource) declarechunk(ol *tori) *tchunk{
 	
 	if ct.Word=="BEGIN"{
 		if len(ol.sline)>1 { ol.throw("BEGIN does not allow parameters of any sort") }
+		doingln(self.srctype+" ",self.filename) // debug
 		if self.srctype=="PROGRAM" {
 			ol.sline = []*tword{}
 			ol.sline = append(ol.sline,&tword{"PROCEDURE","keyword"})
@@ -409,7 +410,7 @@ func (self *tsource) declarechunk(ol *tori) *tchunk{
 	return rc
 }
 
-func (self *tsource) doinclude(ol *tori, file string) (dump []*tori,dumpid map[string]*tidentifier){
+func (self *tsource) doinclude(ol *tori, file string,isprogram bool) (dump []*tori,dumpid map[string]*tidentifier){
 	workfile:=""
 	if (qstr.Prefixed(file,"/") || file[1]==':'){
 		if qff.IsFile(file) { workfile=file }
@@ -428,6 +429,8 @@ func (self *tsource) doinclude(ol *tori, file string) (dump []*tori,dumpid map[s
 	doingln("Including: ",workfile)
 	tempbank:=Grabfromfile(workfile)
 	tempsrc:=Sepsource(tempbank,workfile)
+	tempsrc.srctype="SCRIPT"
+	if isprogram {tempsrc.srctype="PROGRAM"}
 	tempsrc.noheader=true
 	tempsrc.identifiers=map[string]*tidentifier{}
 	tempsrc.Organize()
@@ -450,11 +453,13 @@ func (self *tsource) Organize(){
 	localdefs:=map[string] bool {}
 	// Presearch for includes
 	subsource:=[]*tori{}
+	isprogram:=false
 	for _,ol:=range self.source {
+		if ol.sline[0].Word=="PROGRAM" {isprogram=true}
 		if ol.sline[0].Word=="#INCLUDE" {
 			if len(ol.sline)!=2 { ol.throw("Invalid #INCLUDE request") }
 			if ol.sline[1].Wtype!="string" { ol.throw("Constant string expected for #INCLUDE request") }
-			incori,incid:=self.doinclude(ol,ol.sline[1].Word)
+			incori,incid:=self.doinclude(ol,ol.sline[1].Word,isprogram)
 			for _,iol:=range incori {
 				subsource=append(subsource,iol)
 			}
@@ -692,5 +697,5 @@ func (self *tsource) SaveTranslation(strans,outputpath string) {
 
 func init(){
 mkl.Lic    ("Scyndi Programming Language - parse.go","GNU General Public License 3")
-mkl.Version("Scyndi Programming Language - parse.go","18.08.02")
+mkl.Version("Scyndi Programming Language - parse.go","18.08.04")
 }
