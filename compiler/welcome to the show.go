@@ -20,7 +20,7 @@
 		
 	Exceptions to the standard GNU license are available with Jeroen's written permission given prior 
 	to the project the exceptions are needed for.
-Version: 18.08.01
+Version: 18.08.04
 */
 package scynt
 
@@ -94,6 +94,11 @@ func (s *tori) throw(e string) {
 	lthrow ( s.sfile,s.ln,e )
 }
 
+func (s *tori) ethrow(e error){
+	s.throw(e.Error())
+}
+
+
 func (s *tori) warn(e string) {
 	lwarn ( s.sfile,s.ln,e )
 }
@@ -117,5 +122,5 @@ func hey() {
 
 func init(){
 mkl.Lic    ("Scyndi Programming Language - welcome to the show.go","GNU General Public License 3")
-mkl.Version("Scyndi Programming Language - welcome to the show.go","18.08.01")
+mkl.Version("Scyndi Programming Language - welcome to the show.go","18.08.04")
 }
