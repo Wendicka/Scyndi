@@ -29,6 +29,7 @@ import(
 		"strings"
 		"trickyunits/mkl"
 		"trickyunits/qff"
+		"trickyunits/qstr"
 )
 
 func purecode(s *tsource,c *tchunk,ol *tori) string {
@@ -46,7 +47,22 @@ func purecode(s *tsource,c *tchunk,ol *tori) string {
 	if tar.Word!=TARGET { return "" } // Only do this if the target is correct
 	ret:=code.Word
 	if strings.HasPrefix(strings.ToUpper(ret),"IMPORT:"){
-		fname:=ret[7:]
+		tfname:=ret[7:]
+		fname:=""
+		if tfname[0]=='/' || tfname[1]==':' {
+			fname=tfname
+		} else {
+			for _,pth:=range PURECODEIMPPATH {
+				wpth:=strings.Replace(pth,"\\","/",-1)
+				if qstr.Right(wpth,1)!="/" { wpth += "/" }
+				doingln("Searching: ",wpth+tfname)
+				if qff.IsFile(wpth+tfname) { 
+					fname=wpth+tfname
+					break
+				}
+			}
+			if fname=="" { ol.throw("Not found PURECODE IMPORT file: "+tfname) }
+		}
 		doingln("Importing pure "+TARGET+" code: ",fname)
 		r,e:=qff.EGetString(fname)
 		if e!=nil { ol.ethrow(e) }

@@ -20,7 +20,7 @@
 		
 	Exceptions to the standard GNU license are available with Jeroen's written permission given prior 
 	to the project the exceptions are needed for.
-Version: 18.08.01
+Version: 18.08.04
 */
 package main
 
@@ -40,9 +40,10 @@ var sourcefile string
 var outputpath string
 var pathsplitter = ":"
 var flagpath *string
+var flagpcip *string
 
 func init(){
-mkl.Version("Scyndi Programming Language - main.go","18.08.01")
+mkl.Version("Scyndi Programming Language - main.go","18.08.04")
 mkl.Lic    ("Scyndi Programming Language - main.go","GNU General Public License 3")
 	nonl:=flag.Bool("sco",false,"If set new lines will not count as the end of an instruction and all instructions will have to be ended with a semi-colon")
 	trgt:=flag.String("target","Wendicka","Set the target to translate to. (Supported targets: "+Scyndi.TargetsSupported()+")")
@@ -50,6 +51,7 @@ mkl.Lic    ("Scyndi Programming Language - main.go","GNU General Public License 
 	ver :=flag.Bool("version",false,"Show version information of all used source files to build Scorpion")
 	ansi:=flag.String("ansi","","ON = force ANSI to be ON or OFF")
 	flagpath=flag.String("use","","Can be used to add extra directories to the use path")
+	flagpcip=flag.String("purecodeinc","","Can be used to add extra directories to the PURECODE IMPORT path")
 	flag.Parse()
 	switch strings.ToUpper(*ansi) {
 		case "ON":	ans.ANSI_Use=true
@@ -105,6 +107,24 @@ func ReadConfig(){
 			Scyndi.USEPATH = append(Scyndi.USEPATH,p)
 		}
 	}
+	// PURECODE IMPORT PATH
+	Scyndi.PURECODEIMPPATH = append(Scyndi.PURECODEIMPPATH,filepath.Dir(sourcefile))
+	for _,p:=range g.List("PureCodePath") {
+		Scyndi.PURECODEIMPPATH = append(Scyndi.PURECODEIMPPATH,p)
+	}
+	e=os.Getenv("SCYNDI_PURECODE_PATH")
+	if e!=""{
+		es:=strings.Split(e,pathsplitter)
+		for _,p:=range es {
+			Scyndi.PURECODEIMPPATH = append(Scyndi.PURECODEIMPPATH,p)
+		}
+	}
+	if *flagpcip!=""{
+		for _,p:=range strings.Split(*flagpcip,pathsplitter) {
+			Scyndi.PURECODEIMPPATH = append(Scyndi.PURECODEIMPPATH,p)
+		}
+	}
+
 
 }
 
