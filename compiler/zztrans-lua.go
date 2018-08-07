@@ -20,7 +20,7 @@
 		
 	Exceptions to the standard GNU license are available with Jeroen's written permission given prior 
 	to the project the exceptions are needed for.
-Version: 18.08.04
+Version: 18.08.07
 */
 package scynt
 
@@ -87,7 +87,7 @@ end
 
 func init(){
 mkl.Lic    ("Scyndi Programming Language - zztrans-lua.go","GNU General Public License 3")
-mkl.Version("Scyndi Programming Language - zztrans-lua.go","18.08.04")
+mkl.Version("Scyndi Programming Language - zztrans-lua.go","18.08.07")
 
 	
 	TransMod["Lua"] = &T_TransMod {}
@@ -132,7 +132,7 @@ mkl.Version("Scyndi Programming Language - zztrans-lua.go","18.08.04")
 
 		ret:="\n\n-- Global Variables (and constants)\n"
 		for vname,vdata:=range src.identifiers {
-			if vdata.idtype=="VAR" {
+			if vdata.idtype=="VAR" && (!vdata.imported) {
 				if src.orilinerem { ret += "\t\t-- VAR "+vname+"\n"}
 				ret += vdata.translateto
 				/*

@@ -20,7 +20,7 @@
 		
 	Exceptions to the standard GNU license are available with Jeroen's written permission given prior 
 	to the project the exceptions are needed for.
-Version: 18.07.30
+Version: 18.08.07
 */
 package scynt
 
@@ -102,7 +102,7 @@ func (s *tsource) performimport(ol *tori) (*tidentifier,string){
 		qw++
 	} else { qw=4 }
 	//fmt.Println("Start",qw,len(ol.sline))
-	if len(ol.sline)>4 {
+	if len(ol.sline)>6 {
 		if imptype=="VAR" { 
 			ol.throw("Variables do not accept parameters")  // Procedure type variables will (for now) not be importable. Perhaps in the future...
 		} else {
