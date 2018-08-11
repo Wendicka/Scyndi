@@ -30,6 +30,7 @@ import(
 		"trickyunits/mkl"
 		"trickyunits/qff"
 		"trickyunits/qstr"
+pfp		"path/filepath"
 )
 
 func purecode(s *tsource,c *tchunk,ol *tori) string {
@@ -52,13 +53,21 @@ func purecode(s *tsource,c *tchunk,ol *tori) string {
 		if tfname[0]=='/' || tfname[1]==':' {
 			fname=tfname
 		} else {
-			for _,pth:=range PURECODEIMPPATH {
-				wpth:=strings.Replace(pth,"\\","/",-1)
-				if qstr.Right(wpth,1)!="/" { wpth += "/" }
-				doingln("Searching: ",wpth+tfname)
-				if qff.IsFile(wpth+tfname) { 
-					fname=wpth+tfname
-					break
+			trythis:=pfp.Dir(s.filename)
+			trythis=strings.Replace(trythis,"\\","/",-1)			
+			if qstr.Right(trythis,1)!="/" { trythis+="/" }
+			doingln("Searching: ",trythis+tfname)
+			if qff.IsFile(trythis+tfname) {
+				fname=trythis+tfname
+			} else {
+				for _,pth:=range PURECODEIMPPATH {
+					wpth:=strings.Replace(pth,"\\","/",-1)
+					if qstr.Right(wpth,1)!="/" { wpth += "/" }
+					doingln("Searching: ",wpth+tfname)
+					if qff.IsFile(wpth+tfname) { 
+						fname=wpth+tfname
+						break
+					}
 				}
 			}
 			if fname=="" { ol.throw("Not found PURECODE IMPORT file: "+tfname) }
