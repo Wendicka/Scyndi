@@ -52,7 +52,7 @@ function split:string inputstr:string, sep:string
 end
 
 
-import "string.format" func sprintf:string ...string
+{import "string.format" func sprintf:string ...string} {malfunctions}
 import "string.gsub"   func replace:string string,string,string
 import "string.rep"    func strrepeat:string string,integer
 
