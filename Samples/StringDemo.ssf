@@ -1,0 +1,26 @@
+program afewtestswithstrings
+
+{
+	This program demonstrates the standard string functions that the system modules for all supported target languages SHOULD have.
+	Thse functions should therefore require no "USE" instruction. The system module for each language should be set up to create as little code due to these functions as possible,
+	and to rely as much on the original functions as possible, (that's why the "IMPORT" feature has been used a lot in the system module), but keep in mind that not all languages
+	do support these functions by default so some improvisations were needed, I'm afraid.... :-(
+}
+
+const 
+	mystring1 = "My name is Jeroen, and I created Scyndi"
+	mystring2 = "Cool, huh?"
+end
+
+
+
+begin
+	writeln mystring1
+	writeln ucase(mystring1)
+	writeln lcase(mystring1)
+	writeln replace(mystring2,"Cool","Neat")
+	writeln strrepeat("=",strlen(mystring2))
+	writeln Left(mystring1,2)
+	writeln right(myStrinG1,6)
+	writeln mid(mystring1,12,6)
+end
