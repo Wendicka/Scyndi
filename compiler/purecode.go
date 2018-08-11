@@ -20,7 +20,7 @@
 		
 	Exceptions to the standard GNU license are available with Jeroen's written permission given prior 
 	to the project the exceptions are needed for.
-Version: 18.08.04
+Version: 18.08.11
 */
 package scynt
 
@@ -97,5 +97,5 @@ func purecode(s *tsource,c *tchunk,ol *tori) string {
 
 func init(){
 mkl.Lic    ("Scyndi Programming Language - purecode.go","GNU General Public License 3")
-mkl.Version("Scyndi Programming Language - purecode.go","18.08.04")
+mkl.Version("Scyndi Programming Language - purecode.go","18.08.11")
 }
