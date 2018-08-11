@@ -20,7 +20,7 @@
 		
 	Exceptions to the standard GNU license are available with Jeroen's written permission given prior 
 	to the project the exceptions are needed for.
-Version: 18.08.02
+Version: 18.08.11
 */
 package scynt
 
@@ -28,11 +28,16 @@ import "trickyunits/qstr"
 
 func (s *tsource) declarevar(line []*tword) (string,tidentifier){
 	//vr:=self.identifiers
+	trans:=TransMod[TARGET]
 	vr:=tidentifier{}
 	vr.private=s.private
 	vr.dttype="VARIANT"
 	vr.idtype="VAR"
-	vr.defaultvalue="NIL"
+	if trans.MyNil=="" { 
+		vr.defaultvalue="nil"
+	} else {
+		vr.defaultvalue=trans.MyNil
+	}
 	if len(line)==0 {return "er:Empty variable declaration",vr } // should normally never happen, but at least this vovr a go panic crash
 	n:=line[0]
 	name:=n.Word
@@ -84,7 +89,9 @@ func (s *tsource) declarevar(line []*tword) (string,tidentifier){
 					vr.defaultvalue = o.Word
 				default:
 					if o.Wtype!="keyword" || o.Word!="NEW" { return "er:Unexpected "+o.Wtype+" ("+o.Word+"). Only the keyword NEW is allowed for "+vr.dttype,vr }
-					vr.defaultvalue = "NEW"
+					tp:=s.GetIdentifier(vr.dttype,nil,nil)
+					
+					vr.defaultvalue = trans.TransTypeDefinition(s,tp,nil)
 			}
 		} else { return "er:Syntax error!",vr } // Now it's really beyond me what you were trying to do.... :-/
 	} else {

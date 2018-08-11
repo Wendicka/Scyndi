@@ -20,7 +20,7 @@
 		
 	Exceptions to the standard GNU license are available with Jeroen's written permission given prior 
 	to the project the exceptions are needed for.
-Version: 18.08.02
+Version: 18.08.11
 */
 package scynt
 
@@ -56,6 +56,7 @@ type tidentifier struct {
 	tarformed bool // Will be true if the translation module already reformed this variable, in order to rule out ANY POSSIBILITY AT ALL it will happen twice.
 	args *targs
 	constant bool // When set true the code cannot change this identifier after being defined.
+	typeidentifiers map[string] *tidentifier // needed for types
 }
 
 type texpression struct{
@@ -168,8 +169,22 @@ type tsource struct {
 	allid map[string]*tidentifier // All own identifiers plus the imported ones.
 }
 
-func (s *tsource) GetIdentifier(name string,c *tchunk, o *tori) *tidentifier {
+func (s *tsource) GetIdentifier(aname string,c *tchunk, o *tori) *tidentifier {
 	var ret *tidentifier
+	var sn []string
+	trans:=TransMod[TARGET]
+	tsep:=trans.SimpleTypeSeparator
+	if tsep=="" { tsep="." }
+	name:=aname
+	fdot:=strings.Index(aname,".")
+	if fdot>-1 {
+		sn=strings.Split(aname,".")
+		un:=sn[0]
+		if s2,ok:=s.usedmap.m[un];ok {
+			return s2.GetIdentifier(aname[fdot+1 : ],c,o)
+		}
+		name=un
+	}
 	if c!=nil {
 		//flv:=c.forid
 		//if fv,fok:=flv[name]; fok {
@@ -181,16 +196,38 @@ func (s *tsource) GetIdentifier(name string,c *tchunk, o *tori) *tidentifier {
 			}
 		}
 		loc:=c.locals
-		if v,ok:=loc[name]; ok { return v }
+		if v,ok:=loc[name]; ok { ret= v }
 	}
-	if v,ok:=s.identifiers[name];ok { return v }
-	if v,ok:=s.allid[name];ok { return v }
+	if v,ok:=s.identifiers[name];ok { ret= v }
+	if v,ok:=s.allid[name];ok { ret= v }
 	// for k,_ := range(s.allid) { doing("ID: ",k) } // debug only
 	if ret==nil {
 		if o==nil { 
 			throw("Unknown identifier: "+name)
 		} else {
 			o.throw("Unknown identifier: "+name)
+		}
+	}
+	//doingln(aname+"<fdot>"+name,fmt.Sprintf("%d",len(sn)))
+	if fdot>-1 {
+		//doingln("fdot",fmt.Sprintf("%d",fdot))
+		
+		for i:=1;i<len(sn);i++{
+			if ret.idtype!="VAR" { o.throw("Request not understood") }
+			if ret.dttype=="INTEGER" || ret.dttype=="STRING" || ret.dttype=="FLOAT" || ret.dttype=="BOOL" { o.throw("Can't typeindex internal types") }
+			tto:=ret.translateto
+			fret:=ret
+			doingln("Subindex:",fmt.Sprintf("%d",i))
+			ftype:=s.GetIdentifier(fret.dttype,c,o)
+			if ftype.idtype!="TYPE" { o.throw("Type is not type (internal error?) > "+ret.dttype) }
+			if subret,ok2:=ftype.typeidentifiers[sn[i]];ok2{
+				sr:=*subret
+				sr.translateto=tto+tsep+sr.translateto
+				ret=&sr
+			} else {
+				//for k,_:=range fret.typeidentifiers{ doingln(ret.dttype+" has: ",k )}
+				o.throw(ret.dttype+" has no field identifier named: "+sn[i])
+			}
 		}
 	}
 	return ret

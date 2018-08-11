@@ -20,7 +20,7 @@
 		
 	Exceptions to the standard GNU license are available with Jeroen's written permission given prior 
 	to the project the exceptions are needed for.
-Version: 18.08.04
+Version: 18.08.11
 */
 package scynt
 
@@ -53,8 +53,10 @@ var keywords = []string {"PROGRAM","SCRIPT","MODULE","UNIT", // UNIT WILL AUTOMA
 						"OPTION","SUPPORT","PURECODE",
 						"TRUE","FALSE","NEW",
 						"MOD",
-						"NIL", 
+						"NIL", "KILL",
 						"RETURN",
+						"EXTENDS",
+						"NUMMERIC", // reserved for later usage. Can be used to define alternate nummeric types, in case you need those. ;)
 					}
 					
 var operators = []string { // It's very important here, that the longer ones come first and the smaller ones later, or things might go wrong here.
@@ -94,6 +96,6 @@ var PURECODEIMPPATH = []string{}
 var TARDIR = ""
 
 func init(){
-mkl.Version("Scyndi Programming Language - progconfigvars.go","18.08.04")
+mkl.Version("Scyndi Programming Language - progconfigvars.go","18.08.11")
 mkl.Lic    ("Scyndi Programming Language - progconfigvars.go","GNU General Public License 3")
 }

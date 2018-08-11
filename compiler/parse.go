@@ -20,7 +20,7 @@
 		
 	Exceptions to the standard GNU license are available with Jeroen's written permission given prior 
 	to the project the exceptions are needed for.
-Version: 18.08.04
+Version: 18.08.11
 */
 package scynt
 
@@ -82,6 +82,7 @@ func gettype(word string,file string,line int) string{
 				ok:=word[i]=='_'
 				ok =ok || (word[i]>='A' && word[i]<='Z')
 				ok =ok || (word[i]>='0' && word[i]<='9')
+				ok =ok || (word[i]=='.')
 				lassert(file,line,ok,"Invalid identifier: "+word)
 			}
 		case '#':
@@ -274,7 +275,7 @@ func (self *tsource) declarechunk(ol *tori) *tchunk{
 	
 	if ct.Word=="BEGIN"{
 		if len(ol.sline)>1 { ol.throw("BEGIN does not allow parameters of any sort") }
-		doingln(self.srctype+" ",self.filename) // debug
+		//doingln(self.srctype+" ",self.filename) // debug
 		if self.srctype=="PROGRAM" {
 			ol.sline = []*tword{}
 			ol.sline = append(ol.sline,&tword{"PROCEDURE","keyword"})
@@ -574,6 +575,10 @@ func (self *tsource) Organize(){
 					case "BEGIN","VOID","PROCEDURE","PROC","FUNCTION","FUNC","DEF":
 						mychunk = self.declarechunk(ol)
 						ltype="func"
+					case "TYPE":
+						if self.starttype(ol) {
+							ltype="type"
+						}
 					case "VAR":
 						if len(sl)>1 { 
 							tv:=sl[1:]
@@ -595,7 +600,7 @@ func (self *tsource) Organize(){
 						}
 					default:
 						ol.throw("Unexpected "+pt.Word+"!!") // (Very likely a bug in the Scyndi compiler! Please report!)")
-				}
+				}				
 			} else if ltype=="use" {
 				for _,w:=range sl {
 					if w.Word=="END" { 
@@ -603,6 +608,12 @@ func (self *tsource) Organize(){
 					} else if w.Wtype=="string" || w.Wtype=="identifier" {
 						self.userequested=append(self.userequested,w.Word) 
 					}
+				}
+			} else if ltype=="type" {
+				if pt.Word=="END" {
+					ltype="ground"
+				} else {
+					self.totype(ol)
 				}
 			} else if ltype=="enum" {
 				if pt.Word=="END" {
@@ -683,6 +694,7 @@ func (self *tsource) Translate() string {
 	}
 	blocks["USE"]=""
 	useblock(TransMod,self,&blocks)
+	blocks["TYPES"]=trans.TransTypes(self)
 	doingln("Translating: ",self.filename)
 	blocks["VAR"]=self.declarevars()
 	blocks["FUN"]=self.translatefunctions()
@@ -697,5 +709,5 @@ func (self *tsource) SaveTranslation(strans,outputpath string) {
 
 func init(){
 mkl.Lic    ("Scyndi Programming Language - parse.go","GNU General Public License 3")
-mkl.Version("Scyndi Programming Language - parse.go","18.08.04")
+mkl.Version("Scyndi Programming Language - parse.go","18.08.11")
 }

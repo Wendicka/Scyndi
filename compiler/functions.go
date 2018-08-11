@@ -20,11 +20,11 @@
 		
 	Exceptions to the standard GNU license are available with Jeroen's written permission given prior 
 	to the project the exceptions are needed for.
-Version: 18.08.02
+Version: 18.08.11
 */
 package scynt
 import(
-//							"trickyunits/qstr"
+							"trickyunits/qstr"
 							"trickyunits/mkl"
 							"strings"
 							"fmt"
@@ -109,6 +109,7 @@ func (self *tsource)  translatefunctions() string{
 	ret:=trans.FuncHeaderRem()
 	returned:=false
 	casevar:=map[int] *tidentifier { }
+	semi:="" // This can be defined by any language requiring ; after every instruction.
 	for _,chf := range self.chunks {
 		ended:=false
 		chf.forid = map[int] map[string]*tidentifier {}
@@ -189,12 +190,29 @@ func (self *tsource)  translatefunctions() string{
 					ret+=scall+"\n"
 					pchat(fmt.Sprintf("%d",spos)) // just compiler distraction... for now
 				}
+			} else if pt.Word=="NEW" {
+				exp,_:=self.translateExpressions("identifier", chf, ol,1,0)
+				//fmt.Println(exp,len(ol.sline))
+				if exp<len(ol.sline) { ol.throw("Separator expected") }
+				id:=rti
+				if id.idtype=="INTEGER" || id.idtype=="FLOAT" || id.idtype=="STRING" || id.idtype=="BOOL" || qstr.Prefixed(id.idtype,"ARRAY ") || qstr.Prefixed(id.idtype,"MAP ") { ol.throw("Invalid type for NEW") }
+				idtype:=self.GetIdentifier(id.dttype,chf,ol)
+				mynew:=trans.TransTypeDefinition(self,idtype,id)
+				ret += mynew+semi+"\n"
+			} else if pt.Word=="KILL" {
+				exp,_:=self.translateExpressions("identifier", chf, ol,1,0)
+				if exp<len(ol.sline) { ol.throw("Separator expected") }
+				id:=rti
+				if id.idtype=="INTEGER" || id.idtype=="FLOAT" || id.idtype=="STRING" || id.idtype=="BOOL" || qstr.Prefixed(id.idtype,"ARRAY ") || qstr.Prefixed(id.idtype,"MAP ") { ol.throw("Invalid type for KILL") }
+				idtype:=self.GetIdentifier(id.dttype,chf,ol)
+				mynew:=trans.TransTypeKill(self,idtype,id)
+				ret += mynew+semi+"\n"
 			} else if pt.Word=="RETURN" {
 				returned=true
 				if chf.pof==0 {
 					if len(ol.sline)>1 { ol.throw("Procedures don't take parameters for return") }
 					if trans.FormVoidReturn==nil {
-						ret+="return\n"
+						ret+="return"+semi+"\n"
 					} else {
 						ret+=trans.FormVoidReturn(self,chf,ol)
 					}
@@ -205,7 +223,7 @@ func (self *tsource)  translatefunctions() string{
 						ol.throw("Separator expected") 
 					}
 					if trans.FormVoidReturn==nil {
-						ret+="return "+exu+"\n"
+						ret+="return "+exu+semi+"\n"
 					} else {
 						ret+=trans.FormFuncReturn(self,chf,ol,exu)+"\n"
 					}
@@ -353,7 +371,7 @@ func (self *tsource)  translatefunctions() string{
 				indexw:=ol.sline[1]
 				indexn:=indexw.Word
 				i:=2
-				if indexw.Wtype!="identifier" { ol.throw("Unexpected "+indexw.Wtype+": "+indexw.Word) }
+				if indexw.Wtype!="identifier" { ol.throw("Unexpected "+indexw.Wtype+": "+indexw.Word+" in FOR") }
 				if len(ol.sline)<3 { ol.throw("Unexpected end of FOR-loop-definition") }
 				indextype:="INTEGER"
 				dp:=ol.sline[i]
@@ -482,6 +500,6 @@ func (self *tsource)  translatefunctions() string{
 }
 
 func init(){
-mkl.Version("Scyndi Programming Language - functions.go","18.08.02")
+mkl.Version("Scyndi Programming Language - functions.go","18.08.11")
 mkl.Lic    ("Scyndi Programming Language - functions.go","GNU General Public License 3")
 }

@@ -20,7 +20,7 @@
 		
 	Exceptions to the standard GNU license are available with Jeroen's written permission given prior 
 	to the project the exceptions are needed for.
-Version: 18.08.02
+Version: 18.08.11
 */
 package scynt
 
@@ -45,13 +45,16 @@ type T_TransMod struct {
 	UseBlocks func(s *tsource, b *map[string]string)
 	SealBlocks func(b *map[string]string)
 	TransVars func(t *tsource) string
+	TransTypes func(t *tsource) string
+	TransTypeDefinition func(t *tsource,dtype *tidentifier,did *tidentifier) string
+	TransTypeKill func(t *tsource,dtype *tidentifier,did *tidentifier) string
 	Merge func(b map[string]string) string
 	FuncHeaderRem func() string
 	FuncHeader func(s *tsource,ch *tchunk) string
 	EndFunc func(s *tsource,ch *tchunk,trueend bool) string
 	StartFor func(fortype string,index *tidentifier,sxu,exu,step string,stepconstant bool) string
 	startforeach func(eachi, fkey,fvalue *tidentifier,arrayORmap string,self *tsource,chf *tchunk,ol *tori) string
-	savetrans func(s *tsource,trans, outp string)
+	savetrans func(s *tsource,trans, outp string)	
 	plusone func(i interface{}) string
 	minusone func(i interface{}) string
 	setstring func(str string) string
@@ -91,6 +94,9 @@ type T_TransMod struct {
 	simplecaseoneitem string
 	simplecasemultiitem func(want string,ol *tori) string
 	simplecaseend string
+	MyNil string
+	AltGetTypedIdentifier func() *tidentifier
+	SimpleTypeSeparator string
 }
 
 var TransMod = map[string] *T_TransMod{}
@@ -118,7 +124,7 @@ func TargetsSupported() string {
 
 func init(){
 mkl.Lic    ("Scyndi Programming Language - maintrans.go","GNU General Public License 3")
-mkl.Version("Scyndi Programming Language - maintrans.go","18.08.02")
+mkl.Version("Scyndi Programming Language - maintrans.go","18.08.11")
 
 	dfo:=&defoperators
 	for _,k := range ([]string{"==","+","-","/","*","^","!=","<",">","<=",">="}){
