@@ -4,6 +4,7 @@ module System
 
 import "string.char" function chr:string integer
 import "os.exit" void Halt
+import "print" void PRINT STRING
 
 var ReadIntError:string = "?Invalid input! Please redo from start!"
 
@@ -43,3 +44,50 @@ end
 
 import "string.upper" func UCase:string string
 import "string.lower" func LCase:string string
+
+
+function split:string inputstr:string, sep:string
+     {I've done it this way, due to requiring too many backslashes otherwise, and that could really lead to messy code bound for lots of needless parse errors, and Scyndi will merge it all together anyway}
+	purecode "Lua","import:mysplit.lua.imp"
+end
+
+
+import "string.format" func sprintf:string ...string
+import "string.gsub"   func replace:string string,string,string
+import "string.rep"    func strrepeat:string string,integer
+
+{import "string.sub"    func substring:string string,integer,integer}
+
+
+function left:string s:string,l:integer=1
+	purecode "Lua","return string.sub($C{S}C$,1,$C{L}C$)"
+end
+
+function right:string s:string,l:integer=1
+purecode "Lua","
+	local ln = $C{L}C$ --or 1
+	local st = $C{S}C$ --or \"nostring\"
+	-- return string.sub(st,string.len(st)-ln,string.len(st))
+	return string.sub(st,-ln,-1)
+	"
+end 
+
+function mid:string s:string,o:integer,l:integer=1
+purecode "Lua","
+  local ln=$C{L}C$
+  local of=$C{O}C$
+  local st=$C{S}C$
+  return string.sub(st,of,(of+ln)-1)
+"
+end 
+
+
+function trim:string s:String
+  purecode "Lua","return (s:gsub(\"^%s*(.-)%s*$\", \"%1\"))"
+end
+
+function strlen:integer s:string
+	purecode "Lua","return #$C{S}C$"
+end
+
+
