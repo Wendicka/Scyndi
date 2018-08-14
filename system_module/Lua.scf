@@ -83,7 +83,7 @@ end
 
 
 function trim:string s:String
-  purecode "Lua","return (s:gsub(\"^%s*(.-)%s*$\", \"%1\"))"
+  purecode "Lua","return ($C{S}C$:gsub(\"^%s*(.-)%s*$\", \"%1\"))"
 end
 
 function strlen:integer s:string
