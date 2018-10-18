@@ -1,0 +1,64 @@
+module system
+
+import "console.log" void Print string
+
+
+{In Javascript Write and WriteLn will cause the same effect, due to JavaScript not having a proper 'Write' equivalent}
+void Write ...a:string
+   purecode "WebJS","import:Write.js.imp"
+   purecode "NodeJS","import:Write.js.imp"
+   purecode "NW.JS","import:Write.js.imp"
+end
+
+void WriteLn ...a:string
+   purecode "WebJS","import:Write.js.imp"
+   purecode "NodeJS","import:Write.js.imp"
+   purecode "NW.JS","import:Write.js.imp"
+end
+
+func ReadLn:string question:string
+   purecode "NodeJS","console.log(\"ERROR: No READLN support for NodeJS output (yet)\"); return;"
+   purecode "NW.JS","return prompt($C{QUESTION}C$);"
+   purecode "WebJS","return prompt($C{QUESTION}C$);"
+end
+
+func ReadInt:integer question:string
+   purecode "NodeJS","console.log(\"ERROR: No READINT support for NodeJS output (yet)\"); return 0;"
+   purecode "NW.JS","ReadInt.js.imp";
+   purecode "WebJS","ReadInt.js.imp";
+end
+
+
+func UCase:String str:string
+	purecode "NodeJS","return $C{STR}C$.toUpperCase();"
+	purecode "NW.JS","return $C{STR}C$.toUpperCase();"
+	purecode "WebJS","return $C{STR}C$.toUpperCase();"
+end
+
+
+func LCase:String str:string
+	purecode "NodeJS","return $C{STR}C$.toLowerCase();"
+	purecode "NW.JS","return $C{STR}C$.toLowerCase();"
+	purecode "WebJS","return $C{STR}C$.toLowerCase();"
+end
+
+def StrRepeat str:string,times:int
+     var ret:string = ""     
+     for i:=1,times
+         ret += str
+     end
+     return ret
+end
+
+def Trim:string str:String
+     purecode "NodeJS","return $C{STR}C$.trim();"
+     purecode "NW.JS","return $C{STR}C$.trim();"
+     purecode "WebJS","return $C{STR}C$.trim();"
+end
+
+def StrLen:Int str:string
+    purecode "NodeJS","return $C{STR}C$.length;"
+    purecode "NW.JS","return $C{STR}C$.length;"
+    purecode "WebJS","return $C{STR}C$.length;"
+end
+    

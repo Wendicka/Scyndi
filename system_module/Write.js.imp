@@ -1,0 +1,6 @@
+let output="";
+for(let i=0;i<$C{A}C$;i++){
+	if (i>0) output +="";
+	output += $C{A}C$
+	console.log(output);
+}

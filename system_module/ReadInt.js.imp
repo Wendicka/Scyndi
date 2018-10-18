@@ -1,0 +1,7 @@
+let q=$C{QUESTION}C$;
+let ret=NaN;
+do{
+    ret=Number(prompt(q));
+} while isNaN(ret);
+return ret;
+   
