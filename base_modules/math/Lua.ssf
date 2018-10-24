@@ -32,7 +32,7 @@ import "math.atan" def atan:float float
 
 import "math.floor" def floor:integer float
 import "math.ceil"  def ceil:integer float
-
+import "math.abs"   def abs:float float
 
 
 def Round:integer value:float
@@ -44,3 +44,8 @@ import "math.randomseed" void seedrand float
 
 import "math.sqrt"   def sqr:float float
 
+def POW:float value:float,power:integer
+	purecode "Lua","return $C{VALUE}C$^$C{POWER}C$"
+end
+
+#include "factorial.ssf"

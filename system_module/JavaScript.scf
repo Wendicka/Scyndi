@@ -90,7 +90,13 @@ def Right:string str:string,l:integer=1
 end
 
 def Mid:String str:string,p:integer,l:integer=1
-     purecode "NodeJS"," s=$C{P}C$-1; e=s+$C{L}C$; return $C{STR}C$.slice(s,e);"
-     purecode  "NW.JS"," s=$C{P}C$-1; e=s+$C{L}C$; return $C{STR}C$.slice(s,e);"
-     purecode  "WebJS"," s=$C{P}C$-1; e=s+$C{L}C$; return $C{STR}C$.slice(s,e);"
+     purecode "NodeJS","let s=$C{P}C$-1; let e=s+$C{L}C$; return $C{STR}C$.slice(s,e);"
+     purecode  "NW.JS","let s=$C{P}C$-1; let e=s+$C{L}C$; return $C{STR}C$.slice(s,e);"
+     purecode  "WebJS","let s=$C{P}C$-1; let e=s+$C{L}C$; return $C{STR}C$.slice(s,e);"
+end
+
+def Slice:String str,start,einde
+	purecode "NodeJS","return $C{STR}.slice(start,einde)"
+	purecode  "WebJS","return $C{STR}.slice(start,einde)"
+	purecode  "NW.JS","return $C{STR}.slice(start,einde)"
 end
