@@ -1,0 +1,7 @@
+let mystring=$C{ORISTRING}C$;
+let ret=mystring;
+do {
+	mystring=ret;
+	ret = mystring.replace(mystring,$C{ORI}C$,$C{REPWITH}C$);
+} while (ret!==mystring)
+return ret;
