@@ -1,0 +1,56 @@
+{ --- START LICENSE BLOCK ---
+  JavaScript.ssf
+  
+  version: 18.10.24
+  Copyright (C) 2018 Jeroen P. Broks
+  This software is provided 'as-is', without any express or implied
+  warranty.  In no event will the authors be held liable for any damages
+  arising from the use of this software.
+  Permission is granted to anyone to use this software for any purpose,
+  including commercial applications, and to alter it and redistribute it
+  freely, subject to the following restrictions:
+  1. The origin of this software must not be misrepresented; you must not
+     claim that you wrote the original software. If you use this software
+     in a product, an acknowledgment in the product documentation would be
+     appreciated but is not required.
+  2. Altered source versions must be plainly marked as such, and must not be
+     misrepresented as being the original software.
+  3. This notice may not be removed or altered from any source distribution.
+  --- END LICENSE BLOCK --- } 
+
+const pi = 3.1415926535898
+
+import "Math.sin" def sin:float float
+import "Math.cos" def cos:float float
+import "Math.tan" def tan:float float
+
+import "Math.asin" def asin:float float
+import "Math.acos" def acos:float float
+import "Math.atan" def atan:float float
+
+import "Math.floor" def floor:integer float
+import "Math.ceil"  def ceil:integer float
+
+
+
+{def Round:integer value:float
+	return floor(value+0.5)
+end}
+import "Math.round" def Round:integer float
+
+{import "Math.random" def rand:integer integer,integer}
+{import "math.randomseed" void seedrand float}
+void SeedRand f:float
+	{Do nothing at all as JavaScript has no support for this!}
+end
+
+import "Math.random" def JSPURERAND:float
+
+def rand:integer minimaal:integer,maximaal:integer=0
+	if maximaal=0
+		return ceil(JSPURERAND()*minimaal)
+	end
+	return (floor(JSPURERAND()*(Maximaal-MiniMaal)))+MiniMaal
+end
+
+import "Math.sqrt" def sqr:float float
