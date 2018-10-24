@@ -12,6 +12,7 @@ okki.o
 
 # no output
 *.bmx
+*.js
 
 # No mac crap
 ._*
