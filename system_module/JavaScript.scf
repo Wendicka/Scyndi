@@ -1,15 +1,22 @@
-module system
+{module system}
 
 import "console.log" void Print string
+{import "String.fromCharCode" function Chr:string i:integer}
+function Chr:string i:integer
+	purecode "WebJS" ,"return String.fromCharCode($C{I}C$);"
+	purecode "NW.JS" ,"return String.fromCharCode($C{I}C$);"
+	purecode "NodeJS","return String.fromCharCode($C{I}C$);"
+end
+
 
 {In Javascript Write and WriteLn will cause the same effect, due to JavaScript not having a proper 'Write' equivalent}
-void Write ...a:string
+void Write a:...string
    purecode "WebJS","import:Write.js.imp"
    purecode "NodeJS","import:Write.js.imp"
    purecode "NW.JS","import:Write.js.imp"
 end
 
-void WriteLn ...a:string
+void WriteLn a:...string
    purecode "WebJS","import:Write.js.imp"
    purecode "NodeJS","import:Write.js.imp"
    purecode "NW.JS","import:Write.js.imp"
@@ -40,12 +47,16 @@ func LCase:String str:string
 	purecode "WebJS","return $C{STR}C$.toLowerCase();"
 end
 
-def StrRepeat str:string,times:int
-     var ret:string = ""     
+def StrRepeat str:string,times:integer
+     {var ret:string = ""     
      for i:=1,times
          ret += str
      end
      return ret
+     }
+     PureCode "NodeJS","   let ret = \"\"; for(let i=1;i<=$C{TIMES}C$;i++) ret += $C{STR}C$; return ret;"
+     PureCode "NW.JS" ,"   let ret = \"\"; for(let i=1;i<=$C{TIMES}C$;i++) ret += $C{STR}C$; return ret;"
+     PureCode "WebHS" ,"   let ret = \"\"; for(let i=1;i<=$C{TIMES}C$;i++) ret += $C{STR}C$; return ret;"
 end
 
 def Trim:string str:String
@@ -54,7 +65,7 @@ def Trim:string str:String
      purecode "WebJS","return $C{STR}C$.trim();"
 end
 
-def StrLen:Int str:string
+def StrLen:IntEgeR str:string
     purecode "NodeJS","return $C{STR}C$.length;"
     purecode "NW.JS","return $C{STR}C$.length;"
     purecode "WebJS","return $C{STR}C$.length;"
