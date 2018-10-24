@@ -47,7 +47,7 @@ func LCase:String str:string
 	purecode "WebJS","return $C{STR}C$.toLowerCase();"
 end
 
-def StrRepeat str:string,times:integer
+def StrRepeat:String str:string,times:integer
      {var ret:string = ""     
      for i:=1,times
          ret += str
@@ -56,7 +56,13 @@ def StrRepeat str:string,times:integer
      }
      PureCode "NodeJS","   let ret = \"\"; for(let i=1;i<=$C{TIMES}C$;i++) ret += $C{STR}C$; return ret;"
      PureCode "NW.JS" ,"   let ret = \"\"; for(let i=1;i<=$C{TIMES}C$;i++) ret += $C{STR}C$; return ret;"
-     PureCode "WebHS" ,"   let ret = \"\"; for(let i=1;i<=$C{TIMES}C$;i++) ret += $C{STR}C$; return ret;"
+     PureCode "WebJS" ,"   let ret = \"\"; for(let i=1;i<=$C{TIMES}C$;i++) ret += $C{STR}C$; return ret;"
+end
+
+def Replace:String OriString:String,Ori:String,RepWith:String
+	purecode "NodeJS","import:Replace.js.imp"
+	purecode  "WebJS","import:Replace.js.imp"
+	purecode  "NW.JS","import:Replace.js.imp"
 end
 
 def Trim:string str:String
@@ -71,3 +77,20 @@ def StrLen:IntEgeR str:string
     purecode "WebJS","return $C{STR}C$.length;"
 end
     
+def Left:string str:string,l:integer=1
+	purecode "NodeJS","return $C{STR}C$.slice(0,$C{L}C$);"
+	purecode  "NW.JS","return $C{STR}C$.slice(0,$C{L}C$);"
+	purecode  "WebJS","return $C{STR}C$.slice(0,$C{L}C$);"
+end
+
+def Right:string str:string,l:integer=1
+	purecode "NodeJS","return $C{STR}C$.slice(-$C{L}C$);"
+	purecode  "NW.JS","return $C{STR}C$.slice(-$C{L}C$);"
+	purecode  "WebJS","return $C{STR}C$.slice(-$C{L}C$);"
+end
+
+def Mid:String str:string,p:integer,l:integer=1
+     purecode "NodeJS"," s=$C{P}C$-1; e=s+$C{L}C$; return $C{STR}C$.slice(s,e);"
+     purecode  "NW.JS"," s=$C{P}C$-1; e=s+$C{L}C$; return $C{STR}C$.slice(s,e);"
+     purecode  "WebJS"," s=$C{P}C$-1; e=s+$C{L}C$; return $C{STR}C$.slice(s,e);"
+end

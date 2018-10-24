@@ -322,7 +322,7 @@ func init(){
 		wto:="<="
 		if fortype=="FORU" { wto="<" }
 		//ret:= fmt.Sprintf("for %s in forloop(%s,%s,%s,'%s') do",index.translateto,sxu,exu,step,wto)
-		ret:=fmt.Sprintf("for(%s=%s;%s%s%s; %s+=%s){",index.translateto,sxu,  index.translateto,wto,exu,   index.translateto,step)
+		ret:=fmt.Sprintf("for(let %s=%s;%s%s%s; %s+=%s){",index.translateto,sxu,  index.translateto,wto,exu,   index.translateto,step)
 		return ret
 	}
 	
@@ -338,7 +338,7 @@ func init(){
 		return ret
 		*/
 		
-		return fmt.Sprintf("for (%s in %s) { let %s=%s[%s]; ",fkey.translateto,eachi.translateto,fvalue.translateto,eachi.translateto,fkey.translateto)
+		return fmt.Sprintf("for (let %s in %s) { let %s=%s[%s]; ",fkey.translateto,eachi.translateto,fvalue.translateto,eachi.translateto,fkey.translateto)
 		
 	}
 
