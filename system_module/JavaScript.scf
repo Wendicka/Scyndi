@@ -2,7 +2,6 @@ module system
 
 import "console.log" void Print string
 
-
 {In Javascript Write and WriteLn will cause the same effect, due to JavaScript not having a proper 'Write' equivalent}
 void Write ...a:string
    purecode "WebJS","import:Write.js.imp"
@@ -27,7 +26,6 @@ func ReadInt:integer question:string
    purecode "NW.JS","ReadInt.js.imp";
    purecode "WebJS","ReadInt.js.imp";
 end
-
 
 func UCase:String str:string
 	purecode "NodeJS","return $C{STR}C$.toUpperCase();"
