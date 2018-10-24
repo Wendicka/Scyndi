@@ -1,1 +1,2 @@
-#include JavaScript.scf
+module system
+#include "JavaScript.scf"
