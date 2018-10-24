@@ -1,0 +1,7 @@
+program ASCIITabel
+
+begin
+	for i=0,255,1
+		WriteLn i,"\t=\t",Chr(i)
+	end
+end
