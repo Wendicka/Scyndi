@@ -1,6 +1,6 @@
 program MathTest
 Use 
-	"Math"
+	"math"
 end
 
 begin

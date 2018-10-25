@@ -96,7 +96,7 @@ def Mid:String str:string,p:integer,l:integer=1
 end
 
 def Slice:String str,start,einde
-	purecode "NodeJS","return $C{STR}.slice(start,einde)"
-	purecode  "WebJS","return $C{STR}.slice(start,einde)"
-	purecode  "NW.JS","return $C{STR}.slice(start,einde)"
+	purecode "NodeJS","return $C{STR}C$.slice(start,einde)"
+	purecode  "WebJS","return $C{STR}C$.slice(start,einde)"
+	purecode  "NW.JS","return $C{STR}C$.slice(start,einde)"
 end
