@@ -1,0 +1,10 @@
+var POWVAL:float {temporarily global will be local, once locals are supported}
+def POW:float value:float,power:integer
+	if power=0; return 0; end
+	if power=1; return value; end
+	POWVAL=value;
+	for i=2,power
+		POWVAL=POWVAL*POWVAL
+	end
+	return POWVAL
+end
