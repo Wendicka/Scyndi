@@ -1,0 +1,5 @@
+def Factorial:integer n:integer
+	if n<0; return 0; end {Error prevention!}
+	if n=0; return 1; end
+	return Factorial(n-1)*n
+end
