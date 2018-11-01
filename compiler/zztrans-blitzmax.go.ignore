@@ -174,7 +174,7 @@ mkl.Version("Scyndi Programming Language - zztrans-blitzmax.go","18.08.02")
 	tmw.simpleendfor="Next"
 
 	
-	tmw.operators = defoperators // We need to have the basic. As this is not a pointer assignment, I can just modify all this :)
+	tmw.operators = NewDefOperators(); //defoperators // We need to have the basic. As this is not a pointer assignment, I can just modify all this :)
 	tmw.operators[  "="]="="
 	tmw.operators[ "=="]="="
 	tmw.operators[ "!="]="<>"

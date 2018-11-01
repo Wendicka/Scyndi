@@ -1,3 +1,27 @@
+// License Information:
+// 	Scyndi
+// 	Main
+// 	
+// 	
+// 	
+// 	(c) Jeroen P. Broks, 2018, All rights reserved
+// 	
+// 		This program is free software: you can redistribute it and/or modify
+// 		it under the terms of the GNU General Public License as published by
+// 		the Free Software Foundation, either version 3 of the License, or
+// 		(at your option) any later version.
+// 		
+// 		This program is distributed in the hope that it will be useful,
+// 		but WITHOUT ANY WARRANTY; without even the implied warranty of
+// 		MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// 		GNU General Public License for more details.
+// 		You should have received a copy of the GNU General Public License
+// 		along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// 		
+// 	Exceptions to the standard GNU license are available with Jeroen's written permission given prior 
+// 	to the project the exceptions are needed for.
+// Version: 18.11.01
+// End License Information
 /*
 	Scyndi
 	Main
@@ -120,11 +144,17 @@ func TargetsSupported() string {
 	return ret
 }
 
-
+func NewDefOperators() map[string] string {
+	ret := map[string] string{}
+	for key,value:=range defoperators{
+		ret[key]=value;
+	}
+	return ret
+}
 
 func init(){
 mkl.Lic    ("Scyndi Programming Language - maintrans.go","GNU General Public License 3")
-mkl.Version("Scyndi Programming Language - maintrans.go","18.08.11")
+mkl.Version("Scyndi Programming Language - maintrans.go","18.11.01")
 
 	dfo:=&defoperators
 	for _,k := range ([]string{"==","+","-","/","*","^","!=","<",">","<=",">="}){
