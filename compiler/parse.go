@@ -1,3 +1,27 @@
+// License Information:
+// 	Scyndi
+// 	General Parsing
+// 	
+// 	
+// 	
+// 	(c) Jeroen P. Broks, 2018, 2019, All rights reserved
+// 	
+// 		This program is free software: you can redistribute it and/or modify
+// 		it under the terms of the GNU General Public License as published by
+// 		the Free Software Foundation, either version 3 of the License, or
+// 		(at your option) any later version.
+// 		
+// 		This program is distributed in the hope that it will be useful,
+// 		but WITHOUT ANY WARRANTY; without even the implied warranty of
+// 		MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// 		GNU General Public License for more details.
+// 		You should have received a copy of the GNU General Public License
+// 		along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// 		
+// 	Exceptions to the standard GNU license are available with Jeroen's written permission given prior 
+// 	to the project the exceptions are needed for.
+// Version: 19.02.08
+// End License Information
 /*
 	Scyndi
 	General Parsing
@@ -444,7 +468,7 @@ func (self *tsource) doinclude(ol *tori, file string,isprogram bool) (dump []*to
 // Organising the code blocks
 func (self *tsource) Organize(){
 	var mychunk  *tchunk
-	agroundkeys:=[]string{"BEGIN","VOID","PROCEDURE","PROC","FUNC","FUNCTION","DEF","VAR","TYPE","USE","XUSE","PRIVATE","PUBLIC","IMPORT","CONST","ENUM"} // On "ground level" only these keywords are allowed.
+	agroundkeys:=[]string{"BEGIN","VOID","PROCEDURE","PROC","FUNC","FUNCTION","DEF","VAR","TYPE","USE","XUSE","PRIVATE","PUBLIC","IMPORT","CONST","ENUM","PURECODE"} // On "ground level" only these keywords are allowed.
 	ogroundkeys:=[]string{"BEGIN","VOID","PROCEDURE","PROC","FUNC","FUNCTION","DEF","TYPE","USE","XUSE","PRIVATE","PUBLIC","IMPORT","CONST","ENUM"}       // These keywords are ONLY allowed on "ground level".
 	ltype:="ground"
 	doing("Organising: ",self.filename)
@@ -598,6 +622,9 @@ func (self *tsource) Organize(){
 							ltype="var"
 							self.levels=append(self.levels,&tstatementspot{ol.ln,"Global VAR declaration block",0})
 						}
+					case "PURECODE":
+						//if _,ok:=blocks["HEADPURECODE"];!ok { blocks["HEADPURECODE"]=""; }
+						self.headpurecode +=purecode(self,nil,ol)+"\n\n"
 					default:
 						ol.throw("Unexpected "+pt.Word+"!!") // (Very likely a bug in the Scyndi compiler! Please report!)")
 				}				
@@ -693,11 +720,12 @@ func (self *tsource) Translate() string {
 		trans.SealBlocks(&blocks) 
 	}
 	blocks["USE"]=""
-	useblock(TransMod,self,&blocks)
+	useblock(TransMod,self,&blocks)	
 	blocks["TYPES"]=trans.TransTypes(self)
 	doingln("Translating: ",self.filename)
 	blocks["VAR"]=self.declarevars()
 	blocks["FUN"]=self.translatefunctions()
+	blocks["HEADPURECODE"] = self.headpurecode
 	return trans.Merge(blocks)
 }
 
@@ -709,5 +737,5 @@ func (self *tsource) SaveTranslation(strans,outputpath string) {
 
 func init(){
 mkl.Lic    ("Scyndi Programming Language - parse.go","GNU General Public License 3")
-mkl.Version("Scyndi Programming Language - parse.go","18.08.11")
+mkl.Version("Scyndi Programming Language - parse.go","19.02.08")
 }
