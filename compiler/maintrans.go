@@ -4,7 +4,7 @@
 // 	
 // 	
 // 	
-// 	(c) Jeroen P. Broks, 2018, All rights reserved
+// 	(c) Jeroen P. Broks, 2018, 2019, All rights reserved
 // 	
 // 		This program is free software: you can redistribute it and/or modify
 // 		it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 // 		
 // 	Exceptions to the standard GNU license are available with Jeroen's written permission given prior 
 // 	to the project the exceptions are needed for.
-// Version: 18.11.01
+// Version: 19.02.08
 // End License Information
 package scynt
 
@@ -130,7 +130,7 @@ func NewDefOperators() map[string] string {
 
 func init(){
 mkl.Lic    ("Scyndi Programming Language - maintrans.go","GNU General Public License 3")
-mkl.Version("Scyndi Programming Language - maintrans.go","18.11.01")
+mkl.Version("Scyndi Programming Language - maintrans.go","19.02.08")
 
 	dfo:=&defoperators
 	for _,k := range ([]string{"==","+","-","/","*","^","!=","<",">","<=",">="}){
