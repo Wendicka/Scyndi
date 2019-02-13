@@ -20,7 +20,7 @@
 // 		
 // 	Exceptions to the standard GNU license are available with Jeroen's written permission given prior 
 // 	to the project the exceptions are needed for.
-// Version: 19.02.08
+// Version: 19.02.13
 // End License Information
 package scynt
 
@@ -36,7 +36,7 @@ import(
 
 func init(){
 	mkl.Lic    ("Scyndi Programming Language - zztrans-javascript.go","GNU General Public License 3")
-	mkl.Version("Scyndi Programming Language - zztrans-javascript.go","19.02.08")
+	mkl.Version("Scyndi Programming Language - zztrans-javascript.go","19.02.13")
 	var tmw *T_TransMod;
 	forNode:=&T_TransMod {}
 	forNWJS:=&T_TransMod {}
@@ -448,6 +448,6 @@ func init(){
 		os.MkdirAll(outdir,0777)
 		saveprogram(s,translation,outfile)
 		doingln("Saving: ",outdir+"/index.html")
-		qff.WriteStringToFile(outdir+"/index.html","<html> Please await contain later </html>")
+		qff.WriteStringToFile(outdir+"/index.html","<!DOCTYPE html>\n\n<html>\n<head id='scyndi_head'>\n</head>\n\n<body id='scyndi_body'>\n</body>\n\n<script src='"+qstr.StripAll(s.filename)+".js'></script>\n\n</html>")
 	}
 }

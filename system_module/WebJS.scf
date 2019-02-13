@@ -1,2 +1,10 @@
 module System
 #include "JavaScript.scf"
+
+
+purecode "WebJS","const html_head = document.getElementById('scyndi_head')"
+import "html_head.innerHTML" var HTML_Head:string
+
+
+purecode "WebJS","const html_body = document.getElementById('scyndi_body')"
+import "html_body.innerHTML" var HTML_Body:string

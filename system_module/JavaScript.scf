@@ -30,8 +30,8 @@ end
 
 func ReadInt:integer question:string
    purecode "NodeJS","console.log(\"ERROR: No READINT support for NodeJS output (yet)\"); return 0;"
-   purecode "NW.JS","ReadInt.js.imp";
-   purecode "WebJS","ReadInt.js.imp";
+   purecode "NW.JS","import:ReadInt.js.imp";
+   purecode "WebJS","import:ReadInt.js.imp";
 end
 
 func UCase:String str:string
