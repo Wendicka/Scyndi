@@ -20,7 +20,7 @@
 // 		
 // 	Exceptions to the standard GNU license are available with Jeroen's written permission given prior 
 // 	to the project the exceptions are needed for.
-// Version: 19.02.08
+// Version: 19.02.13
 // End License Information
 
 package scynt
@@ -191,12 +191,15 @@ func (s *tsource) GetIdentifier(aname string,c *tchunk, o *tori) *tidentifier {
 		//flv:=c.forid
 		//if fv,fok:=flv[name]; fok {
 		//	for i,b:=range c.fors{
+		rm:=-1;
+		var ri *tidentifier = nil;
 		for i,flv:=range c.forid {
 			b:=c.fors[i]
 			if fv,fok:=flv[name]; fok {
-				if b && strings.HasPrefix(fv.translateto,fmt.Sprintf("SCYNDI_FOR%X_",i)) { return fv }
+				if b && strings.HasPrefix(fv.translateto,fmt.Sprintf("SCYNDI_FOR%X_",i)) { /*return fv*/ if i>rm {rm=i; ri=fv } }
 			}
 		}
+		if rm>=0 { return ri }
 		loc:=c.locals
 		if v,ok:=loc[name]; ok { ret= v }
 	}
