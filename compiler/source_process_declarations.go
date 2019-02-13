@@ -115,6 +115,8 @@ type tinstruction struct {
 	state *tstatementspot
 }
 
+var scopes uint32 = 0
+
 
 type tchunk struct {
 	isimported bool
@@ -134,9 +136,20 @@ type tchunk struct {
 	forid map[int] map[string]*tidentifier
 	fors map[int] bool
 	forline2ins map[int]*tinstruction
+	scopeid map[int] map[string] *tidentifier
+	scopeindex map[int] uint32
 	endless bool
 
 }
+
+func (c *tchunk) newscope(level) {
+	if _,ok:=c.scopeid[level];ok { fmt.Printf("Warning! Scope level #%d appears to be there. Maybe a little error?",level) }
+	scopeid[level] = map [string] *tidentifier {}
+	scopes++
+	scopeindex[level]=scopes
+}
+
+func (c *tchunk) endscope(level) { scopeid[level]=nil }
 
 type smap struct {
 	m map[string]*tsource

@@ -1,3 +1,27 @@
+// License Information:
+// 	Scyndi
+// 	Function processing
+// 	
+// 	
+// 	
+// 	(c) Jeroen P. Broks, 2018, 2019, All rights reserved
+// 	
+// 		This program is free software: you can redistribute it and/or modify
+// 		it under the terms of the GNU General Public License as published by
+// 		the Free Software Foundation, either version 3 of the License, or
+// 		(at your option) any later version.
+// 		
+// 		This program is distributed in the hope that it will be useful,
+// 		but WITHOUT ANY WARRANTY; without even the implied warranty of
+// 		MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// 		GNU General Public License for more details.
+// 		You should have received a copy of the GNU General Public License
+// 		along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// 		
+// 	Exceptions to the standard GNU license are available with Jeroen's written permission given prior 
+// 	to the project the exceptions are needed for.
+// Version: 19.02.13
+// End License Information
 /*
 	Scyndi
 	Function processing
@@ -112,9 +136,12 @@ func (self *tsource)  translatefunctions() string{
 	semi:="" // This can be defined by any language requiring ; after every instruction.
 	for _,chf := range self.chunks {
 		ended:=false
-		chf.forid = map[int] map[string]*tidentifier {}
-		chf.fors  = map[int]bool{}
+		chf.forid      = map[int] map[string] *tidentifier {}
+		chf.fors       = map[int] bool{}
+		chf.scopeid    = map[int] map[string] *tidentifier {}
+		chf.scopeindex = map[int] uint32 {}
 		chf.forline2ins = map[int]*tinstruction{}
+		chf.newscope(0);
 		ret += trans.FuncHeader(self,chf)
 		//doingln("DEBUG: Translating func to: ",chf.translateto) // debug only
 		for _,ins:=range chf.instructions {
@@ -230,6 +257,7 @@ func (self *tsource)  translatefunctions() string{
 				}
 			} else if pt.Word=="IF" || pt.Word=="ELSEIF" || pt.Word=="ELIF" {
 				if pt.Word!="IF" && ins.state.openinstruct!="IF" && ins.state.openinstruct!="IF block" { ol.throw(pt.Word+" can only be used within an IF block") }
+				chf.newscope(chf.level+1)
 				exp,exu:=self.translateExpressions("boolean", chf, ol,1,0)
 				if exp<len(ol.sline) { 
 					//echat("\tEnd:",exp,len(ol.sline))
@@ -241,9 +269,11 @@ func (self *tsource)  translatefunctions() string{
 					ret+=fmt.Sprintf(trans.simpleelif,exu)+"\n"
 				}
 			} else if pt.Word=="ELSE" {
+				chf.newscope(chf.level+1)
 				if ins.state.openinstruct!="IF" && ins.state.openinstruct!="IF block" { ol.throw(pt.Word+" can only be used within an IF block") }
 				ret += trans.simpleelse+"\n"
 			} else if pt.Word=="SELECT" || pt.Word=="SWITCH" {
+				chf.newscope(chf.level+1)
 				if len(ol.sline)!=2 { ol.throw("Invalid SWITCH/SELECT!") }
 				ag:=ol.sline[1]
 				if ag.Wtype!="identifier" { ol.throw("Identifier expected for SWTICH/SELECT but I got "+ag.Wtype+": "+ag.Word) }
@@ -302,6 +332,7 @@ func (self *tsource)  translatefunctions() string{
 					ret += trans.simpleelse+"\n"
 				}				
 			} else if pt.Word=="WHILE" {
+				chf.newscope(chf.level+1)
 				exp,exu:=self.translateExpressions("boolean", chf, ol,1,0)
 				if exp<len(ol.sline) { 
 					//echat("\tEnd:",exp,len(ol.sline))
@@ -309,6 +340,7 @@ func (self *tsource)  translatefunctions() string{
 				}
 				ret+=fmt.Sprintf(trans.simplewhile,exu)+"\n"
 			} else if pt.Word=="FOREACH" {
+				chf.newscope(chf.level+1)
 				fortotal++
 				chf.forline2ins[ol.ln]=ins
 				//exp,eache:=self.translateExpressions("chain", chf, ol,1,0)
@@ -365,6 +397,7 @@ func (self *tsource)  translatefunctions() string{
 				}
 				
 			} else if pt.Word=="FOR" || pt.Word=="FORU" {
+				chf.newscope(chf.level+1)
 				fortotal++
 				chf.forline2ins[ol.ln]=ins
 				if len(ol.sline)<2 { ol.throw("Index variable expected") }
@@ -435,6 +468,7 @@ func (self *tsource)  translatefunctions() string{
 				chf.fors[fortotal]=true
 				ret+=trans.StartFor(pt.Word,&index,sxu,exu,step,stepconstant)+"\n"
 			} else if pt.Word=="REPEAT" || pt.Word=="DO" {
+				chf.newscope(chf.level+1)
 				ret+=trans.simpleloop+"\n"
 				if len(ol.sline)>1 { ol.throw("REPEAT and DO do not accept parameters") }
 			} else if pt.Word=="END" || pt.Word=="FOREVER" || pt.Word=="LOOP" || pt.Word=="UNTIL" {
@@ -443,6 +477,7 @@ func (self *tsource)  translatefunctions() string{
 				if (ins.state.openinstruct!="REPEAT" && ins.state.openinstruct!="REPEAT block" && ins.state.openinstruct!="DO" && ins.state.openinstruct!="DO block") && pt.Word!="END"{
 					ol.throw("Keyword "+pt.Word+" may ONLY be used to close REPEAT/DO loops")
 				}
+				endscope(chf.level);
 				switch ins.state.openinstruct {
 					case "PROCEDURE","PROC","VOID":
 						ret += trans.EndFunc(self,chf,true)
@@ -500,6 +535,6 @@ func (self *tsource)  translatefunctions() string{
 }
 
 func init(){
-mkl.Version("Scyndi Programming Language - functions.go","18.08.11")
+mkl.Version("Scyndi Programming Language - functions.go","19.02.13")
 mkl.Lic    ("Scyndi Programming Language - functions.go","GNU General Public License 3")
 }
