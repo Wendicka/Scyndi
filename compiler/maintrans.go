@@ -20,7 +20,7 @@
 // 		
 // 	Exceptions to the standard GNU license are available with Jeroen's written permission given prior 
 // 	to the project the exceptions are needed for.
-// Version: 19.02.08
+// Version: 19.02.13
 // End License Information
 package scynt
 
@@ -97,6 +97,7 @@ type T_TransMod struct {
 	MyNil string
 	AltGetTypedIdentifier func() *tidentifier
 	SimpleTypeSeparator string
+	noscopetrans bool // Should be true of target language doesn't support local variable declarations except for the start of a function, such as Pascal or older versions of C.
 }
 
 var TransMod = map[string] *T_TransMod{}
@@ -130,7 +131,7 @@ func NewDefOperators() map[string] string {
 
 func init(){
 mkl.Lic    ("Scyndi Programming Language - maintrans.go","GNU General Public License 3")
-mkl.Version("Scyndi Programming Language - maintrans.go","19.02.08")
+mkl.Version("Scyndi Programming Language - maintrans.go","19.02.13")
 
 	dfo:=&defoperators
 	for _,k := range ([]string{"==","+","-","/","*","^","!=","<",">","<=",">="}){
