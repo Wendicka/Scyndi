@@ -98,6 +98,7 @@ type T_TransMod struct {
 	AltGetTypedIdentifier func() *tidentifier
 	SimpleTypeSeparator string
 	noscopetrans bool // Should be true of target language doesn't support local variable declarations except for the start of a function, such as Pascal or older versions of C.
+	TransLocal func(src *tsource, i *tidentifier) string
 }
 
 var TransMod = map[string] *T_TransMod{}

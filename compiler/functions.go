@@ -226,6 +226,14 @@ func (self *tsource)  translatefunctions() string{
 				idtype:=self.GetIdentifier(id.dttype,chf,ol)
 				mynew:=trans.TransTypeDefinition(self,idtype,id)
 				ret += mynew+semi+"\n"
+			} else if pt.Word=="VAR" {
+				if len(ol.sline)<2 { ol.throw("Local variable declarations cannot (yet) come in var blocks") }
+				n:=ol.sline[1];
+				if n.Wtype!="identifier" { ol.throw("Identifier expected for local variable declaration. Not a "+n.Wtype) }
+				_,v := self.declarevar(ol.sline[1:])
+				v.translateto = fmt.Sprintf("SCYNDI_LOCAL_SCOPE%d_%s",chf.scopeindex[ins.level],n.Word)
+				//fmt.Printf("- %s translated to %s should have value \"%s\"\n",n.Word,v.translateto,v.defaultvalue) // debug line
+				ret += trans.TransLocal(self,&v)+"\n"; 
 			} else if pt.Word=="KILL" {
 				exp,_:=self.translateExpressions("identifier", chf, ol,1,0)
 				if exp<len(ol.sline) { ol.throw("Separator expected") }
@@ -257,7 +265,7 @@ func (self *tsource)  translatefunctions() string{
 				}
 			} else if pt.Word=="IF" || pt.Word=="ELSEIF" || pt.Word=="ELIF" {
 				if pt.Word!="IF" && ins.state.openinstruct!="IF" && ins.state.openinstruct!="IF block" { ol.throw(pt.Word+" can only be used within an IF block") }
-				chf.newscope(chf.level+1)
+				chf.newscope(ins.level+1)
 				exp,exu:=self.translateExpressions("boolean", chf, ol,1,0)
 				if exp<len(ol.sline) { 
 					//echat("\tEnd:",exp,len(ol.sline))
@@ -269,11 +277,11 @@ func (self *tsource)  translatefunctions() string{
 					ret+=fmt.Sprintf(trans.simpleelif,exu)+"\n"
 				}
 			} else if pt.Word=="ELSE" {
-				chf.newscope(chf.level+1)
+				chf.newscope(ins.level+1)
 				if ins.state.openinstruct!="IF" && ins.state.openinstruct!="IF block" { ol.throw(pt.Word+" can only be used within an IF block") }
 				ret += trans.simpleelse+"\n"
 			} else if pt.Word=="SELECT" || pt.Word=="SWITCH" {
-				chf.newscope(chf.level+1)
+				chf.newscope(ins.level+1)
 				if len(ol.sline)!=2 { ol.throw("Invalid SWITCH/SELECT!") }
 				ag:=ol.sline[1]
 				if ag.Wtype!="identifier" { ol.throw("Identifier expected for SWTICH/SELECT but I got "+ag.Wtype+": "+ag.Word) }
@@ -332,7 +340,7 @@ func (self *tsource)  translatefunctions() string{
 					ret += trans.simpleelse+"\n"
 				}				
 			} else if pt.Word=="WHILE" {
-				chf.newscope(chf.level+1)
+				chf.newscope(ins.level+1)
 				exp,exu:=self.translateExpressions("boolean", chf, ol,1,0)
 				if exp<len(ol.sline) { 
 					//echat("\tEnd:",exp,len(ol.sline))
@@ -340,7 +348,7 @@ func (self *tsource)  translatefunctions() string{
 				}
 				ret+=fmt.Sprintf(trans.simplewhile,exu)+"\n"
 			} else if pt.Word=="FOREACH" {
-				chf.newscope(chf.level+1)
+				chf.newscope(ins.level+1)
 				fortotal++
 				chf.forline2ins[ol.ln]=ins
 				//exp,eache:=self.translateExpressions("chain", chf, ol,1,0)
@@ -397,7 +405,7 @@ func (self *tsource)  translatefunctions() string{
 				}
 				
 			} else if pt.Word=="FOR" || pt.Word=="FORU" {
-				chf.newscope(chf.level+1)
+				chf.newscope(ins.level+1)
 				fortotal++
 				chf.forline2ins[ol.ln]=ins
 				if len(ol.sline)<2 { ol.throw("Index variable expected") }
@@ -468,7 +476,7 @@ func (self *tsource)  translatefunctions() string{
 				chf.fors[fortotal]=true
 				ret+=trans.StartFor(pt.Word,&index,sxu,exu,step,stepconstant)+"\n"
 			} else if pt.Word=="REPEAT" || pt.Word=="DO" {
-				chf.newscope(chf.level+1)
+				chf.newscope(ins.level+1)
 				ret+=trans.simpleloop+"\n"
 				if len(ol.sline)>1 { ol.throw("REPEAT and DO do not accept parameters") }
 			} else if pt.Word=="END" || pt.Word=="FOREVER" || pt.Word=="LOOP" || pt.Word=="UNTIL" {
@@ -477,7 +485,7 @@ func (self *tsource)  translatefunctions() string{
 				if (ins.state.openinstruct!="REPEAT" && ins.state.openinstruct!="REPEAT block" && ins.state.openinstruct!="DO" && ins.state.openinstruct!="DO block") && pt.Word!="END"{
 					ol.throw("Keyword "+pt.Word+" may ONLY be used to close REPEAT/DO loops")
 				}
-				endscope(chf.level);
+				chf.endscope(ins.level);
 				switch ins.state.openinstruct {
 					case "PROCEDURE","PROC","VOID":
 						ret += trans.EndFunc(self,chf,true)
@@ -530,7 +538,8 @@ func (self *tsource)  translatefunctions() string{
 			ei:=chf.instructions[len(chf.instructions)-1]
 			throw(fmt.Sprintf("%s in line %d not properly closed!",ei.state.openinstruct,ei.state.openline))
 		}
-	}
+		chf.endscope(0)
+	}	
 	return ret // I must have this asa temp measyre or Go won't work (figures).
 }
 

@@ -142,14 +142,14 @@ type tchunk struct {
 
 }
 
-func (c *tchunk) newscope(level) {
+func (c *tchunk) newscope(level int) {
 	if _,ok:=c.scopeid[level];ok { fmt.Printf("Warning! Scope level #%d appears to be there. Maybe a little error?",level) }
-	scopeid[level] = map [string] *tidentifier {}
-	scopes++
-	scopeindex[level]=scopes
+	c.scopeid[level] = map [string] *tidentifier {}
+	  scopes++
+	c.scopeindex[level]=scopes
 }
 
-func (c *tchunk) endscope(level) { scopeid[level]=nil }
+func (c *tchunk) endscope(level int) { c.scopeid[level]=nil }
 
 type smap struct {
 	m map[string]*tsource
