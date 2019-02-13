@@ -141,7 +141,7 @@ func (self *tsource)  translatefunctions() string{
 		chf.scopeid    = map[int] map[string] *tidentifier {}
 		chf.scopeindex = map[int] uint32 {}
 		chf.forline2ins = map[int]*tinstruction{}
-		chf.newscope(0);
+		chf.newscope(1);
 		ret += trans.FuncHeader(self,chf)
 		//doingln("DEBUG: Translating func to: ",chf.translateto) // debug only
 		for _,ins:=range chf.instructions {
@@ -233,6 +233,8 @@ func (self *tsource)  translatefunctions() string{
 				_,v := self.declarevar(ol.sline[1:])
 				v.translateto = fmt.Sprintf("SCYNDI_LOCAL_SCOPE%d_%s",chf.scopeindex[ins.level],n.Word)
 				//fmt.Printf("- %s translated to %s should have value \"%s\"\n",n.Word,v.translateto,v.defaultvalue) // debug line
+				if _,ok:=chf.scopeid[ins.level];!ok { ol.throw(fmt.Sprintf("Internal error! Trying to declare local into non-existent scope level %d!",ins.level)) }
+				chf.scopeid[ins.level][n.Word]=&v;
 				ret += trans.TransLocal(self,&v)+"\n"; 
 			} else if pt.Word=="KILL" {
 				exp,_:=self.translateExpressions("identifier", chf, ol,1,0)
@@ -538,7 +540,7 @@ func (self *tsource)  translatefunctions() string{
 			ei:=chf.instructions[len(chf.instructions)-1]
 			throw(fmt.Sprintf("%s in line %d not properly closed!",ei.state.openinstruct,ei.state.openline))
 		}
-		chf.endscope(0)
+		chf.endscope(1)
 	}	
 	return ret // I must have this asa temp measyre or Go won't work (figures).
 }

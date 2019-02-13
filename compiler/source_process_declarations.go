@@ -213,8 +213,17 @@ func (s *tsource) GetIdentifier(aname string,c *tchunk, o *tori) *tidentifier {
 			}
 		}
 		if rm>=0 { return ri }
+		/* removed as locals have been done in a more improve manner now
 		loc:=c.locals
 		if v,ok:=loc[name]; ok { ret= v }
+		*/
+		rm=-1
+		ri=nil;
+		for i,scope:=range c.scopeid {
+			if sv,sok:=scope[name]; sok {if i>rm { rm=i; ri=sv } }
+		}
+		if ri!=nil { return ri }
+		
 	}
 	if v,ok:=s.identifiers[name];ok { ret= v }
 	if v,ok:=s.allid[name];ok { ret= v }
