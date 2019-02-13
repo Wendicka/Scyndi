@@ -20,7 +20,7 @@
 // 		
 // 	Exceptions to the standard GNU license are available with Jeroen's written permission given prior 
 // 	to the project the exceptions are needed for.
-// Version: 19.02.08
+// Version: 19.02.13
 // End License Information
 /*
 	Scyndi
@@ -115,7 +115,7 @@ const luabig=`
 
 func init(){
 mkl.Lic    ("Scyndi Programming Language - zztrans-lua.go","GNU General Public License 3")
-mkl.Version("Scyndi Programming Language - zztrans-lua.go","19.02.08")
+mkl.Version("Scyndi Programming Language - zztrans-lua.go","19.02.13")
 
 	
 	TransMod["Lua"] = &T_TransMod {}
@@ -528,6 +528,15 @@ mkl.Version("Scyndi Programming Language - zztrans-lua.go","19.02.08")
 		}
 		ret:=fmt.Sprintf("for %s,%s in %s(%s) do ",fkey.translateto,fvalue.translateto,f,eachi.translateto)
 		return ret
+	}
+	
+	tmw.TransLocal=func(src *tsource, vdata *tidentifier) string {
+		ret:="local ";
+		ret+=vdata.translateto+" = ";
+		if qstr.Prefixed(vdata.dttype,"ARRAY ") || qstr.Prefixed(vdata.dttype,"MAP ")  { vdata.defaultvalue="{}" }		
+		//if vdata.defstring { ret += "\""+vdata.defaultvalue+"\"\n" } else { ret+=vdata.defaultvalue+"\n" }
+		if vdata.defstring { ret += tmw.setstring(vdata.defaultvalue) } else { ret+=vdata.defaultvalue }
+		return ret;
 	}
 
 
