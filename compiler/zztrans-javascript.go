@@ -376,7 +376,7 @@ func init(){
 		// repeat until
 		js.simpleloop="do {"
 		js.simpleinfloop="} while true"
-		js.simpleuntilloop="} while(!( %s ))" // Please note that JavaScript loops as long as the condition is true, and Scyndi is set up to stop when the codition is true.
+		js.simpleuntilloop="} while(!( %s ))" // Please note that JavaScript loops as long as the condition is true, and Scyndi is set up to stop when the condition is true.
 		// end of a for loop
 		js.simpleendfor="}"
 		// defoperators

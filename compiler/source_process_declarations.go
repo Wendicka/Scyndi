@@ -213,10 +213,10 @@ func (s *tsource) GetIdentifier(aname string,c *tchunk, o *tori) *tidentifier {
 			}
 		}
 		if rm>=0 { return ri }
-		/* removed as locals have been done in a more improve manner now
+		/* brought back or the function parameters no longer work */
 		loc:=c.locals
 		if v,ok:=loc[name]; ok { ret= v }
-		*/
+		//*/
 		rm=-1
 		ri=nil;
 		for i,scope:=range c.scopeid {
