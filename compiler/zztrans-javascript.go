@@ -399,7 +399,9 @@ func init(){
 		js.StartFor=StartFor;
 		js.startforeach=startforeach
 		js.MyNil = "null"
-		
+		// Under no circumstances may variables of two different types result into true when being compared in Scyndi, but JavaScript has a different approach, so ...
+		js.operators[  "="]="==="
+		js.operators[ "=="]="==="
 
 	}
 	
