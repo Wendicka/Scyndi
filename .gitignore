@@ -4,7 +4,6 @@ test*
 bin
 !bin/readme.md
 *scyndi.translation*
-*.lua
 okki
 okki.o
 *.goi*
@@ -13,6 +12,8 @@ okki.o
 # no output
 *.bmx
 *.js
+*.lua
+!base_modules/crypto/md5*
 
 # No mac crap
 ._*
