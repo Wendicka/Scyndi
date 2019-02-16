@@ -1,0 +1,67 @@
+module fio
+
+
+
+purecode "Lua","local openfiles = {}
+local function stringtonumber(str)
+  local function _b2n(exp, num, digit, ...)
+    if not digit then return num end
+    return _b2n(exp*256, num + digit*exp, ...)
+  end
+  return _b2n(256, string.byte(str, 1, -1))
+end
+"
+
+
+
+void closefile fileid:integer
+	purecode "Lua","local f = openfiles[$C{FILEID}C$]
+	if not f then return end
+	f.stream:close()
+	openfiles[$C{FILEID}C$] = nil"
+end
+
+
+def readfile:integer file:String
+	purecode "Lua","	local f = fopen($C{FILE}C$,'rb')
+	if not f; return 0 end -- if any error occurs just exit!
+	local i = #openfiles+1
+	openfiles[i] = { stream = f, t = 'read' }
+	return i"
+end
+
+def ReadByte:Integer fileid:integer
+	purecode "Lua","stream = openfiles[$C{FIELDID}C$]; if not stream return 0 end
+	local s = stream:read(1)
+	return s:byte(1,1)"
+end
+
+
+{ Please note, negative numbers will not be returned! }
+def ReadInt32:Integer fieldid:integer
+	purecode "Lua","	stream = openfiles[$C{FIELDID}C$]; if not stream return 0 end
+	local s = stream:read(4)
+	return stringtonumber(s)"
+end
+
+{ Please note, negative numbers will not be returned! }
+def ReadInt64:Integer fieldid:integer
+	purecode "Lua","	stream = openfiles[$C{FIELDID}C$]; if not stream return 0 end
+	local s = stream:read(8)
+	return stringtonumber(s)"
+end
+
+def ReadString:String fieldid:integer, stringlength:integer
+	purecode "Lua","	stream = openfiles[$C{FIELDID}C$]; if not stream return 0 end
+	local length = $C{STRINGLENGTH}C$ or RAW_ReadInt(stream)
+	return stream:read(length)"
+end
+
+def ReadBoolean:boolean fieldid
+	var rdv:integer
+	var ret:boolean
+	rdv = ReadByte(fieldid)
+	ret = rdv != 0
+	return ret
+end
+
