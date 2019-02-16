@@ -1,6 +1,6 @@
 # Scyndi
 
-![Scyndi](http://tricky1975.github.io/63/icons/scyndi.png)
+![Scyndi](http://tricky1975.github.io/63/Icons/scyndi.png)
 
 Experimental stuff.
 Not much to see here yet.
