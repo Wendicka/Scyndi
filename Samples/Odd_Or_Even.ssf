@@ -1,0 +1,15 @@
+Program ForAWhile
+Var a:Integer
+Begin
+    a:=0
+    While a<=10
+        var o:string = "Odd"
+        var b:integer 
+        b = a mod 2
+        if b = 0
+           o = "Even"
+        end
+        WriteLn a,o
+        a++
+    end
+end
