@@ -1,0 +1,7 @@
+Module crypto
+
+PureCode "Lua","import:md5.lua"
+
+import "md5.sum" func md5:string string
+
+
