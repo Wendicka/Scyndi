@@ -143,7 +143,7 @@ type tchunk struct {
 }
 
 func (c *tchunk) newscope(level int) {
-	if _,ok:=c.scopeid[level];ok { fmt.Printf("Warning! Scope level #%d appears to be there. Maybe a little error?",level) }
+	if _,ok:=c.scopeid[level];ok { fmt.Printf("Warning! Scope level #%d appears to be there. Maybe a little error?\n",level) }
 	c.scopeid[level] = map [string] *tidentifier {}
 	  scopes++
 	c.scopeindex[level]=scopes
