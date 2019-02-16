@@ -51,13 +51,13 @@ def ReadInt64:Integer fieldid:integer
 	return stringtonumber(s)"
 end
 
-def ReadString:String fieldid:integer, stringlength:integer
+def ReadString:String fieldid:integer, stringlength:integer=0
 	purecode "Lua","	stream = openfiles[$C{FIELDID}C$]; if not stream return 0 end
 	local length = $C{STRINGLENGTH}C$ or RAW_ReadInt(stream)
 	return stream:read(length)"
 end
 
-def ReadBoolean:boolean fieldid
+def ReadBoolean:boolean fieldid:integer
 	var rdv:integer
 	var ret:boolean
 	rdv = ReadByte(fieldid)
